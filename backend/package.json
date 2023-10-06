@@ -1,0 +1,26 @@
+{
+    "name": "backend",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "vitest",
+        "test:ui": "vitest --ui",
+        "dev": "nodemon -r dotenv/config index.js"
+    },
+    "author": "Claire Kurth, Dan Demange, Victor Dallé",
+    "license": "ISC",
+    "dependencies": {
+        "bcrypt": "^5.1.0",
+        "cors": "^2.8.5",
+        "dotenv": "^16.0.3",
+        "express": "^4.18.2",
+        "jsonwebtoken": "^9.0.0",
+        "mysql2": "^3.2.2",
+        "nodemon": "^3.0.1"
+    },
+    "devDependencies": {
+        "@vitest/ui": "^0.30.1",
+        "vitest": "^0.30.1"
+    }
+}
