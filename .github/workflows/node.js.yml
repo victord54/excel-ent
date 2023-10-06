@@ -29,5 +29,8 @@ jobs:
         cache-dependency-path: backend/package-lock.json
     # - run: npm ci
     # - run: npm run build --if-present
-    - run: npm run test
-      working-directory: backend 
+    - name: Execute Unit tests
+      run: |
+        npm ci
+        npm run test
+
