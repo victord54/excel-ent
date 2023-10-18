@@ -8,7 +8,7 @@
         "test:ui": "vitest --ui",
         "dev": "nodemon -r dotenv/config index.js"
     },
-    "author": "Claire Kurth, Dan Demange, Victor Dallé",
+    "author": "Claire Kurth, Dan Demange, Théo Faedo, Victor Dallé",
     "license": "ISC",
     "dependencies": {
         "bcrypt": "^5.1.0",
