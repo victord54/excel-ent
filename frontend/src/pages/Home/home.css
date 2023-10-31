@@ -1,0 +1,89 @@
+.container-home{
+    margin:2%;
+    display: flex;
+    gap:25px;
+}
+
+.panneau-gauche{
+    flex:20%;
+    display: flex;
+    flex-direction: column;
+}
+.barre {
+    width: 100%;
+
+}
+
+.filter-button{
+    border: none;
+    border-radius: 25px;
+    background-color: #aec1e2;
+    margin : 5px 0;
+    width: 100%;
+    height: 40px;
+    cursor: pointer;
+    transition: all ease-in-out 0.2s;
+    font-size: 15px;
+}
+
+.filter-button:not(.active):hover{
+    background-color: #CDD1C4;
+    transform: scale(1.1);
+}
+
+.active{
+    background-color: #CDD1C4;
+}
+
+.button-nouvelle-feuille{
+    border: none;
+    border-radius: 25px;
+    background-color: #5C80BC;
+    margin : 15px 0;
+    width: 100%;
+    height: 50px;
+    cursor: pointer;
+    transition: all ease-in-out 0.2s;
+    font-size: 18px;
+}
+
+.button-nouvelle-feuille:hover{
+    background-color: #7a9edb;
+    transform: scale(1.1);
+}
+
+.panneau-droit{
+    flex:80%;
+}
+
+.table-container{
+    overflow: auto;
+    height: 750px;
+}
+
+.panneau-droit {
+    padding: 15px;
+    border-radius: 25px;
+    box-shadow: 1px 1px 25px  rgba(0,0,0,0.3);
+}
+
+.table-feuilles{
+    width: 100%;
+    border-collapse: collapse; 
+    border-spacing: 0;
+}
+
+.table-feuilles thead th {
+    text-align: left;
+    position: sticky;
+    background-color: rgba(248, 246, 246, 1.0); 
+    top:0;
+    height: 40px;
+  }
+
+.table-feuilles tr {
+    border-bottom: 1px dotted rgb(15, 15, 15); 
+    height: 40px;
+}
+
+
