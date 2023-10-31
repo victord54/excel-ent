@@ -1,4 +1,4 @@
-const database = require('../database');
+const database = require('../utils/database');
 const UserDQL = require('../models/usr_user_dql');
 const UserDML = require('../models/usr_user_dml');
 const bcrypt = require('bcrypt');
@@ -71,7 +71,7 @@ exports.signup = async (req, res) => {
         // vérification de l'unicité des données reçues
         const userMail = await UserDQL.get({ usr_mail: usr_mail });
         if (userMail.length > 0) {
-            return res.status(400).json({ message: 'usr_mail already exists' });
+            return res.status(400).json({ message: 'mail already exists' });
         }
 
         // salage mot de passe

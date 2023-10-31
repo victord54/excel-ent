@@ -1,4 +1,4 @@
-const db = require('../database');
+const db = require('../utils/database');
 
 /**
  * Create a new user

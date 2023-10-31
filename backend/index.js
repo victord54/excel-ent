@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
-const database = require('./database');
+const database = require('./utils/database');
+const logWrite = require('./utils/log-write');
 // const db = require("./db.config");
 // const checkToken = require("./jwt/check");
 // const utils = require("./controllers/utils");
@@ -12,6 +13,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use((req, res, next) => {logWrite.accessLogFile(req, res, next);});
 
 app.get('/', (req, res) => {
     res.send("I'm online stepbro !");
