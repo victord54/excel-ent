@@ -1,9 +1,9 @@
-import { expect, test } from "vitest";
+import { expect, test } from 'vitest';
 
-test("add", () => {
+test('add', () => {
     expect(1 + 1).toBe(2);
 });
 
-test("sub", () => {
+test('sub', () => {
     expect(1 - 1).toBe(0);
 });
