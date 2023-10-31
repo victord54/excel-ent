@@ -2,6 +2,10 @@ import React, { useState } from "react";
 import "./home.css";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import boutonModifier from "../../assets/bouton-modifier.png";
+import boutonSupprimer from "../../assets/bouton-supprimer.png";
+import boutonPartager from "../../assets/bouton-partager.png";
+
 function Home() {
   const f1 = {
     titre: "test test test test",
@@ -9,7 +13,7 @@ function Home() {
     date_creation: "10-12-1997",
     date_modification: "15-12-1997",
     auteur: "pamoa",
-    id:2
+    id: 2,
   };
 
   const f2 = {
@@ -18,7 +22,7 @@ function Home() {
     date_creation: "10-12-1997",
     date_modification: "15-12-1997",
     auteur: "moa",
-    id:1
+    id: 1,
   };
 
   const [feuilles, setFeuilles] = useState([
@@ -87,10 +91,6 @@ function Home() {
     console.log(filter);
   };
 
-  const handleRowClick = (feuille) => {
-    console.log(feuille.href);
-    navigate(feuille.href);    
-  };
   const filteredFeuilles = feuilles.filter((feuille) => {
     if (selectedFilter === "all") {
       return true;
@@ -101,6 +101,26 @@ function Home() {
     }
   });
 
+  const handleRowClick = (feuille) => {
+    console.log(feuille.href);
+    navigate(feuille.href);
+  };
+
+  const modifier = (e,feuille) => {
+    e.stopPropagation();
+    console.log("Modifier");
+  }
+
+  const supprimer = (e,euille) => {
+    e.stopPropagation();
+    console.log("Supprimer");
+  }
+
+  const partager = (e,feuille) => {
+    e.stopPropagation();
+    console.log("Partager");
+  }
+
   return (
     <>
       <div className="container-home">
@@ -110,25 +130,28 @@ function Home() {
               Nouvelle feuille
             </button>
           </div>
-          <hr className="barre"/>
+          <hr className="barre" />
           <div>
             <button
               className={`filter-button ${
-                selectedFilter === "all" ? "active" : ""}`}
+                selectedFilter === "all" ? "active" : ""
+              }`}
               onClick={() => handleFilterClick("all")}
             >
               Afficher tout
             </button>
             <button
               className={`filter-button ${
-                selectedFilter === "mesFeuilles" ? "active" : ""}`}
+                selectedFilter === "mesFeuilles" ? "active" : ""
+              }`}
               onClick={() => handleFilterClick("mesFeuilles")}
             >
               Afficher mes feuilles
             </button>
             <button
               className={`filter-button ${
-                selectedFilter === "feuillesPartagees" ? "active" : ""}`}
+                selectedFilter === "feuillesPartagees" ? "active" : ""
+              }`}
               onClick={() => handleFilterClick("feuillesPartagees")}
             >
               Afficher les feuilles partagées
@@ -149,13 +172,23 @@ function Home() {
               </thead>
               <tbody>
                 {filteredFeuilles.map((feuille, i) => (
-                    <tr key={i} onClick={() => handleRowClick(feuille)}>                    
-                        <td>{feuille.titre}</td>
-                        <td>{feuille.auteur}</td>
-                        <td>{feuille.date_creation}</td>
-                        <td>{feuille.date_modification}</td>
-                        <td></td>
-                    </tr>
+                  <tr key={i} onClick={() => handleRowClick(feuille)}>
+                    <td>{feuille.titre}</td>
+                    <td>{feuille.auteur}</td>
+                    <td>{feuille.date_creation}</td>
+                    <td>{feuille.date_modification}</td>
+                    <td>
+                      <button className="button-option modifier" title="Modifier le nom" onClick={(e) => modifier(e,feuille)}>
+                        <img src={boutonModifier} width="15px"/>
+                      </button>
+                      <button className="button-option supprimer" title="Supprimer la feuille" onClick={(e) => supprimer(e,feuille)}>
+                        <img src={boutonSupprimer} width="15px"/>
+                      </button>
+                      <button className="button-option partager" title="Partager la feuille" onClick={(e) => partager(e,feuille)}>
+                        <img src={boutonPartager} width="15px"/>
+                      </button>
+                    </td>
+                  </tr>
                 ))}
               </tbody>
             </table>

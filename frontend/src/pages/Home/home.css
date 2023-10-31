@@ -86,4 +86,31 @@
     height: 40px;
 }
 
+.table-feuilles tr:hover{
+    background-color: #b4bdcc;
+    cursor: pointer;
+}
 
+.button-option{
+    cursor: pointer;
+    border: none;
+    margin-left:5px;
+    padding:4px;
+    transition: all ease-in-out 0.2s;
+    border-radius: 5px;
+}
+.button-option:hover{
+    transform: scale(1.5);
+}
+
+.modifier{
+    background-color: rgb(236, 236, 166);
+}
+
+.supprimer {
+    background-color: rgb(211, 122, 122);
+}
+
+.partager{
+    background-color: #84a1d3;
+}
