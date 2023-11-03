@@ -1,12 +1,8 @@
-const express = require('express');
-const cors = require('cors');
-const database = require('./utils/database');
-const logWrite = require('./utils/log-write');
-// const db = require("./db.config");
-// const checkToken = require("./jwt/check");
-// const utils = require("./controllers/utils");
-// const userRoutes = require("./routes/users");
-const authRoutes = require('./routes/auth');
+import express from 'express';
+import cors from 'cors';
+import * as database from './utils/database.js';
+import authRoutes from './routes/auth.js';
+import { accessLogFile, errorLogFile } from './utils/logfile.js';
 
 const app = express();
 
@@ -15,22 +11,25 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
-    logWrite.accessLogFile(req, res, next);
+    accessLogFile(req);
+    next();
 });
 
 app.get('/', (req, res) => {
     res.send("I'm online stepbro !");
 });
 
-// app.use((req, res, next) => {
-// 	utils.logfile(req, res, next);
-// });
 // app.use('/users', checkToken, userRoutes);
 
 app.use('/auth', authRoutes);
 
 app.use('*', (req, res) => {
     return res.status(501).json('No route found');
+});
+
+app.use((err, req, res, next) => {
+    errorLogFile(err, req);
+    return res.status(err.status).json({ error: err });
 });
 
 /**

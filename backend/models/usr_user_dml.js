@@ -1,4 +1,4 @@
-const db = require('../utils/database');
+import { executeQuery } from '../utils/database.js';
 
 /**
  * Create a new user
@@ -21,9 +21,9 @@ const db = require('../utils/database');
  * //     warningStatus: 0
  * // }
  */
-exports.create = async ({ usr_fname, usr_lname, usr_mail, usr_pwd }) => {
-    return db.executeQuery(
+export async function create({ usr_fname, usr_lname, usr_mail, usr_pwd }) {
+    return executeQuery(
         'INSERT INTO usr_user (usr_fname, usr_lname, usr_mail, usr_pwd) VALUES (?, ?, ?, ?)',
         [usr_fname, usr_lname, usr_mail, usr_pwd],
     );
-};
+}

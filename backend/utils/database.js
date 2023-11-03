@@ -1,9 +1,9 @@
-const mysql = require('mysql2/promise');
+import { createPool } from 'mysql2/promise';
 
 /**
  * Create a pool of connection to the database
  */
-const pool = mysql.createPool({
+const pool = createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASS,
@@ -16,24 +16,24 @@ const pool = mysql.createPool({
 /**
  * Start a transaction
  */
-exports.commitTransaction = async () => {
+export async function commitTransaction() {
     try {
-        await this.executeQuery('COMMIT');
+        await executeQuery('COMMIT');
     } catch (error) {
         throw error;
     }
-};
+}
 
 /**
  * Rollback a transaction
  */
-exports.rollbackTransaction = async () => {
+export async function rollbackTransaction() {
     try {
-        await this.executeQuery('ROLLBACK');
+        await executeQuery('ROLLBACK');
     } catch (error) {
         throw error;
     }
-};
+}
 
 /**
  *
@@ -41,7 +41,7 @@ exports.rollbackTransaction = async () => {
  * @param {*} values Values to insert in the query
  * @returns {Promise<RowDataPacket[]>} Result of the query
  */
-exports.executeQuery = async (sql, values) => {
+export async function executeQuery(sql, values) {
     try {
         const [rows] = await pool.query(sql, values);
         return rows;
@@ -49,23 +49,23 @@ exports.executeQuery = async (sql, values) => {
         console.log(error);
         throw error;
     }
-};
+}
 
 /**
  * Test the connection to the database
  */
-exports.testConnection = async () => {
+export async function testConnection() {
     try {
-        this.executeQuery('SELECT "PONG" AS PING');
+        executeQuery('SELECT "PONG" AS PING');
     } catch (error) {
         throw error;
     }
-};
+}
 
 /**
  * Set the settings of the database
  */
-exports.settingsSQL = async () => {
+export async function settingsSQL() {
     try {
         this.executeQuery(
             'SET SESSION sql_mode = "ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"',
@@ -74,4 +74,4 @@ exports.settingsSQL = async () => {
     } catch (error) {
         throw error;
     }
-};
+}
