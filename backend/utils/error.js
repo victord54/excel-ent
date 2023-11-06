@@ -36,3 +36,15 @@ export class InvalidUserDataError extends UserError {
         super(message, 401);
     }
 }
+
+export class SheetError extends CustomError {
+    constructor(message, status) {
+        super(message, status);
+    }
+}
+
+export class SheetNotFoundError extends SheetError {
+    constructor(message) {
+        super(message, 404);
+    }
+}

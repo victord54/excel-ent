@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import * as database from './utils/database.js';
 import authRoutes from './routes/auth.js';
+import sheetRoutes from './routes/sheet.js';
 import { accessLogFile, errorLogFile } from './utils/logfile.js';
 
 const app = express();
@@ -22,6 +23,8 @@ app.get('/', (req, res) => {
 // app.use('/users', checkToken, userRoutes);
 
 app.use('/auth', authRoutes);
+
+app.use('/sheet', sheetRoutes)
 
 app.use('*', (req, res) => {
     return res.status(501).json('No route found');
