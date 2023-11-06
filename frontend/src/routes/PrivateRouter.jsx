@@ -1,6 +1,6 @@
-import { Route } from "react-router-dom";
+import { Route } from 'react-router-dom';
 // import ErrorPage from "../pages/public/error-page/ErrorPage";
-import AuthGuard from "./AuthGuard";
+import AuthGuard from './AuthGuard';
 
 const router = (
     <Route

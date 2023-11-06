@@ -36,6 +36,6 @@ header nav a {
     transition: all 0.5s ease;
 }
 
-/* header nav ul a:hover {
-    color: rgb(255, 255, 255);
-} */
+header nav ul a:hover {
+    color: rgb(189, 189, 189);
+}
