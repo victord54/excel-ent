@@ -228,7 +228,6 @@ function Home() {
                     </div>
                 </div>
             </div>
-            <br></br>
         </>
     );
 }
