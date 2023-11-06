@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS `excel-ent`;
-USE `excel-ent`;
+CREATE DATABASE IF NOT EXISTS `excelent`;
+USE `excelent`;
 
 DROP TABLE IF EXISTS `usr_sht_link_sheet_user`;
 DROP TABLE IF EXISTS `sht_sheet`;
