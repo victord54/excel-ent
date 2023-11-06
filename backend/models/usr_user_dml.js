@@ -6,8 +6,7 @@ import { executeQuery } from '../utils/database.js';
  * @returns {Promise<RowDataPacket>} data related to the new user
  * @example
  * const user = await UserDML.create({
- *     usr_fname: 'John',
- *     usr_lname: 'Doe',
+ *     usr_pseudo: 'jdhuk',
  *     usr_mail: 'john@doe.uk',
  *     usr_pwd: '1234'
  * });
@@ -21,9 +20,10 @@ import { executeQuery } from '../utils/database.js';
  * //     warningStatus: 0
  * // }
  */
-export async function create({ usr_fname, usr_lname, usr_mail, usr_pwd }) {
+export async function create({ usr_pseudo, usr_mail, usr_pwd }) {
+    // TODO: Vérifier injection SQL /!\
     return executeQuery(
-        'INSERT INTO usr_user (usr_fname, usr_lname, usr_mail, usr_pwd) VALUES (?, ?, ?, ?)',
-        [usr_fname, usr_lname, usr_mail, usr_pwd],
+        'INSERT INTO usr_user (usr_pseudo, usr_mail, usr_pwd) VALUES (?, ?, ?)',
+        [usr_pseudo, usr_mail, usr_pwd],
     );
 }

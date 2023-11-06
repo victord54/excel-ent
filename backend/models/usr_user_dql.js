@@ -13,7 +13,8 @@ export async function getAll() {
  * @param {Object} object data to fetch a user
  * @returns {Promise<RowDataPacket>} User
  */
-export async function get({ usr_idtusr, usr_mail }) {
+export async function get({ usr_idtusr, usr_mail, usr_pseudo }) {
+    // TODO: Vérifier injection SQL /!\
     if (usr_idtusr) {
         return executeQuery('SELECT * FROM usr_user WHERE usr_idtusr = ?', [
             usr_idtusr,
@@ -22,6 +23,11 @@ export async function get({ usr_idtusr, usr_mail }) {
     if (usr_mail) {
         return executeQuery('SELECT * FROM usr_user WHERE usr_mail = ?', [
             usr_mail,
+        ]);
+    }
+    if (usr_pseudo) {
+        return executeQuery('SELECT * FROM usr_user WHERE usr_pseudo = ?', [
+            usr_pseudo,
         ]);
     }
     return null;
