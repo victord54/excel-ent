@@ -84,8 +84,7 @@ export async function signup(req, res, next) {
 
         // création de l'utilisateur
         const user = await create({
-            usr_fname: usr_fname,
-            usr_lname: usr_lname,
+            usr_pseudo: usr_fname,
             usr_mail: usr_mail,
             usr_pwd: hash,
         });

@@ -21,9 +21,9 @@ import { executeQuery } from '../utils/database.js';
  * //     warningStatus: 0
  * // }
  */
-export async function create({ usr_fname, usr_lname, usr_mail, usr_pwd }) {
+export async function create({ usr_pseudo, usr_mail, usr_pwd }) {
     return executeQuery(
-        'INSERT INTO usr_user (usr_fname, usr_lname, usr_mail, usr_pwd) VALUES (?, ?, ?, ?)',
-        [usr_fname, usr_lname, usr_mail, usr_pwd],
+        'INSERT INTO usr_user (usr_pseudo, usr_mail, usr_pwd) VALUES (?, ?, ?)',
+        [usr_pseudo, usr_mail, usr_pwd],
     );
 }
