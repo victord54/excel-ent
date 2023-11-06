@@ -1,0 +1,41 @@
+header {
+    background-color: rgb(39, 36, 36);
+}
+
+header a {
+    text-decoration: none;
+}
+
+header ul {
+    list-style: none;
+}
+
+header .header-name {
+    color: aliceblue;
+    margin-left: 1vw;
+}
+
+header nav {
+    padding: 5px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1vh;
+}
+
+header nav ul {
+    display: flex;
+    gap: 50px;
+}
+
+header nav a {
+    display: inline-block;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: rgb(255, 255, 255);
+    transition: all 0.5s ease;
+}
+
+header nav ul a:hover {
+    color: rgb(189, 189, 189);
+}
