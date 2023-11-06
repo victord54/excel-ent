@@ -62,11 +62,11 @@ export async function login(req, res) {
  * @returns {Promise<Response>} data to send back
  */
 export async function signup(req, res, next) {
-    const { usr_fname, usr_lname, usr_mail, usr_pwd } = req.body;
+    const { usr_pseudo, usr_mail, usr_pwd } = req.body;
 
     try {
         // validation des données reçues
-        if (!usr_fname || !usr_lname || !usr_mail || !usr_pwd) {
+        if (!usr_pseudo || !usr_mail || !usr_pwd) {
             throw new MissingParameterError('Missing parameters');
         }
 
@@ -84,7 +84,7 @@ export async function signup(req, res, next) {
 
         // création de l'utilisateur
         const user = await create({
-            usr_pseudo: usr_fname,
+            usr_pseudo: usr_pseudo,
             usr_mail: usr_mail,
             usr_pwd: hash,
         });

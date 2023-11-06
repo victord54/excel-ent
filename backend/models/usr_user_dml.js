@@ -6,8 +6,7 @@ import { executeQuery } from '../utils/database.js';
  * @returns {Promise<RowDataPacket>} data related to the new user
  * @example
  * const user = await UserDML.create({
- *     usr_fname: 'John',
- *     usr_lname: 'Doe',
+ *     usr_pseudo: 'John',
  *     usr_mail: 'john@doe.uk',
  *     usr_pwd: '1234'
  * });
