@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { login, signup } from '../../../services/api-service';
 import './auth.css';
+import { useNavigate } from 'react-router-dom';
 
 export default function Auth() {
     const initialValueSignUp = {
@@ -17,6 +18,8 @@ export default function Auth() {
     const [formValuesLogin, setInputesValuesLogin] =
         useState(initialValueLogin);
     const [onSignUp, setOnSignUp] = useState(true);
+
+    const navigate = useNavigate();
 
     function handleChangeSignUp(e) {
         setInputesValuesSignUp({
@@ -42,6 +45,7 @@ export default function Auth() {
                 //TODO : Gestion du message d'erreur
             }else{
                 setInputesValuesSignUp(initialValueSignUp);
+                changement();
             }
           }
         ); 
@@ -57,6 +61,7 @@ export default function Auth() {
                 //TODO : Gestion du message d'erreur
             }else{
                 setInputesValuesSignUp(formValuesLogin);
+                navigate("/");
             }
           }
         );
