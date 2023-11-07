@@ -13,7 +13,7 @@ const { sign } = pkg;
  * @returns {Promise<Response>} data to send back
  */
 export async function login(req, res) {
-    const { usr_mail, usr_pwd } = req.body;
+    const { usr_mail, usr_pwd } = req.query;
 
     // validation des données reçues
     if (!usr_mail || !usr_pwd) {

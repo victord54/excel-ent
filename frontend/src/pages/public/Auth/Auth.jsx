@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { signup } from '../../../services/api-service';
+import { login, signup } from '../../../services/api-service';
 import './auth.css';
 
 export default function Auth() {
@@ -51,6 +51,15 @@ export default function Auth() {
         e.preventDefault();
         console.log('Login:');
         console.log(formValuesLogin);
+
+        login(formValuesLogin).then((data) => {
+            if(data.error){
+                //TODO : Gestion du message d'erreur
+            }else{
+                setInputesValuesSignUp(formValuesLogin);
+            }
+          }
+        );
     }
 
     function changement() {
