@@ -18,7 +18,7 @@ export function signup({ pseudo, mail, password }) {
 
 export function login({ mail, password }) {
     return fetch(
-        import.meta.env.API_URL +
+        import.meta.env.VITE_API_URL +
             '/auth/login?usr_mail=' +
             mail +
             '&usr_pwd=' +
