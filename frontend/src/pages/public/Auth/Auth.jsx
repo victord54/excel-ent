@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { login, signup } from '../../../services/api-service';
 import './auth.css';
 import { useNavigate } from 'react-router-dom';
+import { saveToken } from '../../../services/auth-service';
 
 export default function Auth() {
     const initialValueSignUp = {
@@ -45,7 +46,7 @@ export default function Auth() {
                 //TODO : Gestion du message d'erreur
             }else{
                 setInputesValuesSignUp(initialValueSignUp);
-                changement();
+                changement;
             }
           }
         ); 
@@ -62,6 +63,7 @@ export default function Auth() {
             }else{
                 setInputesValuesSignUp(formValuesLogin);
                 navigate("/");
+                saveToken(data.token);
             }
           }
         );

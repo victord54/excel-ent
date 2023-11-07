@@ -1,19 +1,21 @@
 import { Route } from 'react-router-dom';
-// import ErrorPage from "../pages/public/error-page/ErrorPage";
 import AuthGuard from './AuthGuard';
+import { isLogged } from '../services/auth-service';
+import Layout from '../pages/public/Layout';
+import ErrorPage from '../pages/public/ErrorPage/ErrorPage';
 
 const router = (
     <Route
         path="/sheet"
         element={
-            <AuthGuard user={true}>
+            <AuthGuard user={isLogged()}>
                 <Layout />
             </AuthGuard>
         }
         errorElement={<ErrorPage />}
     >
-        <Route index element={<Dashboard />} />
-        <Route path="users" element={<Users />} />
+        {/*<Route index element={<Dashboard />} />*/}
+        {/*<Route path="users" element={<Users />} />*/}
     </Route>
 );
 
