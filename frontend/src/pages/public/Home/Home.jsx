@@ -8,7 +8,7 @@ import boutonPartager from '../../../assets/bouton-partager.png';
 function Home() {
     const f1 = {
         titre: 'test test test test',
-        href: 'sign-up-login',
+        href: 'auth',
         date_creation: '10-12-1997',
         date_modification: '15-12-1997',
         auteur: 'pamoa',
@@ -17,7 +17,7 @@ function Home() {
 
     const f2 = {
         titre: 'test test test test',
-        href: 'sign-up-login',
+        href: 'auth',
         date_creation: '10-12-1997',
         date_modification: '15-12-1997',
         auteur: 'moa',

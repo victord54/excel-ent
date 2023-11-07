@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { signup } from '../../../services/api-service';
 import './auth.css';
 
 export default function Auth() {
@@ -35,6 +36,15 @@ export default function Auth() {
         e.preventDefault();
         console.log('SignUp:');
         console.log(formValuesSignUp);
+
+        signup(formValuesSignUp).then((data) => {
+            if(data.error){
+                //TODO : Gestion du message d'erreur
+            }else{
+                setInputesValuesSignUp(initialValueSignUp);
+            }
+          }
+        ); 
     }
 
     function handleSubmitLogin(e) {
