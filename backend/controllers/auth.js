@@ -70,9 +70,10 @@ export async function signup(req, res, next) {
             throw new MissingParameterError('Missing parameters');
         }
 
-        // vérification de l'unicité des données reçues
+        // vérification de l'unicité des données reçues (mail et pseudo)
         const userMail = await get({ usr_mail: usr_mail });
-        if (userMail.length > 0) {
+        const userPseudo = await get({ usr_pseudo: usr_pseudo });
+        if (userMail.length > 0 || userPseudo.length > 0) {
             throw new UserAlreadyExistsError('User already exists');
         }
 
