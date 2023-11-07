@@ -7,7 +7,13 @@ cd backend && npm install
 cd ../frontend && npm install
 ```
 
-Don't forget to add the db script to your database and adapt the db name.
+## Database create and user create
+```sh
+CREATE USER 'excelent_user'@'localhost' IDENTIFIED BY 'excelent_password';
+mysql -u user < database.sql
+GRANT ALL PRIVILEGES ON excelent.* TO 'excelent_user'@'localhost';
+FLUSH PRIVILEGES;
+```
 
 ## Files to add
 
@@ -24,6 +30,11 @@ BCRYPT_SALT_ROUNDS = 12
 
 JWT_SECRET = "secret"
 JWT_DURATION = "3600"
+```
+
+-   frontend/.env :
+```sh
+VITE_API_URL = http://localhost:8888
 ```
 ## Before commit
 Don't forget to format your project with the command :

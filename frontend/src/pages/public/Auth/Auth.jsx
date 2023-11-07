@@ -42,14 +42,13 @@ export default function Auth() {
         console.log(formValuesSignUp);
 
         signup(formValuesSignUp).then((data) => {
-            if(data.error){
+            if (data.error) {
                 //TODO : Gestion du message d'erreur
-            }else{
+            } else {
                 setInputesValuesSignUp(initialValueSignUp);
                 changement;
             }
-          }
-        ); 
+        });
     }
 
     function handleSubmitLogin(e) {
@@ -58,15 +57,14 @@ export default function Auth() {
         console.log(formValuesLogin);
 
         login(formValuesLogin).then((data) => {
-            if(data.error){
+            if (data.error) {
                 //TODO : Gestion du message d'erreur
-            }else{
+            } else {
                 setInputesValuesSignUp(formValuesLogin);
-                navigate("/");
+                navigate('/');
                 saveToken(data.token);
             }
-          }
-        );
+        });
     }
 
     function changement() {
