@@ -15,6 +15,10 @@ export default function Sheet() {
 
     const [cells, setCells] = useState([]);
 
+    let timer = 0;
+    let delay = 200;
+    let prevent = false;
+
     function generateNameColumns(){
         const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         let res = [];
@@ -29,9 +33,27 @@ export default function Sheet() {
         return res;
     }
 
+    /** Fonction qui permet de gérer le click */
+    function handleClick(event, cellKey){
+        event.preventDefault();
+        timer = setTimeout(function() {
+            if (!prevent) {
+                editingCell(cellKey);
+            }
+            prevent = false;
+        }, delay);
+    }
+
+    /** Fonction qui permet de gérer le double click */
+    function handleDoubleClick(event, cellKey){
+        event.preventDefault();
+        clearTimeout(timer);
+        prevent = true;
+        editingCell(cellKey);
+    }
 
     function editingCell(cellKey){
-       setSelectedCell(cellKey);
+        setSelectedCell(cellKey);
     }
 
     function handleInputChange(event, cellKey){
@@ -75,15 +97,18 @@ export default function Sheet() {
                                     <th key={nameCol}>{nameCol}</th>
                                 ))}   
                             </tr>
-                            
+
                         </thead>
                         <tbody>
                             {nameRows.map((nameRow, i) => (
                                  <tr key={nameRow}>
                                     <td key={nameRow}>{nameRow}</td>
                                     {nameColums.map(nameCol => (
-                                        <td key={nameCol + '_' + nameRow} onClick={() => editingCell(nameCol + '_' + nameRow)} 
-                                        className={selectedCell === nameCol + '_' + nameRow ? 'selected-cell' : ''}>
+                                        <td key={nameCol + '_' + nameRow} 
+                                        onClick={(event) => handleClick(event, nameCol + '_' + nameRow)} 
+                                        onDoubleClick={(event) => handleDoubleClick(event,nameCol + '_' + nameRow)}
+                                        className={selectedCell === nameCol + '_' + nameRow ? 'selected-cell' : ''}
+                                        >
                                             {cells[nameCol+'_'+nameRow]}
                                         </td>
                                     )
