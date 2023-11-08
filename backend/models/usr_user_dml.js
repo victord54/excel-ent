@@ -27,3 +27,11 @@ export async function create({ usr_pseudo, usr_mail, usr_pwd }) {
         [usr_pseudo, usr_mail, usr_pwd],
     );
 }
+
+export async function update({ usr_id, usr_pseudo, usr_mail }) {
+    // TODO: Vérifier injection SQL /!\
+    return executeQuery(
+        'UPDATE usr_user SET usr_pseudo = ?, usr_mail = ? WHERE usr_idtusr = ?',
+        [usr_pseudo, usr_mail, usr_id],
+    );
+}

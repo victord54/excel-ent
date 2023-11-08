@@ -41,8 +41,7 @@ export async function login(req, res) {
         // création du token
         const token = sign(
             {
-                usr_idtusr: user.usr_idtusr,
-                usr_mail: user.usr_mail,
+                usr_idtusr: user.usr_idtusr
             },
             process.env.JWT_SECRET,
             { expiresIn: process.env.JWT_DURATION },

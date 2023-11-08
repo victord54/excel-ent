@@ -1,4 +1,4 @@
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 
 const extractBearer = (authorization) => {
     if (typeof authorization !== 'string') {
@@ -11,6 +11,7 @@ const extractBearer = (authorization) => {
     return match && match[2];
 };
 
+
 /**
  * Check if the token is valid
  * @param {Request} req data from the request
@@ -18,7 +19,7 @@ const extractBearer = (authorization) => {
  * @param {NextFunction} next next function to call
  * @returns {Response} data to send back if token is invalid
  */
-exports.checkToken = (req, res, next) => {
+const checkToken = (req, res, next) => {
     const token =
         req.headers.authorization && extractBearer(req.headers.authorization);
 
@@ -34,3 +35,8 @@ exports.checkToken = (req, res, next) => {
         next();
     });
 };
+
+export {
+    checkToken,
+    extractBearer
+}
