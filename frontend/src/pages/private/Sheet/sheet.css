@@ -1,0 +1,25 @@
+.sht-container-tab{
+    width: 100%;
+    overflow-x: auto;
+    max-width: 100%;
+}
+
+.sht-table {
+    border : black 1px solid;
+    border-collapse: collapse;
+}
+
+
+
+.sht-table td, .sht-table th {
+    border : rgb(146, 146, 146) 1px solid;
+}
+
+.sht-table th {
+    min-width: 100px;
+}
+
+.selected-cell {
+    background-color: rgb(215, 231, 241);
+    border: 3px solid rgb(125, 222, 247) !important;
+}

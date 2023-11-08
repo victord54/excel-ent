@@ -46,7 +46,7 @@ export default function Auth() {
                 //TODO : Gestion du message d'erreur
             }else{
                 setInputesValuesSignUp(initialValueSignUp);
-                changement;
+                changement();
             }
           }
         ); 

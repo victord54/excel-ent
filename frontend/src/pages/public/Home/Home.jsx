@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import boutonModifier from '../../../assets/bouton-modifier.png';
 import boutonSupprimer from '../../../assets/bouton-supprimer.png';
 import boutonPartager from '../../../assets/bouton-partager.png';
+import { v4 as uuid } from 'uuid';
 
 function Home() {
     const f1 = {
@@ -120,12 +121,18 @@ function Home() {
         console.log('Partager');
     };
 
+    const newSheet = () => {
+        let newUuid = uuid();
+        console.log(newUuid);
+        window.open(`/sheet/${newUuid}`);
+    }
+
     return (
         <>
             <div className="container-home">
                 <div className="panneau-gauche">
                     <div>
-                        <button className="button-nouvelle-feuille">
+                        <button onClick={newSheet} className="button-nouvelle-feuille">
                             Nouvelle feuille
                         </button>
                     </div>
