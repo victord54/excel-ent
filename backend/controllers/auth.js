@@ -3,7 +3,10 @@ import { get } from '../models/usr_user_dql.js';
 import { create } from '../models/usr_user_dml.js';
 import { compare, hash as _hash } from 'bcrypt';
 import pkg from 'jsonwebtoken';
-import { MissingParameterError, UserAlreadyExistsError } from '../utils/error.js';
+import {
+    MissingParameterError,
+    UserAlreadyExistsError,
+} from '../utils/error.js';
 const { sign } = pkg;
 
 /**

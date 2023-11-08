@@ -24,7 +24,7 @@ app.get('/', (req, res) => {
 
 app.use('/auth', authRoutes);
 
-app.use('/sheet', sheetRoutes)
+app.use('/sheet', sheetRoutes);
 
 app.use('*', (req, res) => {
     return res.status(501).json('No route found');
