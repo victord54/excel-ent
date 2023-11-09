@@ -7,14 +7,14 @@ export default function Sheet() {
     let { uuidSheet } = useParams();
     const numberOfRows = 100;
     const numberOfColumns = 30;
+    const [cells, setCells] = useState([]);
+    const [nameSheet, setNameSheet] = useState('Sans Nom');
 
     const nameRows = Array.from(
-        { length: numberOfColumns },
+        { length: numberOfRows },
         (_, index) => index + 1,
     );
     const nameColums = generateNameColumns();
-
-    const [cells, setCells] = useState([]);
 
     function generateNameColumns() {
         const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -67,8 +67,22 @@ export default function Sheet() {
         setCells({ ...cells, [keyCell]: text });
     }
 
+    function nameSheetChange(event) {
+        setNameSheet(event.target.value);
+    }
+
+    function handleSelectAll(event) {
+        event.target.select();
+    }
+
     return (
         <>
+            <input
+                className="sht-input-name"
+                value={nameSheet}
+                onChange={nameSheetChange}
+                onClick={handleSelectAll}
+            ></input>
             <button onClick={saveSheet}>Save</button>
             <div className="sht-container-all">
                 <div className="sht-container-tab">
