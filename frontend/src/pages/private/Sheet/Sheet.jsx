@@ -40,13 +40,28 @@ export default function Sheet() {
         console.log(cells);
     }   
 
-    function handleEnter(event){
+    function handleKeyDown(event){
         if (event.key === 'Enter'){
             event.preventDefault();
             event.target.blur();
         }
+        if (event.ctrlKey && event.key === 'c'){
+            handleCopy();
+        }
     }
 
+    function handleCopy(){
+        console.log("copy");
+        const selection = window.getSelection();
+        const copiedText = selection.focusNode.nodeValue;
+        navigator.clipboard.writeText(copiedText);
+    }
+
+    function handlePaste(event, keyCell){
+        console.log("paste");
+        const text = event.clipboardData.getData('text/plain');
+        setCells({...cells, [keyCell]: text});
+    }
 
     return (
         <>
@@ -71,7 +86,8 @@ export default function Sheet() {
                                         <td key={nameCol + '_' + nameRow} 
                                         contentEditable
                                         onInput={(event) => handleInputChange(event, nameCol + '_' + nameRow)}
-                                        onKeyDown={(event) => handleEnter(event)}
+                                        onKeyDown={(event) => handleKeyDown(event)}
+                                        onPaste={(event) => handlePaste(event, nameCol + '_' + nameRow)}
                                         >
                                         </td>
                                     )
