@@ -9,6 +9,9 @@ export default function Sheet() {
     const numberOfColumns = 30;
     const [cells, setCells] = useState([]);
     const [nameSheet, setNameSheet] = useState('Sans Nom');
+    const [draggedCell, setDraggedCell] = useState(null);
+    const [editable, setEditable] = useState(true);
+    const [isDragging, setIsDragging] = useState(false);
 
     const nameRows = Array.from(
         { length: numberOfRows },
@@ -75,6 +78,44 @@ export default function Sheet() {
         event.target.select();
     }
 
+    function handleDragStart(event, keyCell) {
+        console.log('yeees');
+        event.dataTransfer.setData('text/plain', cells[keyCell]);
+        setEditable(false);
+        setIsDragging(true);
+        setCells({ ...cells, [keyCell]: '' });
+        setDraggedCell(keyCell);
+    }
+
+    function handleDrop(event, keyCell) {
+        console.log('drop');
+        setIsDragging(false);
+        setEditable(true);
+        setCells({
+            ...cells,
+            [keyCell]: event.dataTransfer.getData('text/plain'),
+        });
+
+        const td_source = document.getElementById(draggedCell);
+        if (td_source) {
+            const divChild = td_source.querySelector('div');
+            if (divChild) {
+                divChild.innerText = '';
+            }
+        }
+        setDraggedCell(null);
+
+        const td_target = document.getElementById(keyCell);
+        if (td_target) {
+            const divChild = td_target.querySelector('div');
+            if (divChild) {
+                if (divChild === '')
+                    divChild.innerText =
+                        event.dataTransfer.getData('text/plain');
+            }
+        }
+    }
+
     return (
         <>
             <input
@@ -101,27 +142,50 @@ export default function Sheet() {
                                     <td key={nameRow}>{nameRow}</td>
                                     {nameColums.map((nameCol) => (
                                         <td
+                                            id={nameCol + '_' + nameRow}
                                             key={nameCol + '_' + nameRow}
-                                            contentEditable
-                                            onInput={(event) =>
-                                                handleInputChange(
+                                            draggable
+                                            onDrag={() => console.log('yes')}
+                                            onDragStart={(event) =>
+                                                handleDragStart(
                                                     event,
                                                     nameCol + '_' + nameRow,
                                                 )
                                             }
-                                            onKeyDown={(event) =>
-                                                handleKeyDown(
+                                            onDragOver={(event) =>
+                                                event.preventDefault()
+                                            }
+                                            onDrop={(event) =>
+                                                handleDrop(
                                                     event,
                                                     nameCol + '_' + nameRow,
                                                 )
                                             }
-                                            onPaste={(event) =>
-                                                handlePaste(
-                                                    event,
-                                                    nameCol + '_' + nameRow,
-                                                )
-                                            }
-                                        ></td>
+                                        >
+                                            <div
+                                                contentEditable={
+                                                    !isDragging && editable
+                                                }
+                                                onInput={(event) =>
+                                                    handleInputChange(
+                                                        event,
+                                                        nameCol + '_' + nameRow,
+                                                    )
+                                                }
+                                                onKeyDown={(event) =>
+                                                    handleKeyDown(
+                                                        event,
+                                                        nameCol + '_' + nameRow,
+                                                    )
+                                                }
+                                                onPaste={(event) =>
+                                                    handlePaste(
+                                                        event,
+                                                        nameCol + '_' + nameRow,
+                                                    )
+                                                }
+                                            ></div>
+                                        </td>
                                     ))}
                                 </tr>
                             ))}
