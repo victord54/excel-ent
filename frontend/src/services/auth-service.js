@@ -2,7 +2,7 @@ export function saveToken(token) {
     localStorage.setItem('auth_token', token);
 }
 
-export function logout() {
+export function removeToken() {
     localStorage.removeItem('auth_token');
 }
 

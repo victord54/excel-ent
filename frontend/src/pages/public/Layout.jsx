@@ -1,14 +1,18 @@
-import React from 'react';
 import { Outlet } from 'react-router-dom';
 import TopBar from '../../components/public/TopBar/TopBar';
+import { AuthContextProvider } from '../../context/AuthContext';
+import { isLogged } from '../../services/auth-service';
+import { getLoggedUser } from '../../services/user-service';
 
 export default function Layout() {
     return (
         <>
-            <TopBar />
-            <main id="page-content">
-                <Outlet />
-            </main>
+            <AuthContextProvider defaultValue={{loged: isLogged(), user: getLoggedUser()}}>
+                <TopBar/>
+                <main id="page-content">
+                    <Outlet />
+                </main>
+            </AuthContextProvider>
         </>
     );
 }

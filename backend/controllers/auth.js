@@ -50,7 +50,10 @@ export async function login(req, res, next) {
         // envoi du token
         return res.status(200).json({
             token,
-            user
+            user: {
+                usr_pseudo: user.usr_pseudo,
+                usr_mail: user.usr_mail
+            }
         });
     } catch (error) {
         next(error);

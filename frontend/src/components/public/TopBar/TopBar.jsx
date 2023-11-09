@@ -1,7 +1,13 @@
 import { Link } from 'react-router-dom';
 import './top-bar.css';
+import { useContext } from 'react';
+import { AuthContext } from '../../../context/AuthContext';
+
 
 export default function TopBar() {
+
+    const { loged } = useContext(AuthContext);
+
     return (
         <header>
             <nav>
@@ -10,7 +16,7 @@ export default function TopBar() {
                 </Link>
                 <ul>
                     <li>
-                        <Link to="/auth">Authentication</Link>
+                        {loged ? <Link to="/profile">Profile</Link> : <Link to="/auth">Authentication</Link>}
                     </li>
                 </ul>
             </nav>

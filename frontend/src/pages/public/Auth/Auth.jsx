@@ -2,9 +2,13 @@ import { useState } from 'react';
 import { login, signup } from '../../../services/api-service';
 import './auth.css';
 import { useNavigate } from 'react-router-dom';
-import { saveToken } from '../../../services/auth-service';
+import { useContext } from 'react';
+import { AuthContext } from '../../../context/AuthContext';
 
 export default function Auth() {
+
+    const { loginContext } = useContext(AuthContext); 
+
     const initialValueSignUp = {
         pseudo: '',
         mail: '',
@@ -60,9 +64,9 @@ export default function Auth() {
             if (data.error) {
                 //TODO : Gestion du message d'erreur
             } else {
+                loginContext(data.token, data.user);
                 setInputesValuesSignUp(formValuesLogin);
                 navigate('/');
-                saveToken(data.token);
             }
         });
     }
