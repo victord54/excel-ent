@@ -3,7 +3,7 @@ import { login, signup } from '../../../services/api-service';
 import './auth.css';
 import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
-import { AuthContext } from '../../../context/AuthContext';
+import { AuthContext } from '../../../contexts/AuthContext';
 
 export default function Auth() {
 

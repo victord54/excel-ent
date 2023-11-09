@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import './top-bar.css';
 import { useContext } from 'react';
-import { AuthContext } from '../../../context/AuthContext';
+import { AuthContext } from '../../../contexts/AuthContext';
 
 
 export default function TopBar() {

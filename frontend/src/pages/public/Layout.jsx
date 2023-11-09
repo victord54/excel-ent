@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import TopBar from '../../components/public/TopBar/TopBar';
-import { AuthContextProvider } from '../../context/AuthContext';
+import { AuthContextProvider } from '../../contexts/AuthContext';
 import { isLogged } from '../../services/auth-service';
 import { getLoggedUser } from '../../services/user-service';
 
