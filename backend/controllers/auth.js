@@ -4,8 +4,10 @@ import { create } from '../models/usr_user_dml.js';
 import { compare, hash as _hash } from 'bcrypt';
 import pkg from 'jsonwebtoken';
 import {
+    InvalidIdentifiersError,
     MissingParameterError,
     UserAlreadyExistsError,
+    UserNotFoundError,
 } from '../utils/error.js';
 const { sign } = pkg;
 
@@ -15,27 +17,25 @@ const { sign } = pkg;
  * @param {Response} res data to send back
  * @returns {Promise<Response>} data to send back
  */
-export async function login(req, res) {
+export async function login(req, res, next) {
     const { usr_mail, usr_pwd } = req.query;
 
     // validation des données reçues
     if (!usr_mail || !usr_pwd) {
-        return res.status(400).json({ message: 'Missing parameters' });
+        throw new MissingParameterError('Missing parameters');
     }
 
     try {
         // vérification de l'existence de l'utilisateur
         const user = (await get({ usr_mail: usr_mail }))[0];
         if (user === undefined) {
-            return res.status(401).json({ message: 'User not found' });
+            throw new UserNotFoundError('User not found');
         }
 
         // vérification du mot de passe
         const valid = await compare(usr_pwd, user.usr_pwd);
         if (!valid) {
-            return res
-                .status(401)
-                .json({ message: 'Incorrect mail or password' });
+            throw new InvalidIdentifiersError('Invalid identifiers');
         }
 
         // création du token
@@ -50,10 +50,10 @@ export async function login(req, res) {
         // envoi du token
         return res.status(200).json({
             token,
+            user
         });
     } catch (error) {
-        console.log(error);
-        return res.status(500).json({ message: 'Unknown Error', error });
+        next(error);
     }
 }
 

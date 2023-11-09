@@ -37,6 +37,12 @@ export class InvalidUserDataError extends UserError {
     }
 }
 
+export class InvalidIdentifiersError extends UserError {
+    constructor(message) {
+        super(message, 401);
+    }
+}
+
 export class SheetError extends CustomError {
     constructor(message, status) {
         super(message, status);
