@@ -1,0 +1,73 @@
+#profile{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+h2{
+    margin: 0;
+    font-size: 1.8em;
+}
+
+.illot-central{
+    max-width: 470px;
+    width: 100%;
+    margin-top: 2em;
+    background-color: rgb(39, 36, 36);
+    border-radius: 1em;
+    box-shadow: 0.4em 0.4em 0.4em rgba(0, 0, 0, 0.2);
+
+    max-width: 470px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.illot-central-content{
+    background-color: #aec1e2;
+    width: 100%;
+    padding: 1em 0 2em 0;
+    margin: 2em 0 4em 0;
+}
+
+.input-wrapper{
+    display: flex;
+    flex-direction: column;
+    margin-top: 0.8em;
+}
+
+.input-wrapper img{
+    width: 2em;
+}
+
+.input-wrapper button:active{
+    transform: scale(0.9);
+}
+
+.inputfield-wrapper{
+    display: flex;
+    align-items: stretch;
+    gap: 0.5em;
+}
+
+.inputfield-wrapper input {
+    display: block;
+    background-color: rgba(248, 246, 246, 0.8);
+    border: none;
+    font-size: 1.8em;
+    padding: 0.2em 0.3em;
+    flex: 1;
+    border-radius: 0.2em;
+}
+
+.inputfield-wrapper button{
+    margin: 0;
+    padding: 0;
+    background: none;
+    border: none;
+}
+
+label{
+    font-size: 1.4em;
+    font-weight: 600;
+}
+

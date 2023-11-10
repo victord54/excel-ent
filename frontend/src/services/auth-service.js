@@ -14,3 +14,7 @@ export function isLogged() {
 export function getToken() {
     return localStorage.getItem('auth_token');
 }
+
+export function getBearerString(){
+    return 'Bearer ' + getToken();
+}

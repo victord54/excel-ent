@@ -14,19 +14,12 @@ import { extractBearer } from '../utils/jwt-check.js';
  */
 
 export async function editProfile(req, res, next) {
-    const { usr_pseudo, usr_mail, usr_pwd } = req.body;
+    const { usr_pseudo, usr_mail } = req.body;
 
     try {
         // validation des données reçues
-        if (!usr_pseudo || !usr_mail || !usr_pwd) {
+        if (!usr_pseudo || !usr_mail) {
             throw new MissingParameterError('Missing parameters');
-        }
-
-        //verification unicité nouveau pseudo et mail
-        const userMail = await get({ usr_mail: usr_mail });
-        const userPseudo = await get({ usr_pseudo: usr_pseudo });
-        if(userMail.length > 0 || userPseudo.length > 0){
-            throw new UserAlreadyExistsError('User already exists');
         }
 
         //récupération de l'id de l'utilisateur via la payload du token
@@ -39,12 +32,18 @@ export async function editProfile(req, res, next) {
         const user = await get({ usr_idtusr });
         if(user.length===0) throw new UserNotFoundError('User not found');
 
+        //verification unicité nouveau pseudo et mail
+        const userMail = await get({ usr_mail: usr_mail });
+        const userPseudo = await get({ usr_pseudo: usr_pseudo });
+        if((userMail.length>0 && user[0].usr_mail !== usr_mail) || (userPseudo.length>0 && user[0].usr_pseudo !== usr_pseudo)) {
+            throw new UserAlreadyExistsError('User already exists');
+        }
+
         //mise a jour de l'utilisateur
-        await update( { usr_id: usr_idtusr, usr_pseudo: usr_pseudo, usr_mail: usr_mail, usr_pwd: usr_pwd });
+        await update( { usr_id: usr_idtusr, usr_pseudo: usr_pseudo, usr_mail: usr_mail, usr_pwd: user.usr_pwd });
+        await commitTransaction();
 
         const userEdited = (await get({ usr_idtusr }))[0];
-
-        await commitTransaction();
 
         // envoi de la réponse
         return res.status(201).json({ message: 'user editer',  user: {usr_pseudo: userEdited.usr_pseudo, usr_mail: userEdited.usr_mail} });

@@ -1,3 +1,5 @@
+import { getBearerString } from "./auth-service";
+
 export function signup({ pseudo, mail, password }) {
     return fetch(import.meta.env.VITE_API_URL + '/auth/signup', {
         method: 'POST',
@@ -28,6 +30,29 @@ export function login({ mail, password }) {
             headers: {
                 'Content-Type': 'application/json',
             },
+        },
+    )
+        .then((response) => response.json())
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+}
+
+export function editProfile({ pseudo, mail, password }) {
+    return fetch(
+        import.meta.env.VITE_API_URL +
+            '/profile/editProfile',
+        {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: getBearerString(),
+            },
+            body: JSON.stringify({
+                usr_pseudo: pseudo,
+                usr_mail: mail,
+                usr_pwd: password,
+            }),
         },
     )
         .then((response) => response.json())

@@ -27,11 +27,20 @@ export const AuthContextProvider = ({defaultValue, children}) => {
         }));
     }, []); 
 
+    const setUser = useCallback((user) => {
+        setLoggedUser(user);
+        setData((prevData) => ({
+            ...prevData,
+            user: user
+        }));
+    }, []);
+
     useEffect(() => {
         setData((prevData) => ({
             ...prevData,
             user: getLoggedUser(),
             loged: isLogged(),
+            setUser: setUser,
             loginContext: loginContext,
             logoutContext: logoutContext
         }));
