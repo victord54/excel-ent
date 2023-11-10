@@ -1,6 +1,6 @@
 import { createContext, useCallback, useEffect, useState } from "react"
 import { isLogged, removeToken, saveToken } from "../services/auth-service";
-import { getLoggedUser, setLoggedUser } from "../services/user-service";
+import { getLoggedUser, removeLoggedUser, setLoggedUser } from "../services/user-service";
 
 export const AuthContext = createContext({ loged: false, loginContext: (token) => {}, logoutContext: () => {}, user: null});
 
@@ -20,6 +20,7 @@ export const AuthContextProvider = ({defaultValue, children}) => {
 
     const logoutContext = useCallback(() => {
         removeToken();
+        removeLoggedUser();
         setData((prevData) => ({
             ...prevData,
             loged: false,

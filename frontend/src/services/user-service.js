@@ -18,3 +18,7 @@ export function setLoggedUser(user){
     localStorage.setItem('loged_user', JSON.stringify(user));
     return true;
 }
+
+export function removeLoggedUser(){
+    localStorage.removeItem('loged_user');
+}

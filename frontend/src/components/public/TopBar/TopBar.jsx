@@ -6,7 +6,7 @@ import { AuthContext } from '../../../contexts/AuthContext';
 
 export default function TopBar() {
 
-    const { loged } = useContext(AuthContext);
+    const { loged, logoutContext } = useContext(AuthContext);
 
     return (
         <header>
@@ -16,8 +16,13 @@ export default function TopBar() {
                 </Link>
                 <ul>
                     <li>
-                        {loged ? <Link to="/profile">Profile</Link> : <Link to="/auth">Authentication</Link>}
+                        {loged ? <Link to="/profile">Mon profil</Link> : <Link to="/auth">Inscription/Connexion</Link>}
                     </li>
+                    {loged && 
+                        <li>
+                            <a href={''} onClick={(e) => {e.preventDefault(); logoutContext();}}>Deconnexion</a>
+                        </li>
+                    }
                 </ul>
             </nav>
         </header>

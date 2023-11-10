@@ -86,7 +86,7 @@ export default function Profile(){
                             <div className="input-wrapper">
                                 <label htmlFor="pwd">Mot de passe :</label>
                                 <div className="inputfield-wrapper">
-                                    <input name="pwd" type="password" disabled value={"******************"}/>
+                                    <input name="pwd" type="password" disabled value={"*********************"} className="flouter"/>
                                     <button><img src={boutonModifier} width="15px"/></button>
                                 </div>
                             </div>

@@ -71,3 +71,6 @@ label{
     font-weight: 600;
 }
 
+.flouter{
+    filter: blur(2px);
+}
