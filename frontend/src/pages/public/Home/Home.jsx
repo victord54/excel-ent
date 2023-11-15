@@ -8,7 +8,7 @@ export default function Home() {
 
     return (
         <div className="home-container">
-            <div className='home-title'>
+            <div className="home-title">
                 <h1>Tableur Collaboratif</h1>
                 <p>Bienvenue sur notre plateforme de tableur collaboratif.</p>
             </div>

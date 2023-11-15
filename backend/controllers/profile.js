@@ -60,15 +60,13 @@ export async function editProfile(req, res, next) {
         const userEdited = (await get({ usr_idtusr }))[0];
 
         // envoi de la réponse
-        return res
-            .status(201)
-            .json({
-                message: 'user editer',
-                user: {
-                    usr_pseudo: userEdited.usr_pseudo,
-                    usr_mail: userEdited.usr_mail,
-                },
-            });
+        return res.status(201).json({
+            message: 'user editer',
+            user: {
+                usr_pseudo: userEdited.usr_pseudo,
+                usr_mail: userEdited.usr_mail,
+            },
+        });
     } catch (error) {
         rollbackTransaction();
         next(error);
