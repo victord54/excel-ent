@@ -13,7 +13,32 @@ export default function TopBar() {
                     Excel-ent
                 </Link>
                 <ul>
-                    <li>
+                    {loged ? (
+                        <>
+                            <li>
+                                <Link to="/sheet">Mes feuilles</Link>
+                            </li>
+                            <li>
+                                <Link to="/profile">Mon profil</Link>
+                            </li>
+                            <li>
+                                <a
+                                    href=""
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        logoutContext();
+                                    }}
+                                >
+                                    Déconnexion
+                                </a>
+                            </li>
+                        </>
+                    ) : (
+                        <li>
+                            <Link to="/auth">Inscription/Connexion</Link>
+                        </li>
+                    )}
+                    {/* <li>
                         {loged ? (
                             <Link to="/profile">Mon profil</Link>
                         ) : (
@@ -32,7 +57,7 @@ export default function TopBar() {
                                 Deconnexion
                             </a>
                         </li>
-                    )}
+                    )} */}
                 </ul>
             </nav>
         </header>

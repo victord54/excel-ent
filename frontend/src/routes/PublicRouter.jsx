@@ -11,8 +11,6 @@ const router = (
     <Route path="/" element={<Layout />} errorElement={<ErrorPage />}>
         <Route index element={<Home />} />
         <Route path="auth" element={<Auth />} />
-        <Route path="sheet/:idSheet" element={<Sheet />} />
-        <Route path="profile" element={<Profile />} />
     </Route>
 );
 

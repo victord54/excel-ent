@@ -1,12 +1,15 @@
-import { Route } from 'react-router-dom';
+import { Route, createRoutesFromElements } from 'react-router-dom';
 import AuthGuard from './AuthGuard';
 import { isLogged } from '../services/auth-service';
-import Layout from '../pages/public/Layout';
+import Layout from '../pages/private/Layout';
 import ErrorPage from '../pages/public/ErrorPage/ErrorPage';
+import Sheet from '../pages/private/Sheet/Sheet';
+import Profile from '../pages/private/Profile/Profile';
+import Listing from '../pages/private/Listing/Listing';
 
 const router = (
     <Route
-        path="/sheet"
+        path="/"
         element={
             <AuthGuard user={isLogged()}>
                 <Layout />
@@ -14,8 +17,11 @@ const router = (
         }
         errorElement={<ErrorPage />}
     >
-        {/*<Route index element={<Dashboard />} />*/}
-        {/*<Route path="users" element={<Users />} />*/}
+        <Route path="profile" element={<Profile />} />
+        <Route path="sheet">
+            <Route path=":idSheet" element={<Sheet />} />
+            <Route index element={<Listing />} />
+        </Route>
     </Route>
 );
 
