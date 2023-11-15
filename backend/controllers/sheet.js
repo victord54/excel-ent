@@ -9,6 +9,7 @@ import {
     update as updateSheet,
 } from '../models/sht_sheet_dml.js';
 import { MissingParameterError, SheetNotFoundError } from '../utils/error.js';
+import { getIdtUsr as _getIdtUsr, extractBearer } from '../utils/jwt-check.js';
 
 /**
  * Fetch all sheets
@@ -48,20 +49,30 @@ export async function getOne(req, res, next) {
 }
 
 export async function create(req, res, next) {
-    console.log(req.body);
-    const { sht_idtusr, sht_name, sht_data, sht_sharing, sht_uuid } = req.body;
+    const { sht_name, sht_data, sht_sharing, sht_uuid } = req.body;
+    // récupération de l'id de l'utilisateur via la payload du token
+    const token = req.headers.authorization;
     try {
-        //const sht_idtusr = getIdUsr(req.headers.authorization);
-        // validation des données reçues
-        if (
-            !sht_idtusr ||
-            !sht_name ||
-            !sht_data ||
-            !sht_sharing ||
-            !sht_uuid
-        ) {
-            throw new MissingParameterError('Missing parameters');
+        const sht_idtusr = _getIdtUsr(token);
+        // validation des données reçues avec détail des champs manquants
+        let missing = '';
+        if (!sht_name) {
+            missing += 'sht_name ';
         }
+        if (!sht_data) {
+            missing += 'sht_data ';
+        }
+        if (sht_sharing === undefined) {
+            missing += 'sht_sharing ';
+        }
+        if (!sht_uuid) {
+            missing += 'sht_uuid ';
+        }
+        if (missing !== '') {
+            console.log(req.body);
+            throw new MissingParameterError('Missing parameters: ' + missing);
+        }
+        // création de la feuille
         const sheet = await createSheet({
             sht_idtusr,
             sht_name,
@@ -70,7 +81,7 @@ export async function create(req, res, next) {
             sht_uuid,
         });
         commitTransaction();
-        return res.status(200).json(sheet);
+        return res.status(200).json(sheet.insertId);
     } catch (error) {
         rollbackTransaction();
         next(error);
@@ -82,14 +93,22 @@ export async function update(req, res, next) {
     const { sht_name, sht_data, sht_sharing, sht_uuid } = req.body;
     try {
         // validation des données reçues
-        if (
-            !sht_idtsht ||
-            !sht_name ||
-            !sht_data ||
-            !sht_sharing ||
-            !sht_uuid
-        ) {
-            throw new MissingParameterError('Missing parameters');
+        let missing = '';
+        if (!sht_name) {
+            missing += 'sht_name ';
+        }
+        if (!sht_data) {
+            missing += 'sht_data ';
+        }
+        if (sht_sharing === undefined) {
+            missing += 'sht_sharing ';
+        }
+        if (!sht_uuid) {
+            missing += 'sht_uuid ';
+        }
+        if (missing !== '') {
+            console.log(req.body);
+            throw new MissingParameterError('Missing parameters: ' + missing);
         }
         const sheet = await updateSheet({
             sht_idtsht,
@@ -99,7 +118,7 @@ export async function update(req, res, next) {
             sht_uuid,
         });
         await commitTransaction();
-        return res.status(200).json(sheet);
+        return res.status(200).json(sht_idtsht);
     } catch (error) {
         await rollbackTransaction();
         next(error);

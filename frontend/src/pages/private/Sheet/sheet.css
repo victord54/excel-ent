@@ -1,18 +1,17 @@
-.sht-container-tab{
+.sht-container-tab {
     width: 100%;
     overflow-x: auto;
     max-width: 100%;
 }
 
 .sht-table {
-    border : black 1px solid;
+    border: black 1px solid;
     border-collapse: collapse;
 }
 
-
-
-.sht-table td, .sht-table th {
-    border : rgb(146, 146, 146) 1px solid;
+.sht-table td,
+.sht-table th {
+    border: rgb(146, 146, 146) 1px solid;
 }
 
 .sht-table th {

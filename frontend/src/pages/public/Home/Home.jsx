@@ -125,14 +125,17 @@ function Home() {
         let newUuid = uuid();
         console.log(newUuid);
         window.open(`/sheet/${newUuid}`);
-    }
+    };
 
     return (
         <>
             <div className="container-home">
                 <div className="panneau-gauche">
                     <div>
-                        <button onClick={newSheet} className="button-nouvelle-feuille">
+                        <button
+                            onClick={newSheet}
+                            className="button-nouvelle-feuille"
+                        >
                             Nouvelle feuille
                         </button>
                     </div>

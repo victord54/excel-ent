@@ -15,6 +15,6 @@ export function getToken() {
     return localStorage.getItem('auth_token');
 }
 
-export function getBearerString(){
+export function getBearerString() {
     return 'Bearer ' + getToken();
 }

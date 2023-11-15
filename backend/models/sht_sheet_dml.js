@@ -15,7 +15,7 @@ export async function create({
     // TODO: Vérifier injection SQL /!\
     return executeQuery(
         'INSERT INTO sht_sheet (sht_idtusr, sht_name, sht_data, sht_sharing, sht_uuid) VALUES (?, ?, ?, ?, ?)',
-        [sht_idtusr, sht_name, sht_data, sht_sharing, sht_uuid],
+        [sht_idtusr, sht_name, JSON.stringify(sht_data), sht_sharing, sht_uuid],
     );
 }
 
@@ -28,6 +28,6 @@ export async function update({
 }) {
     return executeQuery(
         'UPDATE sht_sheet SET sht_name = ?, sht_data = ?, sht_sharing = ?, sht_uuid = ? WHERE sht_idtsht = ?',
-        [sht_name, sht_data, sht_sharing, sht_uuid, sht_idtsht],
+        [sht_name, JSON.stringify(sht_data), sht_sharing, sht_uuid, sht_idtsht],
     );
 }

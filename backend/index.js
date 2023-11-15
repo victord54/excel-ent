@@ -26,7 +26,7 @@ app.get('/', (req, res) => {
 
 app.use('/auth', authRoutes);
 
-app.use('/sheet', sheetRoutes);
+app.use('/sheet', checkToken, sheetRoutes);
 
 app.use('/profile', checkToken, profileRoutes);
 

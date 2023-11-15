@@ -6,8 +6,7 @@ import { useContext } from 'react';
 import { AuthContext } from '../../../contexts/AuthContext';
 
 export default function Auth() {
-
-    const { loginContext } = useContext(AuthContext); 
+    const { loginContext } = useContext(AuthContext);
 
     const initialValueSignUp = {
         pseudo: '',

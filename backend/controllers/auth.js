@@ -41,7 +41,7 @@ export async function login(req, res, next) {
         // création du token
         const token = sign(
             {
-                usr_idtusr: user.usr_idtusr
+                usr_idtusr: user.usr_idtusr,
             },
             process.env.JWT_SECRET,
             { expiresIn: process.env.JWT_DURATION },
@@ -52,8 +52,8 @@ export async function login(req, res, next) {
             token,
             user: {
                 usr_pseudo: user.usr_pseudo,
-                usr_mail: user.usr_mail
-            }
+                usr_mail: user.usr_mail,
+            },
         });
     } catch (error) {
         next(error);
@@ -99,7 +99,7 @@ export async function signup(req, res, next) {
         // envoi de la réponse
         return res.status(201).json({ message: 'user created', user });
     } catch (error) {
-        rollbackTransaction();
+        await rollbackTransaction();
         next(error);
     }
 }

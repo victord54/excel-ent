@@ -3,9 +3,7 @@ import './top-bar.css';
 import { useContext } from 'react';
 import { AuthContext } from '../../../contexts/AuthContext';
 
-
 export default function TopBar() {
-
     const { loged, logoutContext } = useContext(AuthContext);
 
     return (
@@ -16,13 +14,25 @@ export default function TopBar() {
                 </Link>
                 <ul>
                     <li>
-                        {loged ? <Link to="/profile">Mon profil</Link> : <Link to="/auth">Inscription/Connexion</Link>}
+                        {loged ? (
+                            <Link to="/profile">Mon profil</Link>
+                        ) : (
+                            <Link to="/auth">Inscription/Connexion</Link>
+                        )}
                     </li>
-                    {loged && 
+                    {loged && (
                         <li>
-                            <a href={''} onClick={(e) => {e.preventDefault(); logoutContext();}}>Deconnexion</a>
+                            <a
+                                href={''}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    logoutContext();
+                                }}
+                            >
+                                Deconnexion
+                            </a>
                         </li>
-                    }
+                    )}
                 </ul>
             </nav>
         </header>

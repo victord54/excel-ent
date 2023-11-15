@@ -2,16 +2,15 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import './sheet.css';
 import { evaluateur } from '../../../services/evaluateur';
+import { getLoggedUser } from '../../../services/user-service';
 
-import { saveSheet as _saveSheet} from '../../../services/api-service';
-import { AuthContext } from '../../../contexts/AuthContext';
+import { saveSheet as _saveSheet } from '../../../services/api-service';
 
 export default function Sheet() {
     useEffect(() => {
         document.title = 'Feuille de calcul';
     }, []);
 
-    const { user, setUser } = useContext(AuthContext);
     let { idSheet } = useParams();
     const numberOfRows = 100;
     const numberOfColumns = 30;
@@ -20,6 +19,7 @@ export default function Sheet() {
     const [draggedCell, setDraggedCell] = useState(null);
     const [editable, setEditable] = useState(true);
     const [isDragging, setIsDragging] = useState(false);
+    const [idt_sht, setIdt_sht] = useState(null);
 
     const nameRows = Array.from(
         { length: numberOfRows },
@@ -47,11 +47,22 @@ export default function Sheet() {
         setCells(updatedCells);
     }
 
-    function saveSheet() {
+    async function saveSheet() {
         console.log('save');
         console.log(cells);
-        console.log(user);
-        _saveSheet({sht_uuid: idSheet, sht_name: nameSheet, sht_data: cells, sht_sharing: 0, sht_idtusr: 1});
+        const response = await _saveSheet({
+            sht_uuid: idSheet,
+            sht_name: nameSheet,
+            sht_data: cells,
+            sht_sharing: 0,
+            sht_idtsht: idt_sht,
+        });
+        const _body = await response.json();
+        console.log(_body);
+        if (response.status === 200) {
+            console.log('ok');
+            setIdt_sht(_body);
+        }
     }
 
     function handleKeyDown(event, cellKey) {

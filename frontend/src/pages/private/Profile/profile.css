@@ -1,15 +1,15 @@
-#profile{
+#profile {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-h2{
+h2 {
     margin: 0;
     font-size: 1.8em;
 }
 
-.illot-central{
+.illot-central {
     max-width: 470px;
     width: 100%;
     margin-top: 2em;
@@ -22,28 +22,28 @@ h2{
     overflow: hidden;
 }
 
-.illot-central-content{
+.illot-central-content {
     background-color: #aec1e2;
     width: 100%;
     padding: 1em 0 2em 0;
     margin: 2em 0 4em 0;
 }
 
-.input-wrapper{
+.input-wrapper {
     display: flex;
     flex-direction: column;
     margin-top: 0.8em;
 }
 
-.input-wrapper img{
+.input-wrapper img {
     width: 2em;
 }
 
-.input-wrapper button:active{
+.input-wrapper button:active {
     transform: scale(0.9);
 }
 
-.inputfield-wrapper{
+.inputfield-wrapper {
     display: flex;
     align-items: stretch;
     gap: 0.5em;
@@ -59,18 +59,18 @@ h2{
     border-radius: 0.2em;
 }
 
-.inputfield-wrapper button{
+.inputfield-wrapper button {
     margin: 0;
     padding: 0;
     background: none;
     border: none;
 }
 
-label{
+label {
     font-size: 1.4em;
     font-weight: 600;
 }
 
-.flouter{
+.flouter {
     filter: blur(2px);
 }

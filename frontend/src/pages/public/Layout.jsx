@@ -7,8 +7,10 @@ import { getLoggedUser } from '../../services/user-service';
 export default function Layout() {
     return (
         <>
-            <AuthContextProvider defaultValue={{loged: isLogged(), user: getLoggedUser()}}>
-                <TopBar/>
+            <AuthContextProvider
+                defaultValue={{ loged: isLogged(), user: getLoggedUser() }}
+            >
+                <TopBar />
                 <main id="page-content">
                     <Outlet />
                 </main>

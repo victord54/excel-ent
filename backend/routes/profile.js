@@ -8,7 +8,7 @@ const router = Router();
 router.put('/editprofile', editProfile);
 
 /**
- * 
+ *
  */
 
 export default router;

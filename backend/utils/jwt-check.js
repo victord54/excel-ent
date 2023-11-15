@@ -35,10 +35,10 @@ const checkToken = (req, res, next) => {
     });
 };
 
-const getIdUsr = (authorization) => {
+const getIdtUsr = (authorization) => {
     const token = extractBearer(authorization);
     const decoded = jwt.decode(token);
     return decoded.usr_idtusr;
-}
+};
 
-export { checkToken, extractBearer, getIdUsr };
+export { checkToken, extractBearer, getIdtUsr };
