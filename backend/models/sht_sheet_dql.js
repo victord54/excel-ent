@@ -16,7 +16,7 @@ export async function getAll() {
 export async function getOne({ sht_idtsht }) {
     // TODO: Vérifier injection SQL /!\
     if (sht_idtsht) {
-        return executeQuery('SELECT * FROM sht_sheet WHERE usr_idtusr = ?', [
+        return executeQuery('SELECT * FROM sht_sheet WHERE sht_idtsht = ?', [
             sht_idtsht,
         ]);
     }

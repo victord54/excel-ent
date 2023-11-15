@@ -22,7 +22,7 @@ CREATE TABLE
 -- sheet table
 CREATE TABLE
     `sht_sheet` (
-        `sht_idsht`         BIGINT          NOT NULL AUTO_INCREMENT             COMMENT 'Sheet PK',
+        `sht_idtsht`        BIGINT          NOT NULL AUTO_INCREMENT             COMMENT 'Sheet PK',
         `sht_idtusr`        BIGINT          NOT NULL                            COMMENT 'Creator user FK',
         `sht_name`          VARCHAR(255)    NOT NULL                            COMMENT 'Sheet name',
         `sht_data`          JSON            NOT NULL                            COMMENT 'Sheet data',
@@ -39,7 +39,7 @@ CREATE TABLE
 -- user sheet shared
 CREATE TABLE
     `usr_sht_link_sheet_user` (
-        `usl_idsht`         BIGINT          NOT NULL                            COMMENT 'Sheet FK',
+        `usl_idtsht`        BIGINT          NOT NULL                            COMMENT 'Sheet FK',
         `usl_idtusr`        BIGINT          NOT NULL                            COMMENT 'User FK',
         `usl_created_at`    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP  COMMENT 'Date of link creation',
         `usl_updated_at`    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP  COMMENT 'Date of link update',
