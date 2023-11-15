@@ -3,8 +3,16 @@ import { useParams } from 'react-router-dom';
 import './sheet.css';
 import { evaluateur } from '../../../services/evaluateur';
 
+import { saveSheet as _saveSheet} from '../../../services/api-service';
+import { AuthContext } from '../../../contexts/AuthContext';
+
 export default function Sheet() {
-    let { uuidSheet } = useParams();
+    useEffect(() => {
+        document.title = 'Feuille de calcul';
+    }, []);
+
+    const { user, setUser } = useContext(AuthContext);
+    let { idSheet } = useParams();
     const numberOfRows = 100;
     const numberOfColumns = 30;
     const [cells, setCells] = useState([]);
@@ -42,14 +50,18 @@ export default function Sheet() {
     function saveSheet() {
         console.log('save');
         console.log(cells);
+        console.log(user);
+        _saveSheet({sht_uuid: idSheet, sht_name: nameSheet, sht_data: cells, sht_sharing: 0, sht_idtusr: 1});
     }
 
     function handleKeyDown(event, cellKey) {
         if (event.key === 'Enter') {
             event.preventDefault();
-            const res = evaluateur(cells[cellKey]);
-            setCells({ ...cells, [cellKey]: res });
-            event.target.innerText = res;
+            if (cells[cellKey].startsWith('=')) {
+                const res = evaluateur(cells[cellKey].substring(1));
+                setCells({ ...cells, [cellKey]: res });
+                event.target.innerText = res;
+            }
             event.target.blur();
         }
         if (event.ctrlKey && event.key === 'c') {
@@ -72,6 +84,8 @@ export default function Sheet() {
 
     function nameSheetChange(event) {
         setNameSheet(event.target.value);
+        document.title = `Feuille - ${event.target.value}`;
+        if (event.target.value === '') document.title = 'Sans Nom';
     }
 
     function handleSelectAll(event) {

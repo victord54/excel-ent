@@ -11,7 +11,6 @@ const extractBearer = (authorization) => {
     return match && match[2];
 };
 
-
 /**
  * Check if the token is valid
  * @param {Request} req data from the request
@@ -36,7 +35,10 @@ const checkToken = (req, res, next) => {
     });
 };
 
-export {
-    checkToken,
-    extractBearer
+const getIdUsr = (authorization) => {
+    const token = extractBearer(authorization);
+    const decoded = jwt.decode(token);
+    return decoded.usr_idtusr;
 }
+
+export { checkToken, extractBearer, getIdUsr };

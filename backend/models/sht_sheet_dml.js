@@ -18,3 +18,16 @@ export async function create({
         [sht_idtusr, sht_name, sht_data, sht_sharing, sht_uuid],
     );
 }
+
+export async function update({
+    sht_idtsht,
+    sht_name,
+    sht_data,
+    sht_sharing,
+    sht_uuid,
+}) {
+    return executeQuery(
+        'UPDATE sht_sheet SET sht_name = ?, sht_data = ?, sht_sharing = ?, sht_uuid = ? WHERE sht_idtsht = ?',
+        [sht_name, sht_data, sht_sharing, sht_uuid, sht_idtsht],
+    );
+}
