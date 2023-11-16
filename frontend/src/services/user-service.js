@@ -1,16 +1,8 @@
-import { isLogged, removeToken } from './auth-service';
-
 export function getLoggedUser() {
-    if (isLogged()) {
-        const user = JSON.parse(localStorage.getItem('loged_user'));
-        if (user) {
-            return user;
-        } else {
-            removeToken();
-            return null;
-        }
+    const user = JSON.parse(localStorage.getItem('loged_user'));
+    if (user) {
+        return user;
     }
-    removeToken();
     return null;
 }
 

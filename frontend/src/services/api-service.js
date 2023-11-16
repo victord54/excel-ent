@@ -39,21 +39,48 @@ export function login({ mail, password }) {
 }
 
 export function editProfile({ pseudo, mail, password }) {
-    return fetch(import.meta.env.VITE_API_URL + '/profile/editProfile', {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: getBearerString(),
+    return fetch(
+        import.meta.env.VITE_API_URL +
+            '/profile/editProfile',
+        {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: getBearerString(),
+            },
+            body: JSON.stringify({
+                usr_pseudo: pseudo,
+                usr_mail: mail
+            }),
         },
-        body: JSON.stringify({
-            usr_pseudo: pseudo,
-            usr_mail: mail,
-            usr_pwd: password,
-        }),
-    })
+    )
         .then((response) => response.json())
         .catch((error) => {
             console.error('Error:', error);
+        });
+}
+
+export function editPassword({ old_password, new_password }) {
+    return fetch(
+        import.meta.env.VITE_API_URL +
+            '/profile/editPassword',
+        {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: getBearerString(),
+            },
+            body: JSON.stringify({
+                usr_old_password: old_password,
+                usr_new_password: new_password
+            }),
+        },
+    ).catch(error => {
+        console.log('Error:', error);
+    })
+        .then((response) => response.json())
+        .catch((error) => {
+            console.log('Error:', error);
         });
 }
 

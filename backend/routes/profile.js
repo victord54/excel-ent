@@ -1,14 +1,15 @@
 import { Router } from 'express';
-import { editProfile } from '../controllers/profile.js';
+import { editPassword, editProfile } from '../controllers/profile.js';
 const router = Router();
 
 /**
- * Login route
+ * Edit Profile route
  */
 router.put('/editprofile', editProfile);
 
 /**
- *
+ * Edit Password route
  */
+router.put('/editpassword', editPassword);
 
 export default router;
