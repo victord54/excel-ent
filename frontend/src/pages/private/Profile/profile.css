@@ -2,6 +2,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    animation: fadeIn 0.4s ease-in;
 }
 
 h2 {
@@ -120,4 +121,13 @@ input {
 
 .bouton-password-edit-valider{
     background-color: rgb(108, 197, 115);
+}
+
+.wrapper-boutons-passwords{
+    animation: fadeIn 0.4s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+      to { opacity: 1; }
 }

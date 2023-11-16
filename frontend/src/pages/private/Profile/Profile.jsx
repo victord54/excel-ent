@@ -254,7 +254,7 @@ export default function Profile(){
                                     </div>
                                 </div> 
                                 : 
-                                <div>
+                                <div className="wrapper-boutons-passwords">
                                     <div className="input-wrapper">
                                         <label htmlFor="pwd">Ancien mot de passe :</label>
                                         <div className="inputfield-wrapper">
