@@ -1,88 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import './listing.css';
 import { useNavigate } from 'react-router-dom';
 import boutonModifier from '../../../assets/bouton-modifier.png';
 import boutonSupprimer from '../../../assets/bouton-supprimer.png';
 import boutonPartager from '../../../assets/bouton-partager.png';
 import { v4 as uuid } from 'uuid';
+import { getAllSheetFromUser } from '../../../services/api-service';
+import { AuthContext } from '../../../contexts/AuthContext';
 
 export default function Listing() {
-    const f1 = {
-        titre: 'test test test test',
-        href: 'auth',
-        date_creation: '10-12-1997',
-        date_modification: '15-12-1997',
-        auteur: 'pamoa',
-        id: 2,
-    };
+    useEffect(() => {
+        document.title = 'Mes feuilles';
+        getFeuilles();
+    }, []);
+    const { user, setUser } = useContext(AuthContext);
 
-    const f2 = {
-        titre: 'test test test test',
-        href: 'auth',
-        date_creation: '10-12-1997',
-        date_modification: '15-12-1997',
-        auteur: 'moa',
-        id: 1,
-    };
-
-    const [feuilles, setFeuilles] = useState([
-        f1,
-        f1,
-        f2,
-        f1,
-        f1,
-        f1,
-        f1,
-        f1,
-        f1,
-        f1,
-        f1,
-        f2,
-        f1,
-        f1,
-        f1,
-        f1,
-        f1,
-        f2,
-        f2,
-        f1,
-        f1,
-        f1,
-        f1,
-        f2,
-        f1,
-        f1,
-        f1,
-        f1,
-        f2,
-        f2,
-        f2,
-        f2,
-        f2,
-        f1,
-        f1,
-        f1,
-        f1,
-        f1,
-        f1,
-        f2,
-        f1,
-        f1,
-        f1,
-        f1,
-        f1,
-        f1,
-        f2,
-        f2,
-        f2,
-        f1,
-        f1,
-        f1,
-        f1,
-        f2,
-        f1,
-        f1,
-    ]);
+    const [feuilles, setFeuilles] = useState([]);
     const navigate = useNavigate();
     const [selectedFilter, setSelectedFilter] = useState('all');
 
@@ -90,6 +23,13 @@ export default function Listing() {
         setSelectedFilter(filter);
         console.log(filter);
     };
+
+    async function getFeuilles() {
+        const res = await getAllSheetFromUser();
+        const _body = await res.json();
+        setFeuilles(_body);
+        console.log(_body);
+    }
 
     const filteredFeuilles = feuilles.filter((feuille) => {
         if (selectedFilter === 'all') {
@@ -102,8 +42,8 @@ export default function Listing() {
     });
 
     const handleRowClick = (feuille) => {
-        console.log(feuille.href);
-        navigate(feuille.href);
+        console.log(feuille.sht_uuid);
+        navigate("/sheet/" + feuille.sht_uuid);
     };
 
     const modifier = (e, feuille) => {
@@ -126,6 +66,21 @@ export default function Listing() {
         console.log(newUuid);
         window.open(`/sheet/${newUuid}`);
     };
+
+    function reformatDate(date){
+        const dateObject = new Date(date);
+
+        const year = dateObject.getFullYear();
+        const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+        const day = String(dateObject.getDate()).padStart(2, '0');
+
+        const hours = String(dateObject.getHours()).padStart(2, '0');
+        const minutes = String(dateObject.getMinutes()).padStart(2, '0');
+
+        const formattedDateTime = `${day}/${month}/${year} à ${hours}h${minutes}`;
+
+        return formattedDateTime;
+    }
 
     return (
         <>
@@ -189,10 +144,10 @@ export default function Listing() {
                                         key={i}
                                         onClick={() => handleRowClick(feuille)}
                                     >
-                                        <td>{feuille.titre}</td>
-                                        <td>{feuille.auteur}</td>
-                                        <td>{feuille.date_creation}</td>
-                                        <td>{feuille.date_modification}</td>
+                                        <td>{feuille.sht_name}</td>
+                                        <td>{user.usr_pseudo}</td>
+                                        <td>{reformatDate(feuille.sht_created_at)}</td>
+                                        <td>{reformatDate(feuille.sht_updated_at)}</td>
                                         <td>
                                             <button
                                                 className="button-option modifier"

@@ -101,3 +101,35 @@ export async function saveSheet({
     }
     return res;
 }
+
+export async function getAllSheetFromUser(){
+    console.log("getAllSheetFromUser");
+    const res = await fetch( 
+        import.meta.env.VITE_API_URL + '/sheet',
+        {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: getBearerString(),
+            },
+        });
+        
+    return res;
+}
+
+export async function getSheetById(sht_uuid){
+    console.log("getSheetById : " + sht_uuid);
+    const res = await fetch( 
+        import.meta.env.VITE_API_URL + '/sheet/getOne?sht_uuid=' + sht_uuid,
+        {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: getBearerString(),
+            },
+        });
+        
+    return res;
+}
+
+

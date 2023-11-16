@@ -5,13 +5,16 @@ import { evaluateur } from '../../../services/evaluateur';
 import { getLoggedUser } from '../../../services/user-service';
 
 import { saveSheet as _saveSheet } from '../../../services/api-service';
+import {getSheetById} from '../../../services/api-service';
 
 export default function Sheet() {
+    let { idSheet } = useParams();
+
     useEffect(() => {
         document.title = 'Feuille de calcul';
+        getSheet();
     }, []);
 
-    let { idSheet } = useParams();
     const numberOfRows = 100;
     const numberOfColumns = 30;
     const [cells, setCells] = useState([]);
@@ -52,6 +55,7 @@ export default function Sheet() {
     async function saveSheet() {
         console.log('save');
         console.log(cells);
+        console.log(idt_sht);
         const response = await _saveSheet({
             sht_uuid: idSheet,
             sht_name: nameSheet,
@@ -64,6 +68,20 @@ export default function Sheet() {
         if (response.status === 200) {
             console.log('ok');
             setIdt_sht(_body);
+        }
+    }
+
+    async function getSheet() {
+        const response = await getSheetById(idSheet);
+        const _body = await response.json();
+        if (response.status === 200) {
+            setNameSheet(_body.sht_name);
+            setCells(_body.sht_data);
+            setIdt_sht(_body.sht_idtsht);
+            for (const key in _body.sht_data){
+                const divChild = getDivChild(key);
+                if (divChild) divChild.innerText = _body.sht_data[key];
+            }
         }
     }
 

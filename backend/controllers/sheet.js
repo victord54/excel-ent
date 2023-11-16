@@ -3,6 +3,7 @@ import { commitTransaction, rollbackTransaction } from '../utils/database.js';
 import {
     getAll as getAllSheets,
     getOne as getOneSheet,
+    getAllFromUser as getAllSheetsUser,
 } from '../models/sht_sheet_dql.js';
 import {
     create as createSheet,
@@ -36,13 +37,15 @@ export async function getAll(req, res, next) {
  * @returns {Promise<Response>} data to send back
  */
 export async function getOne(req, res, next) {
-    const { sht_idtsht } = req.params;
+    const { sht_uuid } = req.query;
+    console.log("getOne back " + sht_uuid);
+
     try {
-        const sheet = await getOneSheet(sht_idtsht);
+        const sheet = await getOneSheet({sht_uuid});
         if (sheet.length === 0) {
             throw new SheetNotFoundError('Sheet not found');
         }
-        return res.status(200).json(sheet);
+        return res.status(200).json(sheet[0]);
     } catch (error) {
         next(error);
     }
@@ -121,6 +124,21 @@ export async function update(req, res, next) {
         return res.status(200).json(sht_idtsht);
     } catch (error) {
         await rollbackTransaction();
+        next(error);
+    }
+}
+
+export async function getAllFromUser(req, res, next) {
+    console.log("getAllFromUser back");
+    try {
+        const token = req.headers.authorization;
+        const sht_idtusr = _getIdtUsr(token);
+        const sheets = await getAllSheetsUser({sht_idtusr});
+        // if (sheets.length === 0) {
+        //     throw new SheetNotFoundError('Sheets not found');
+        // }
+        return res.status(200).json(sheets);
+    } catch (error) {
         next(error);
     }
 }

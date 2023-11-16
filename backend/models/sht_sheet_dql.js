@@ -13,11 +13,12 @@ export async function getAll() {
  * @param {Object} object data to fetch a sheet
  * @returns {Promise<RowDataPacket>} Sheet
  */
-export async function getOne({ sht_idtsht }) {
+export async function getOne({ sht_uuid }) {
+    console.log("getOne OEOEOE" + sht_uuid);
     // TODO: Vérifier injection SQL /!\
-    if (sht_idtsht) {
-        return executeQuery('SELECT * FROM sht_sheet WHERE sht_idtsht = ?', [
-            sht_idtsht,
+    if (sht_uuid) {
+        return executeQuery('SELECT * FROM sht_sheet WHERE sht_uuid = ?', [
+            sht_uuid,
         ]);
     }
     return null;
