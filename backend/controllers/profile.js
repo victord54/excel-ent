@@ -37,15 +37,15 @@ export async function editProfile(req, res, next) {
         const { usr_idtusr } = pkg.decode(token);
 
         //vérification de l'éxistence de l'utilisateur
-        const user = await get({ usr_idtusr });
-        if (user.length === 0) throw new UserNotFoundError('User not found');
+        const user = (await get({ usr_idtusr }))[0];
+        if (!user) throw new UserNotFoundError('User not found');
 
         //verification unicité nouveau pseudo et mail
         const userMail = await get({ usr_mail: usr_mail });
         const userPseudo = await get({ usr_pseudo: usr_pseudo });
         if (
-            (userMail.length > 0 && user[0].usr_mail !== usr_mail) ||
-            (userPseudo.length > 0 && user[0].usr_pseudo !== usr_pseudo)
+            (userMail.length > 0 && user.usr_mail !== usr_mail) ||
+            (userPseudo.length > 0 && user.usr_pseudo !== usr_pseudo)
         ) {
             throw new UserAlreadyExistsError('User already exists');
         }
@@ -107,11 +107,11 @@ export async function editPassword(req, res, next) {
         const { usr_idtusr } = pkg.decode(token);
 
         //vérification de l'éxistence de l'utilisateur
-        const user = await get({ usr_idtusr });
-        if (user.length === 0) throw new UserNotFoundError('User not found');
+        const user = (await get({ usr_idtusr }))[0];
+        if (!user) throw new UserNotFoundError('User not found');
 
         //vérification de l'ancien mot de passe
-        const valid = await compare(usr_old_password, user[0].usr_pwd);
+        const valid = await compare(usr_old_password, user.usr_pwd);
         if (!valid) {
             throw new InvalidIdentifiersError('Invalid identifiers');
         }
@@ -123,9 +123,9 @@ export async function editPassword(req, res, next) {
 
         //mise a jour de l'utilisateur
         await update({
-            usr_id: user[0].usr_idtusr,
-            usr_pseudo: user[0].usr_pseudo,
-            usr_mail: user[0].usr_mail,
+            usr_id: user.usr_idtusr,
+            usr_pseudo: user.usr_pseudo,
+            usr_mail: user.usr_mail,
             usr_pwd: hash,
         });
         await commitTransaction();
