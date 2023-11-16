@@ -65,7 +65,7 @@ export default function Auth() {
             } else {
                 loginContext(data.token, data.user);
                 setInputesValuesSignUp(formValuesLogin);
-                navigate('/');
+                navigate('/sheet');
             }
         });
     }
