@@ -69,7 +69,6 @@ export async function editProfile(req, res, next) {
                 user: {
                     usr_pseudo: userEdited.usr_pseudo,
                     usr_mail: userEdited.usr_mail,
-                    usr_pwd: userEdited.usr_pwd,
                 },
             });
     } catch (error) {

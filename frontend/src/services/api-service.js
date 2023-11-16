@@ -75,10 +75,12 @@ export function editPassword({ old_password, new_password }) {
                 usr_new_password: new_password
             }),
         },
-    )
+    ).catch(error => {
+        console.log('Error:', error);
+    })
         .then((response) => response.json())
         .catch((error) => {
-            console.error('Error:', error);
+            console.log('Error:', error);
         });
 }
 

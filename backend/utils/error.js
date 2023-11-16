@@ -19,6 +19,12 @@ export class UserError extends CustomError {
     }
 }
 
+export class InvalidTokenError extends CustomError{
+    constructor(message) {
+        super(message, 401);
+    }
+}
+
 export class UserNotFoundError extends UserError {
     constructor(message) {
         super(message, 404);

@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import { InvalidTokenError } from './error.js';
 
 const extractBearer = (authorization) => {
     if (typeof authorization !== 'string') {
@@ -29,7 +30,7 @@ const checkToken = (req, res, next) => {
     // check token validity
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
         if (err) {
-            return res.status(401).json({ message: 'Invalid token' });
+            next(new InvalidTokenError('Invalid token'));
         }
         next();
     });
