@@ -20,6 +20,7 @@ export default function Sheet() {
     const [editable, setEditable] = useState(true);
     const [isDragging, setIsDragging] = useState(false);
     const [idt_sht, setIdt_sht] = useState(null);
+    const [selectedCells, setSelectedCells] = useState([]);
 
     const nameRows = Array.from(
         { length: numberOfRows },
@@ -27,6 +28,10 @@ export default function Sheet() {
     );
     const nameColums = generateNameColumns();
 
+    /**
+     * 
+     * @returns 
+     */
     function generateNameColumns() {
         const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         let res = [];
@@ -41,12 +46,9 @@ export default function Sheet() {
         return res;
     }
 
-    function handleInputChange(event, cellKey) {
-        const updatedCells = { ...cells };
-        updatedCells[cellKey] = event.target.innerText;
-        setCells(updatedCells);
-    }
-
+    /**
+     * 
+     */
     async function saveSheet() {
         console.log('save');
         console.log(cells);
@@ -65,6 +67,11 @@ export default function Sheet() {
         }
     }
 
+    /**
+     * 
+     * @param {*} event 
+     * @param {*} cellKey 
+     */
     function handleKeyDown(event, cellKey) {
         if (event.key === 'Enter') {
             event.preventDefault();
@@ -80,6 +87,21 @@ export default function Sheet() {
         }
     }
 
+    /**
+     * Handle the change of the input the user is typing in
+     * @param {*} event the event of the input
+     * @param {string} cellKey id of the cell 
+     */
+    function handleInputChange(event, cellKey) {
+        if (event.target.innerText === '/n') return;
+        const updatedCells = { ...cells };
+        updatedCells[cellKey] = event.target.innerText;
+        setCells(updatedCells);
+    }
+
+    /**
+     * Copy the selected text
+     */
     function handleCopy() {
         console.log('copy');
         const selection = window.getSelection();
@@ -87,24 +109,36 @@ export default function Sheet() {
         navigator.clipboard.writeText(copiedText);
     }
 
+    /**
+     * Past the text in the clipboard
+     * @param {*} event event of the paste
+     * @param {*} keyCell id of the receiving cell
+     */
     function handlePaste(event, keyCell) {
         console.log('paste');
         const text = event.clipboardData.getData('text/plain');
         setCells({ ...cells, [keyCell]: text });
     }
 
+    /**
+     * Change the sheet name
+     * @param {*} event event of the change
+     */
     function nameSheetChange(event) {
         setNameSheet(event.target.value);
         document.title = `Feuille - ${event.target.value}`;
         if (event.target.value === '') document.title = 'Sans Nom';
     }
 
-    function handleSelectAll(event) {
-        event.target.select();
-    }
 
+    /**
+     * 
+     * @param {*} event 
+     * @param {*} keyCell 
+     */
     function handleDragStart(event, keyCell) {
-        console.log('yeees');
+        if (event.target.innerText === '') return;
+        console.log('dragStart');
         event.dataTransfer.setData('text/plain', cells[keyCell]);
         setEditable(false);
         setIsDragging(true);
@@ -112,6 +146,11 @@ export default function Sheet() {
         setDraggedCell(keyCell);
     }
 
+    /**
+     * 
+     * @param {*} event 
+     * @param {*} keyCell 
+     */
     function handleDrop(event, keyCell) {
         console.log('drop');
         setIsDragging(false);
@@ -121,24 +160,47 @@ export default function Sheet() {
             [keyCell]: event.dataTransfer.getData('text/plain'),
         });
 
-        const td_source = document.getElementById(draggedCell);
-        if (td_source) {
-            const divChild = td_source.querySelector('div');
-            if (divChild) {
-                divChild.innerText = '';
-            }
-        }
+        const divChild = getDivChild(draggedCell);
+        if (divChild) divChild.innerText = '';
         setDraggedCell(null);
+        
+        const divChildTarget = getDivChild(keyCell);
+        if (divChildTarget) {
+            if (divChildTarget === ''){
+                console.log("uiiii");
+                 divChildTarget.innerText =
+                    event.dataTransfer.getData('text/plain');
+                }
+            }
+               
+    }
 
-        const td_target = document.getElementById(keyCell);
-        if (td_target) {
-            const divChild = td_target.querySelector('div');
+    /**
+     * 
+     * @param {*} event 
+     */
+    function handleSelectAll(event) {
+        const range = document.createRange();
+        range.selectNodeContents(event.target);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+    }
+
+    /**
+     * 
+     * @param {*} cellKey 
+     * @returns 
+     */
+    function getDivChild(cellKey) {
+        const td = document.getElementById(cellKey);
+        if (td) {
+            const divChild = td.querySelector('div');
             if (divChild) {
-                if (divChild === '')
-                    divChild.innerText =
-                        event.dataTransfer.getData('text/plain');
+                return divChild;
             }
         }
+        return '';
     }
 
     return (
@@ -208,6 +270,9 @@ export default function Sheet() {
                                                         event,
                                                         nameCol + '_' + nameRow,
                                                     )
+                                                }
+                                                onFocus={(event) =>
+                                                    handleSelectAll(event)
                                                 }
                                             ></div>
                                         </td>
