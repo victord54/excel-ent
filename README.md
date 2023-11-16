@@ -29,7 +29,7 @@ DB_HOST = 'localhost'
 BCRYPT_SALT_ROUNDS = 12
 
 JWT_SECRET = "secret"
-JWT_DURATION = "3600"
+JWT_DURATION = "1d"
 ```
 
 -   frontend/.env :
