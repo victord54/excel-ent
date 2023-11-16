@@ -7,6 +7,9 @@ import { getLoggedUser } from '../../../services/user-service';
 import { saveSheet as _saveSheet } from '../../../services/api-service';
 import {getSheetById} from '../../../services/api-service';
 
+// TODO : Save automatique
+// TODO : Modification en même temps
+
 export default function Sheet() {
     let { idSheet } = useParams();
 

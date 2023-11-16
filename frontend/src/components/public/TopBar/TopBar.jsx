@@ -27,6 +27,7 @@ export default function TopBar() {
                                     onClick={(e) => {
                                         e.preventDefault();
                                         logoutContext();
+                                        window.location.href = '/';
                                     }}
                                 >
                                     Déconnexion

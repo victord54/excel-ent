@@ -6,6 +6,7 @@ import boutonAnnuler from "../../../assets/bouton-annuler.png";
 import boutonValider from "../../../assets/bouton_valider.png";
 import { editPassword, editProfile } from "../../../services/api-service";
 
+// TODO : essayer de trouver pq ça prend un peu de temps pour se log (5 sec)
 export default function Profile(){
 
     const { user, setUser } = useContext(AuthContext);

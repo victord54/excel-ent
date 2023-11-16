@@ -8,6 +8,11 @@ import { v4 as uuid } from 'uuid';
 import { getAllSheetFromUser } from '../../../services/api-service';
 import { AuthContext } from '../../../contexts/AuthContext';
 
+// TODO : Ajouter les fonctionnalités modifier, supprimer et partager
+// TODO : Ajouter la fonctionnalité de recherche
+// TODO : Récupérer les feuilles partagées
+// TODO : Fonctionnalité de tri
+
 export default function Listing() {
     useEffect(() => {
         document.title = 'Mes feuilles';
