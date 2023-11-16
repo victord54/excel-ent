@@ -28,10 +28,10 @@ export async function create({ usr_pseudo, usr_mail, usr_pwd }) {
     );
 }
 
-export async function update({ usr_id, usr_pseudo, usr_mail }) {
+export async function update({ usr_id, usr_pseudo, usr_mail, usr_pwd }) {
     // TODO: Vérifier injection SQL /!\
     return executeQuery(
-        'UPDATE usr_user SET usr_pseudo = ?, usr_mail = ? WHERE usr_idtusr = ?',
-        [usr_pseudo, usr_mail, usr_id],
+        'UPDATE usr_user SET usr_pseudo = ?, usr_mail = ?, usr_pwd = ?, usr_updated_at = ? WHERE usr_idtusr = ?;',
+        [usr_pseudo, usr_mail, usr_pwd, new Date(), usr_id],
     );
 }
