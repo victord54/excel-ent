@@ -3,7 +3,12 @@ import { get } from '../models/usr_user_dql.js';
 
 import pkg from 'jsonwebtoken';
 import { commitTransaction, rollbackTransaction } from '../utils/database.js';
-import { MissingParameterError, UserAlreadyExistsError, UserNotFoundError, InvalidIdentifiersError } from '../utils/error.js';
+import {
+    MissingParameterError,
+    UserAlreadyExistsError,
+    UserNotFoundError,
+    InvalidIdentifiersError,
+} from '../utils/error.js';
 import { extractBearer } from '../utils/jwt-check.js';
 import { compare, hash as _hash } from 'bcrypt';
 
@@ -57,8 +62,16 @@ export async function editProfile(req, res, next) {
         const userEdited = (await get({ usr_idtusr }))[0];
 
         // envoi de la réponse
-        return res.status(201).json({ message: 'user editer',  user: {usr_pseudo: userEdited.usr_pseudo, usr_mail: userEdited.usr_mail, usr_pwd: userEdited.usr_pwd} });
-
+        return res
+            .status(201)
+            .json({
+                message: 'user editer',
+                user: {
+                    usr_pseudo: userEdited.usr_pseudo,
+                    usr_mail: userEdited.usr_mail,
+                    usr_pwd: userEdited.usr_pwd,
+                },
+            });
     } catch (error) {
         rollbackTransaction();
         next(error);
