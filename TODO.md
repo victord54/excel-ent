@@ -1,5 +1,6 @@
 TODO:
 [ ] backend api response :
+```json
 {
     status: "ok" | "error"
     (si ok)
@@ -10,6 +11,7 @@ TODO:
         message: "..."
     }
 }
+```
 [ ] Gestion des messages d'erreur
 [ ] Renommer, partager, supprimer feuille depuis le listing
 [ ] Filtre de recherche
