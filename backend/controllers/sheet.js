@@ -75,6 +75,11 @@ export async function create(req, res, next) {
             console.log(req.body);
             throw new MissingParameterError('Missing parameters: ' + missing);
         }
+        // vérification unicité uuid
+        const sheetVerif = await getOneSheet({ sht_uuid });
+        if (sheetVerif.length !== 0) {
+            throw new SheetAlreadyExistsError('Sheet (uuid) already exists');
+        }
         // création de la feuille
         const sheet = await createSheet({
             sht_idtusr,

@@ -86,6 +86,7 @@ export default function Sheet() {
             }
             setSheetExist(true);
         } else {
+            //TODO: c'est censé renvoyer une erreur 404 dans le corps de la réponse
             window.location.href = '/404';
         }
     }

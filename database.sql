@@ -32,6 +32,7 @@ CREATE TABLE
         `sht_updated_at`    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP  COMMENT 'Date of sheet update',
         PRIMARY KEY (`sht_idsht`),
         CONSTRAINT `sht_idtusr_fk` FOREIGN KEY (`sht_idtusr`) REFERENCES `usr_user` (`usr_idtusr`),
+        CONSTRAINT `sht_uuid_u` UNIQUE (`sht_uuid`),
         KEY `sht_idtusr_fk_i` (`sht_idtusr`),
         KEY `sht_name_i` (`sht_name`)
     ) ENGINE = InnoDB DEFAULT CHARSET = UTF8MB4 COMMENT = 'Sheet table';

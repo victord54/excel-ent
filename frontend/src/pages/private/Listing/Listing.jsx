@@ -69,15 +69,28 @@ export default function Listing() {
 
     async function newSheet() {
         let newUuid = uuid();
-        const response = await _saveSheet({
+        let response = await _saveSheet({
             sht_uuid: newUuid,
             sht_name: "Sans Nom",
             sht_data: JSON.stringify({}),
             sht_sharing: 0,
             sht_idtsht: null,
         });
-        const _body = await response.json();
+        let _body = await response.json();
         console.log(_body);
+        if (response.status === 409) {
+            console.log('conflict');
+            newUuid = uuid();
+            response = await _saveSheet({
+                sht_uuid: newUuid,
+                sht_name: "Sans Nom",
+                sht_data: JSON.stringify({}),
+                sht_sharing: 0,
+                sht_idtsht: null,
+            });
+            _body = await response.json();
+            console.log(_body);
+        }
         if (response.status === 200) {
             console.log('ok');
             setFeuilles([...feuilles, { sht_uuid: newUuid, sht_name: "Sans Nom", sht_created_at: new Date(), sht_updated_at: new Date() }]);        

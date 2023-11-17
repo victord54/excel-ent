@@ -60,3 +60,9 @@ export class SheetNotFoundError extends SheetError {
         super(message, 404);
     }
 }
+
+export class SheetAlreadyExistsError extends SheetError {
+    constructor(message) {
+        super(message, 409);
+    }
+}
