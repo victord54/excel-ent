@@ -36,3 +36,7 @@
 .sht-input-name:focus{
     border: 0.5px rgb(228, 88, 88) solid;
 }
+
+.sht-select-col-row {
+    background-color: #7a9edb;
+}

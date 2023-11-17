@@ -27,6 +27,9 @@ export default function Sheet() {
     const [isDragging, setIsDragging] = useState(false);
     const [idt_sht, setIdt_sht] = useState(null);
     const [sheetExist, setSheetExist] = useState(false);
+    const [colSelect, setSelectCol] = useState(null);
+    const [rowSelect, setSelectRow] = useState(null);
+
     const nameRows = Array.from(
         { length: numberOfRows },
         (_, index) => index + 1,
@@ -197,6 +200,12 @@ export default function Sheet() {
             }
     }
 
+    function handleMouseDown(nameCol, nameRow){
+        console.log("mouseDown");
+        setSelectCol(nameCol);
+        setSelectRow(nameRow);
+    }
+
     /**
      * 
      * @param {*} event 
@@ -228,7 +237,7 @@ export default function Sheet() {
         }
         return '';
     }
-
+   
     if (!sheetExist) return (<></>);
     return (
         <>
@@ -246,14 +255,14 @@ export default function Sheet() {
                             <tr>
                                 <th></th>
                                 {nameColums.map((nameCol, i) => (
-                                    <th key={nameCol}>{nameCol}</th>
+                                    <th key={nameCol} className={nameCol === colSelect ? 'sht-select-col-row' : ''} >{nameCol}</th>
                                 ))}
                             </tr>
                         </thead>
                         <tbody>
                             {nameRows.map((nameRow, i) => (
                                 <tr key={nameRow}>
-                                    <td key={nameRow}>{nameRow}</td>
+                                    <th key={nameRow} className={nameRow === rowSelect ? 'sht-select-col-row' : ''}>{nameRow}</th>
                                     {nameColums.map((nameCol) => (
                                         <td
                                             id={nameCol + '_' + nameRow}
@@ -301,6 +310,10 @@ export default function Sheet() {
                                                 onFocus={(event) =>
                                                     handleSelectAll(event)
                                                 }
+                                                onMouseDown={(event) =>
+                                                    handleMouseDown( nameCol, nameRow)
+                                                }
+                                                onDoubleClick={handleSelectAll}
                                             ></div>
                                         </td>
                                     ))}
