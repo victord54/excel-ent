@@ -208,6 +208,10 @@ export default function Sheet() {
         selection.addRange(range);
     }
 
+    function handleSelectAllInput(event){
+        event.target.select();
+    }
+
     /**
      * 
      * @param {*} cellKey 
@@ -231,7 +235,7 @@ export default function Sheet() {
                 className="sht-input-name"
                 value={nameSheet}
                 onChange={nameSheetChange}
-                onClick={handleSelectAll}
+                onClick={handleSelectAllInput}
             ></input>
             <button onClick={saveSheet}>Save</button>
             <div className="sht-container-all">

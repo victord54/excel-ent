@@ -22,3 +22,17 @@
     background-color: rgb(215, 231, 241);
     border: 3px solid rgb(125, 222, 247) !important;
 }
+
+.sht-input-name{
+    width: 500px;
+    background: none;
+    height:50px;
+    margin-bottom: 25px;
+    margin-left: 5px;
+    font-size: 20px;
+    border: 0.5px rgb(194, 191, 191) solid;
+}
+
+.sht-input-name:focus{
+    border: 0.5px rgb(228, 88, 88) solid;
+}
