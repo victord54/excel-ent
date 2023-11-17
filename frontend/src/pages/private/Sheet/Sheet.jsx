@@ -236,7 +236,7 @@ export default function Sheet() {
         }
         return '';
     }
-
+   
     if (!sheetExist) return (<></>);
     return (
         <>
@@ -312,6 +312,7 @@ export default function Sheet() {
                                                 onMouseDown={(event) =>
                                                     handleMouseDown( nameCol, nameRow)
                                                 }
+                                                onDoubleClick={handleSelectAll}
                                             ></div>
                                         </td>
                                     ))}
