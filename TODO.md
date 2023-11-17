@@ -1,13 +1,15 @@
-TODO:
+# TODO
 [ ] backend api response :
 ```json
 {
-    status: "ok" | "error"
-    (si ok)
-    data: {...}
-    (si error)
+    // (si ok)
+    status: "ok",
+    data: {/* ... */}
+    // (si error)
+    status: "ko",
     error: {
-        type: MissingParameters
+        type: "MissingParameters",
+        code: 400,
         message: "..."
     }
 }
@@ -19,7 +21,7 @@ TODO:
 [ ] Tester si le token de l'uti est pas expiré à chaque requete
 [ ] socket.io
 
-FIXME:
+# FIXME
 [ ] Délai de chargement au login
 [ ] Renommer champs createur sheet : sht_idtusr_aut
 [ ] Cellules écrasées
