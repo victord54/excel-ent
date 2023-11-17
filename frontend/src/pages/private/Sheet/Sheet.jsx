@@ -14,8 +14,8 @@ export default function Sheet() {
     let { idSheet } = useParams();
 
     useEffect(() => {
-        document.title = 'Feuille de calcul';
         getSheet();
+        document.title = 'Feuille de calcul';
     }, []);
 
     const numberOfRows = 100;
@@ -26,8 +26,7 @@ export default function Sheet() {
     const [editable, setEditable] = useState(true);
     const [isDragging, setIsDragging] = useState(false);
     const [idt_sht, setIdt_sht] = useState(null);
-    const [selectedCells, setSelectedCells] = useState([]);
-
+    const [sheetExist, setSheetExist] = useState(false);
     const nameRows = Array.from(
         { length: numberOfRows },
         (_, index) => index + 1,
@@ -85,6 +84,9 @@ export default function Sheet() {
                 const divChild = getDivChild(key);
                 if (divChild) divChild.innerText = _body.sht_data[key];
             }
+            setSheetExist(true);
+        } else {
+            window.location.href = '/404';
         }
     }
 
@@ -188,12 +190,10 @@ export default function Sheet() {
         const divChildTarget = getDivChild(keyCell);
         if (divChildTarget) {
             if (divChildTarget === ''){
-                console.log("uiiii");
                  divChildTarget.innerText =
                     event.dataTransfer.getData('text/plain');
                 }
             }
-               
     }
 
     /**
@@ -224,6 +224,7 @@ export default function Sheet() {
         return '';
     }
 
+    if (!sheetExist) return (<></>);
     return (
         <>
             <input

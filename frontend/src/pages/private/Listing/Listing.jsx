@@ -7,6 +7,7 @@ import boutonPartager from '../../../assets/bouton-partager.png';
 import { v4 as uuid } from 'uuid';
 import { getAllSheetFromUser } from '../../../services/api-service';
 import { AuthContext } from '../../../contexts/AuthContext';
+import { saveSheet as _saveSheet } from '../../../services/api-service';
 
 // TODO : Ajouter les fonctionnalités modifier, supprimer et partager
 // TODO : Ajouter la fonctionnalité de recherche
@@ -66,10 +67,23 @@ export default function Listing() {
         console.log('Partager');
     };
 
-    const newSheet = () => {
+    async function newSheet() {
         let newUuid = uuid();
+        const response = await _saveSheet({
+            sht_uuid: newUuid,
+            sht_name: "Sans Nom",
+            sht_data: JSON.stringify({}),
+            sht_sharing: 0,
+            sht_idtsht: null,
+        });
+        const _body = await response.json();
+        console.log(_body);
+        if (response.status === 200) {
+            console.log('ok');
+            setFeuilles([...feuilles, { sht_uuid: newUuid, sht_name: "Sans Nom", sht_created_at: new Date(), sht_updated_at: new Date() }]);        
+            window.open(`/sheet/${newUuid}`);
+        }
         console.log(newUuid);
-        window.open(`/sheet/${newUuid}`);
     };
 
     function reformatDate(date){
