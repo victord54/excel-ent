@@ -5,11 +5,14 @@ import boutonModifier from "../../../assets/bouton-modifier.png";
 import boutonAnnuler from "../../../assets/bouton-annuler.png";
 import boutonValider from "../../../assets/bouton_valider.png";
 import { editPassword, editProfile } from "../../../services/api-service";
+import { useQuery } from "../../../hooks/useQuery";
 
 // TODO : essayer de trouver pq ça prend un peu de temps pour se log (5 sec)
 export default function Profile(){
 
     const { user, setUser } = useContext(AuthContext);
+
+    const authQuery = useQuery();
 
     const formDefaultValue = {
         pseudo: {
@@ -65,24 +68,25 @@ export default function Profile(){
         e.preventDefault();
 
         if(form[name].inEdit){
-            editProfile({ mail: form.mail.value, pseudo: form.pseudo.value, pwd: form.pwd }).then((data) => {
-                if(data.error){
-                    setForm({
-                        ...form,
-                        [name]: {
-                            ...form[name],
-                            error: true,
-                            errorMessage: data.error.message,
-                            inEdit: true
-                        }
-                    })
-                }else{
-                    setUser(data.user);
-                    setForm({...form,
-                        [name]: { ...form[name], inEdit: !form[name].inEdit, error: false, errorMessage: ''}
-                    });
-                }
-            });
+            authQuery(editProfile({ mail: form.mail.value, pseudo: form.pseudo.value, pwd: form.pwd }))
+                .then((data) => {
+                    if(data.error){
+                        setForm({
+                            ...form,
+                            [name]: {
+                                ...form[name],
+                                error: true,
+                                errorMessage: data.error.message,
+                                inEdit: true
+                            }
+                        });
+                    }else{
+                        setUser(data.user);
+                        setForm({...form,
+                            [name]: { ...form[name], inEdit: !form[name].inEdit, error: false, errorMessage: ''}
+                        });
+                    }
+                });
         }else{
             setForm({...form,
                 [name]: { ...form[name], inEdit: !form[name].inEdit, error: false, errorMessage: ''}
@@ -106,7 +110,7 @@ export default function Profile(){
         e.preventDefault;
         
         if(passwordForm.isEditing){
-            editPassword({ old_password: passwordForm.old_pwd.value, new_password: passwordForm.new_pwd.value }).then((data) => {
+            authQuery(editPassword({ old_password: passwordForm.old_pwd.value, new_password: passwordForm.new_pwd.value })).then((data) => {
                 if(data.error){
                     if(data.error.name === "InvalidIdentifiersError"){
                         setPasswordForm((prevValue) => {
