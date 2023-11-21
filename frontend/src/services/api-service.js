@@ -11,7 +11,7 @@ const executeRequest = (url, options, needAuthentified = true) => {
     }).then((response) => {
         if (response.ok) {
             return response;
-        }else if(response.status === 401){
+        }else if(response.status === 401 && needAuthentified) {
             throw new Error('Unauthorized');
         }
         return response;
