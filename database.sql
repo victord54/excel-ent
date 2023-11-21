@@ -24,17 +24,16 @@ CREATE TABLE
 CREATE TABLE
     `sht_sheet` (
         `sht_idtsht`        BIGINT          NOT NULL AUTO_INCREMENT             COMMENT 'Sheet PK',
-        `sht_idtusr`        BIGINT          NOT NULL                            COMMENT 'Creator user FK',
+        `sht_idtusr_aut`    BIGINT          NOT NULL                            COMMENT 'Creator user FK',
         `sht_name`          VARCHAR(255)    NOT NULL                            COMMENT 'Sheet name',
-        `sht_data`          JSON            NOT NULL                            COMMENT 'Sheet data',
         `sht_sharing`       BOOLEAN         NOT NULL DEFAULT FALSE              COMMENT 'Sheet sharing',
         `sht_uuid`          VARCHAR(255)    NOT NULL                            COMMENT 'Sheet uuid',
         `sht_created_at`    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP  COMMENT 'Date of sheet creation',
         `sht_updated_at`    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP  COMMENT 'Date of sheet update',
         PRIMARY KEY (`sht_idtsht`),
-        CONSTRAINT `sht_idtusr_fk` FOREIGN KEY (`sht_idtusr`) REFERENCES `usr_user` (`usr_idtusr`),
+        CONSTRAINT `sht_usr_aut_fk` FOREIGN KEY (`sht_idtusr_aut`) REFERENCES `usr_user` (`usr_idtusr`),
         CONSTRAINT `sht_uuid_u` UNIQUE (`sht_uuid`),
-        KEY `sht_idtusr_fk_i` (`sht_idtusr`),
+        KEY `sht_usr_aut_fk_i` (`sht_idtusr_aut`),
         KEY `sht_name_i` (`sht_name`)
     ) ENGINE = InnoDB DEFAULT CHARSET = UTF8MB4 COMMENT = 'Sheet table';
 
@@ -42,14 +41,14 @@ CREATE TABLE
 CREATE TABLE
     `sht_link_sht_usr` (
         `lsu_idtsht`        BIGINT          NOT NULL                            COMMENT 'Sheet FK',
-        `lsu_idtusr`        BIGINT          NOT NULL                            COMMENT 'User FK',
+        `lsu_idtusr_aut`    BIGINT          NOT NULL                            COMMENT 'User FK',
         `lsu_created_at`    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP  COMMENT 'Date of link creation',
         `lsu_updated_at`    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP  COMMENT 'Date of link update',
-        PRIMARY KEY (`lsu_idtsht`, `lsu_idtusr`),
-        CONSTRAINT `lsu_idtsht_fk` FOREIGN KEY (`lsu_idtsht`) REFERENCES `sht_sheet` (`sht_idtsht`),
-        CONSTRAINT `lsu_idtusr_fk` FOREIGN KEY (`lsu_idtusr`) REFERENCES `usr_user` (`usr_idtusr`),
-        KEY `lsu_idtsht_fk_i` (`lsu_idtsht`),
-        KEY `lsu_idtusr_fk_i` (`lsu_idtusr`)
+        PRIMARY KEY (`lsu_idtsht`, `lsu_idtusr_aut`),
+        CONSTRAINT `lsu_sht_fk` FOREIGN KEY (`lsu_idtsht`) REFERENCES `sht_sheet` (`sht_idtsht`),
+        CONSTRAINT `lsu_usr_aut_fk` FOREIGN KEY (`lsu_idtusr_aut`) REFERENCES `usr_user` (`usr_idtusr`),
+        KEY `lsu_sht_fk_i` (`lsu_idtsht`),
+        KEY `lsu_usr_aut_fk_i` (`lsu_idtusr_aut`)
     ) ENGINE = InnoDB DEFAULT CHARSET = UTF8MB4 COMMENT = 'User sheet shared table';
 
 CREATE TABLE
