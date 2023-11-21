@@ -1,4 +1,4 @@
-import { getLoggedUser, removeLoggedUser } from "./user-service";
+import { getLoggedUser } from "./user-service";
 
 export function saveToken(token) {
     localStorage.setItem('auth_token', token);
@@ -11,7 +11,6 @@ export function removeToken() {
 export function isLogged() {
     const token = localStorage.getItem('auth_token');
     if(getLoggedUser() === null) {
-        removeLoggedUser();
     }
     return !!token && getLoggedUser() !== null;
 }

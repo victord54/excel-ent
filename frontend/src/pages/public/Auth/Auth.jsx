@@ -54,20 +54,19 @@ export default function Auth() {
         });
     }
 
-    function handleSubmitLogin(e) {
+    async function handleSubmitLogin(e) {
         e.preventDefault();
         console.log('Login:');
         console.log(formValuesLogin);
-
-        login(formValuesLogin).then((data) => {
-            if (data.error) {
-                //TODO : Gestion du message d'erreur
-            } else {
-                loginContext(data.token, data.user);
-                setInputesValuesSignUp(formValuesLogin);
-                navigate('/sheet');
-            }
-        });
+        const res = await login(formValuesLogin);
+        const payload = await res.json();
+        if (payload.status != 'success') {
+            //TODO : Gestion du message d'erreur
+        } else {
+            loginContext(payload.data.token);
+            setInputesValuesSignUp(formValuesLogin);
+            navigate('/sheet');
+        }
     }
 
     function changement() {

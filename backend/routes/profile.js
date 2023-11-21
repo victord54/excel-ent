@@ -1,6 +1,9 @@
 import { Router } from 'express';
-import { editPassword, editProfile } from '../controllers/profile.js';
+import { editPassword, editProfile, fetchData } from '../controllers/profile.js';
 const router = Router();
+
+
+router.get('/', fetchData);
 
 /**
  * Edit Profile route
