@@ -5,15 +5,24 @@ import authRoutes from './routes/auth.js';
 import sheetRoutes from './routes/sheet.js';
 import profileRoutes from './routes/profile.js';
 import { accessLogFile, errorLogFile } from './utils/logfile.js';
-import { checkToken } from './utils/jwt-check.js'; //checkToken from './utils/jwt-check.js';
+import { checkToken } from './utils/jwt-check.js';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
 
 const app = express();
+const server = createServer(app);
+const io = new Server(server, {
+    cors: {
+        origin: '*',
+    },
+});
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
+    req.io = io;
     accessLogFile(req);
     next();
 });
@@ -49,7 +58,7 @@ async function startServer() {
         console.log(
             'Connection to database has been established successfully.',
         );
-        app.listen(process.env.SRV_PORT, () => {
+        server.listen(process.env.SRV_PORT, () => {
             console.log(`Server is listening on port ${process.env.SRV_PORT}`);
         });
     } catch (error) {

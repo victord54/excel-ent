@@ -1,6 +1,7 @@
 CREATE DATABASE IF NOT EXISTS `excelent`;
 USE `excelent`;
 
+DROP TABLE IF EXISTS `sht_link_sht_col`;
 DROP TABLE IF EXISTS `usr_sht_link_sheet_user`;
 DROP TABLE IF EXISTS `sht_sheet`;
 DROP TABLE IF EXISTS `usr_user`;
@@ -30,7 +31,7 @@ CREATE TABLE
         `sht_uuid`          VARCHAR(255)    NOT NULL                            COMMENT 'Sheet uuid',
         `sht_created_at`    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP  COMMENT 'Date of sheet creation',
         `sht_updated_at`    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP  COMMENT 'Date of sheet update',
-        PRIMARY KEY (`sht_idsht`),
+        PRIMARY KEY (`sht_idtsht`),
         CONSTRAINT `sht_idtusr_fk` FOREIGN KEY (`sht_idtusr`) REFERENCES `usr_user` (`usr_idtusr`),
         CONSTRAINT `sht_uuid_u` UNIQUE (`sht_uuid`),
         KEY `sht_idtusr_fk_i` (`sht_idtusr`),
@@ -39,14 +40,27 @@ CREATE TABLE
 
 -- user sheet shared
 CREATE TABLE
-    `usr_sht_link_sheet_user` (
-        `usl_idtsht`        BIGINT          NOT NULL                            COMMENT 'Sheet FK',
-        `usl_idtusr`        BIGINT          NOT NULL                            COMMENT 'User FK',
-        `usl_created_at`    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP  COMMENT 'Date of link creation',
-        `usl_updated_at`    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP  COMMENT 'Date of link update',
-        PRIMARY KEY (`usl_idsht`, `usl_idtusr`),
-        CONSTRAINT `usl_idsht_fk` FOREIGN KEY (`usl_idsht`) REFERENCES `sht_sheet` (`sht_idsht`),
-        CONSTRAINT `usl_idtusr_fk` FOREIGN KEY (`usl_idtusr`) REFERENCES `usr_user` (`usr_idtusr`),
-        KEY `usl_idsht_fk_i` (`usl_idsht`),
-        KEY `usl_idtusr_fk_i` (`usl_idtusr`)
+    `sht_link_sht_usr` (
+        `lsu_idtsht`        BIGINT          NOT NULL                            COMMENT 'Sheet FK',
+        `lsu_idtusr`        BIGINT          NOT NULL                            COMMENT 'User FK',
+        `lsu_created_at`    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP  COMMENT 'Date of link creation',
+        `lsu_updated_at`    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP  COMMENT 'Date of link update',
+        PRIMARY KEY (`lsu_idtsht`, `lsu_idtusr`),
+        CONSTRAINT `lsu_idtsht_fk` FOREIGN KEY (`lsu_idtsht`) REFERENCES `sht_sheet` (`sht_idtsht`),
+        CONSTRAINT `lsu_idtusr_fk` FOREIGN KEY (`lsu_idtusr`) REFERENCES `usr_user` (`usr_idtusr`),
+        KEY `lsu_idtsht_fk_i` (`lsu_idtsht`),
+        KEY `lsu_idtusr_fk_i` (`lsu_idtusr`)
     ) ENGINE = InnoDB DEFAULT CHARSET = UTF8MB4 COMMENT = 'User sheet shared table';
+
+CREATE TABLE
+    `sht_link_sht_col` (
+        `lsc_idtsht`        BIGINT          NOT NULL                            COMMENT 'PK Sheet FK',
+        `lsc_idtcol`        VARCHAR(10)     NOT NULL                            COMMENT 'PK Column',
+        `lsc_val`           VARCHAR(255)    NOT NULL                            COMMENT 'Column value',
+        `lsc_stl`           VARCHAR(255)    NOT NULL                            COMMENT 'Column style',
+        `lsc_created_at`    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP  COMMENT 'Date of column creation',
+        `lsc_updated_at`    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP  COMMENT 'Date of column update',
+        PRIMARY KEY (`lsc_idtsht`, `lsc_idtcol`),
+        CONSTRAINT `lsc_idtsht_fk` FOREIGN KEY (`lsc_idtsht`) REFERENCES `sht_sheet` (`sht_idtsht`),
+        KEY `lsc_idtsht_fk_i` (`lsc_idtsht`)
+    )
