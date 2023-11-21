@@ -36,6 +36,11 @@ const checkToken = (req, res, next) => {
     });
 };
 
+/**
+ * Get the user id from the token
+ * @param {*} authorization
+ * @returns {string} user id
+ */
 const getIdtUsr = (authorization) => {
     const token = extractBearer(authorization);
     const decoded = jwt.decode(token);
