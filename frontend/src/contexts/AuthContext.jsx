@@ -23,11 +23,17 @@ export const AuthContextProvider = ({ defaultValue, children }) => {
 
     const logoutContext = useCallback(() => {
         removeToken();
-        removeLoggedUser();
         setData((prevData) => ({
             ...prevData,
             logged: false,
             user: null,
+        }));
+    }, []);
+
+    const setUser = useCallback((user) => {
+        setData((prevData) => ({
+            ...prevData,
+            user: user,
         }));
     }, []);
 
@@ -36,6 +42,7 @@ export const AuthContextProvider = ({ defaultValue, children }) => {
             ...prevData,
             user: getLoggedUser(),
             logged: isLogged(),
+            setUser: setUser,
             loginContext: loginContext,
             logoutContext: logoutContext,
         }));

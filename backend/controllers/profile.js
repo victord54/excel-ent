@@ -36,7 +36,7 @@ export async function editProfile(req, res, next) {
 
         const { usr_idtusr } = pkg.decode(token);
 
-        //vérification de l'éxistence de l'utilisateur
+        //vérification de l'existence de l'utilisateur
         const user = (await get({ usr_idtusr }))[0];
         if (!user) throw new UserNotFoundError('User not found');
 

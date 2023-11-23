@@ -45,8 +45,8 @@ export async function login({ mail, password }) {
     );
 }
 
-export async function fetchUser({ id }) {
-    return executeRequest(`/profile/${id}`, {
+export async function fetchUser() {
+    return executeRequest(`/profile`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -54,8 +54,8 @@ export async function fetchUser({ id }) {
     });
 }
 
-export function editProfile({ pseudo, mail }) {
-    return executeRequest('/profile/editProfile', {
+export async function editProfile({ pseudo, mail }) {
+    return await executeRequest('/profile/editProfile', {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
