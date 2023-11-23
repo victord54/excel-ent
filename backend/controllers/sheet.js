@@ -3,11 +3,14 @@ import {
     getAll as _getAll,
     getOne as _getOne,
     getAllForUser as _getAllForUser,
+    getCell as _getCell,
 } from '../models/sht_sheet_dql.js';
 import {
     create as _create,
     updateName as _updateName,
     remove as _remove,
+    createData as _createData,
+    updateData as _updateData,
 } from '../models/sht_sheet_dml.js';
 import { MissingParameterError, SheetNotFoundError } from '../utils/error.js';
 import { getIdtUsr as _getIdtUsr } from '../utils/jwt-check.js';
@@ -133,9 +136,47 @@ export async function updateName(req, res, next) {
 }
 
 export async function updateData(req, res, next) {
-    console.log(req.params.id);
-    console.log(req.body);
-    res.status(200).json('updateData');
+    const cel_idtsht = req.params.id;
+    const { cel_idtcel, cel_val, cel_stl } = req.body;
+    try {
+        // validation des données reçues
+        let missing = '';
+        if (cel_idtcel === undefined) {
+            missing += 'cel_idtcel ';
+        }
+        if (cel_val === undefined) {
+            missing += 'cel_val ';
+        }
+        if (cel_stl === undefined) {
+            missing += 'cel_stl ';
+        }
+        if (missing !== '') {
+            throw new MissingParameterError('Missing parameters: ' + missing);
+        }
+
+        // vérification existence de la cellule
+        const existsCell = await _getCell({ cel_idtsht, cel_idtcel });
+        let cell;
+        if (existsCell.length === 0) {
+            // On la crée
+            cell = await _createData({ cel_idtcel, cel_idtsht, cel_val, cel_stl });
+        }
+        else {
+            // On la met à jour
+            cell = await _updateData({ cel_idtcel, cel_idtsht, cel_val, cel_stl });
+        }
+        await commitTransaction();
+        return res.status(200).json({
+            status: 'success',
+            data: {
+                operation: existsCell.length === 0 ? 'create' : 'update',
+                cel_idtcel,
+                cel_idtsht,
+            },
+        });
+    } catch (error) {
+        next(error);
+    }
 }
 
 export async function getAllForUser(req, res, next) {
