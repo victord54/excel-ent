@@ -20,12 +20,12 @@ const { sign } = pkg;
 export async function login(req, res, next) {
     const { usr_mail, usr_pwd } = req.query;
 
-    // validation des données reçues
-    if (!usr_mail || !usr_pwd) {
-        throw new MissingParameterError('Missing parameters');
-    }
-
     try {
+        // validation des données reçues
+        if (!usr_mail || !usr_pwd) {
+            throw new MissingParameterError('Missing parameters');
+        }
+
         // vérification de l'existence de l'utilisateur
         const user = (await get({ usr_mail: usr_mail }))[0];
         if (user === undefined) {

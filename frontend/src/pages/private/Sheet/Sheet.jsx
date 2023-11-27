@@ -5,7 +5,9 @@ import { evaluateur } from '../../../services/evaluateur';
 import { getLoggedUser } from '../../../services/user-service';
 
 import { saveSheet as _saveSheet } from '../../../services/api-service';
-import {getSheetById} from '../../../services/api-service';
+import { getSheetById } from '../../../services/api-service';
+
+import { io } from 'socket.io-client';
 
 // TODO : Save automatique
 // TODO : Modification en même temps
@@ -16,6 +18,17 @@ export default function Sheet() {
     useEffect(() => {
         getSheet();
         document.title = 'Feuille de calcul';
+        const socket = io('http://localhost:4242');
+
+        // socket.on('connect', () => {
+        //     console.log('connected');
+        //     socket.emit('join-room', idSheet);
+        // });
+
+        socket.on(`sheet-update/${idSheet}`, (data) => {
+            console.log('sheet-update');
+            console.log(data);
+        });
     }, []);
 
     const numberOfRows = 100;
@@ -37,8 +50,8 @@ export default function Sheet() {
     const nameColums = generateNameColumns();
 
     /**
-     * 
-     * @returns 
+     *
+     * @returns
      */
     function generateNameColumns() {
         const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -55,7 +68,7 @@ export default function Sheet() {
     }
 
     /**
-     * 
+     *
      */
     async function saveSheet() {
         console.log('save');
@@ -76,6 +89,7 @@ export default function Sheet() {
         }
     }
 
+
     async function getSheet() {
         const response = await getSheetById(idSheet);
         const _body = await response.json();
@@ -83,20 +97,21 @@ export default function Sheet() {
             setNameSheet(_body.sht_name);
             setCells(_body.sht_data);
             setIdt_sht(_body.sht_idtsht);
-            for (const key in _body.sht_data){
+            for (const key in _body.sht_data) {
                 const divChild = getDivChild(key);
                 if (divChild) divChild.innerText = _body.sht_data[key];
             }
             setSheetExist(true);
         } else {
+            //TODO: c'est censé renvoyer une erreur 404 dans le corps de la réponse
             window.location.href = '/404';
         }
     }
 
     /**
-     * 
-     * @param {*} event 
-     * @param {*} cellKey 
+     *
+     * @param {*} event
+     * @param {*} cellKey
      */
     function handleKeyDown(event, cellKey) {
         if (event.key === 'Enter') {
@@ -116,7 +131,7 @@ export default function Sheet() {
     /**
      * Handle the change of the input the user is typing in
      * @param {*} event the event of the input
-     * @param {string} cellKey id of the cell 
+     * @param {string} cellKey id of the cell
      */
     function handleInputChange(event, cellKey) {
         if (event.target.innerText === '/n') return;
@@ -156,11 +171,10 @@ export default function Sheet() {
         if (event.target.value === '') document.title = 'Sans Nom';
     }
 
-
     /**
-     * 
-     * @param {*} event 
-     * @param {*} keyCell 
+     *
+     * @param {*} event
+     * @param {*} keyCell
      */
     function handleDragStart(event, keyCell) {
         if (event.target.innerText === '') return;
@@ -173,9 +187,9 @@ export default function Sheet() {
     }
 
     /**
-     * 
-     * @param {*} event 
-     * @param {*} keyCell 
+     *
+     * @param {*} event
+     * @param {*} keyCell
      */
     function handleDrop(event, keyCell) {
         console.log('drop');
@@ -189,19 +203,19 @@ export default function Sheet() {
         const divChild = getDivChild(draggedCell);
         if (divChild) divChild.innerText = '';
         setDraggedCell(null);
-        
+
         const divChildTarget = getDivChild(keyCell);
         if (divChildTarget) {
-            if (divChildTarget === ''){
-                 divChildTarget.innerText =
+            if (divChildTarget === '') {
+                divChildTarget.innerText =
                     event.dataTransfer.getData('text/plain');
-                }
             }
+        }
     }
 
     /**
-     * 
-     * @param {*} event 
+     *
+     * @param {*} event
      */
     function handleSelectAll(event, nameCol, nameRow) {
         const range = document.createRange();
@@ -214,14 +228,14 @@ export default function Sheet() {
         setSelectRow(nameRow);
     }
 
-    function handleSelectAllInput(event){
+    function handleSelectAllInput(event) {
         event.target.select();
     }
 
     /**
-     * 
-     * @param {*} cellKey 
-     * @returns 
+     *
+     * @param {*} cellKey
+     * @returns
      */
     function getDivChild(cellKey) {
         const td = document.getElementById(cellKey);
@@ -255,14 +269,32 @@ export default function Sheet() {
                             <tr>
                                 <th></th>
                                 {nameColums.map((nameCol, i) => (
-                                    <th key={nameCol} className={nameCol === colSelect ? 'sht-select-col-row' : ''} >{nameCol}</th>
+                                    <th
+                                        key={nameCol}
+                                        className={
+                                            nameCol === colSelect
+                                                ? 'sht-select-col-row'
+                                                : ''
+                                        }
+                                    >
+                                        {nameCol}
+                                    </th>
                                 ))}
                             </tr>
                         </thead>
                         <tbody>
                             {nameRows.map((nameRow, i) => (
                                 <tr key={nameRow}>
-                                    <th key={nameRow} className={nameRow === rowSelect ? 'sht-select-col-row' : ''}>{nameRow}</th>
+                                    <th
+                                        key={nameRow}
+                                        className={
+                                            nameRow === rowSelect
+                                                ? 'sht-select-col-row'
+                                                : ''
+                                        }
+                                    >
+                                        {nameRow}
+                                    </th>
                                     {nameColums.map((nameCol) => (
                                         <td
                                             id={nameCol + '_' + nameRow}
