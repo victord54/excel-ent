@@ -14,7 +14,7 @@ export async function getAll() {
  * @returns {Promise<RowDataPacket>} Sheet
  */
 export async function getOne({ sht_uuid }) {
-    console.log("getOne OEOEOE" + sht_uuid);
+    console.log('getOne OEOEOE' + sht_uuid);
     // TODO: Vérifier injection SQL /!\
     if (sht_uuid) {
         return executeQuery('SELECT * FROM sht_sheet WHERE sht_uuid = ?', [

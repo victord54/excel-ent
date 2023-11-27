@@ -19,7 +19,7 @@ export class UserError extends CustomError {
     }
 }
 
-export class InvalidTokenError extends CustomError{
+export class InvalidTokenError extends CustomError {
     constructor(message) {
         super(message, 401);
     }

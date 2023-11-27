@@ -18,7 +18,8 @@ export function accessLogFile(req) {
         .padStart(2, '0')}:${event.getSeconds().toString().padStart(2, '0')}`;
     // Log dans la console
     console.log(
-        `${datheu} - ${req.headers['x-forwarded-for']} - ${req.method}: ${req.originalUrl}`);
+        `${datheu} - ${req.headers['x-forwarded-for']} - ${req.method}: ${req.originalUrl}`,
+    );
     // Si le dossier log n'existe pas, on le crée
     if (!existsSync('logs')) {
         mkdirSync('logs');

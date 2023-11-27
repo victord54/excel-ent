@@ -38,10 +38,10 @@ export async function getAll(req, res, next) {
  */
 export async function getOne(req, res, next) {
     const { sht_uuid } = req.query;
-    console.log("getOne back " + sht_uuid);
+    console.log('getOne back ' + sht_uuid);
 
     try {
-        const sheet = await getOneSheet({sht_uuid});
+        const sheet = await getOneSheet({ sht_uuid });
         if (sheet.length === 0) {
             throw new SheetNotFoundError('Sheet not found');
         }
@@ -134,11 +134,11 @@ export async function update(req, res, next) {
 }
 
 export async function getAllFromUser(req, res, next) {
-    console.log("getAllFromUser back");
+    console.log('getAllFromUser back');
     try {
         const token = req.headers.authorization;
         const sht_idtusr = _getIdtUsr(token);
-        const sheets = await getAllSheetsUser({sht_idtusr});
+        const sheets = await getAllSheetsUser({ sht_idtusr });
         // if (sheets.length === 0) {
         //     throw new SheetNotFoundError('Sheets not found');
         // }
