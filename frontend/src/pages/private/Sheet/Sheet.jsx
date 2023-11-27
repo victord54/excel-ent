@@ -199,22 +199,19 @@ export default function Sheet() {
             }
     }
 
-    function handleMouseDown(nameCol, nameRow){
-        console.log("mouseDown");
-        setSelectCol(nameCol);
-        setSelectRow(nameRow);
-    }
-
     /**
      * 
      * @param {*} event 
      */
-    function handleSelectAll(event) {
+    function handleSelectAll(event, nameCol, nameRow) {
         const range = document.createRange();
         range.selectNodeContents(event.target);
         const selection = window.getSelection();
         selection.removeAllRanges();
         selection.addRange(range);
+
+        setSelectCol(nameCol);
+        setSelectRow(nameRow);
     }
 
     function handleSelectAllInput(event){
@@ -235,6 +232,10 @@ export default function Sheet() {
             }
         }
         return '';
+    }
+    function handleBlur(){
+        setSelectCol(null);
+        setSelectRow(null);
     }
    
     if (!sheetExist) return (<></>);
@@ -307,12 +308,11 @@ export default function Sheet() {
                                                     )
                                                 }
                                                 onFocus={(event) =>
-                                                    handleSelectAll(event)
+                                                    handleSelectAll(event, nameCol, nameRow)
                                                 }
-                                                onMouseDown={(event) =>
-                                                    handleMouseDown( nameCol, nameRow)
-                                                }
+                    
                                                 onDoubleClick={handleSelectAll}
+                                                onBlur={handleBlur}
                                             ></div>
                                         </td>
                                     ))}
