@@ -9,18 +9,36 @@ export default function Auth() {
     const { loginContext } = useContext(AuthContext);
 
     const initialValueSignUp = {
-        pseudo: '',
-        mail: '',
-        password: '',
+        pseudo: {
+            value: '',
+            error: false,
+            errorMessage: ''
+        },
+        mail: {
+            value: '',
+            error: false,
+            errorMessage: ''
+        },
+        password: {
+            value: '',
+            error: false,
+            errorMessage: ''
+        }
     };
     const initialValueLogin = {
-        mail: '',
-        password: '',
+        mail: {
+            value: '',
+            error: false,
+            errorMessage: ''
+        },
+        password: {
+            value: '',
+            error: false,
+            errorMessage: ''
+        }
     };
-    const [formValuesSignUp, setInputesValuesSignUp] =
-        useState(initialValueSignUp);
-    const [formValuesLogin, setInputesValuesLogin] =
-        useState(initialValueLogin);
+    const [formValuesSignUp, setInputesValuesSignUp] = useState(initialValueSignUp);
+    const [formValuesLogin, setInputesValuesLogin] = useState(initialValueLogin);
     const [onSignUp, setOnSignUp] = useState(true);
 
     const navigate = useNavigate();
@@ -28,14 +46,50 @@ export default function Auth() {
     function handleChangeSignUp(e) {
         setInputesValuesSignUp({
             ...formValuesSignUp,
-            [e.target.name]: e.target.value,
+            pseudo: {
+                ...formValuesSignUp.pseudo,
+                error: false,
+                errorMessage: ''
+            },
+            mail: {
+                ...formValuesSignUp.mail,
+                error: false,
+                errorMessage: ''
+            },
+            password: {
+                ...formValuesSignUp.password,
+                error: false,
+                errorMessage: ''
+            },
+            [e.target.name]: {
+                ...formValuesSignUp[e.target.name],
+                value: e.target.value,
+                error: false,
+                errorMessage: '',
+            }
         });
     }
 
     function handleChangeLogin(e) {
         setInputesValuesLogin({
             ...formValuesLogin,
-            [e.target.name]: e.target.value,
+            mail: {
+                ...formValuesLogin.mail,
+                error: false,
+                errorMessage: ''
+            },
+            password: {
+                ...formValuesLogin.password,
+                error: false,
+                errorMessage: ''
+            },
+
+            [e.target.name]: {
+                ...formValuesLogin[e.target.name],
+                value: e.target.value,
+                error: false,
+                errorMessage: false
+            },
         });
     }
 
@@ -44,9 +98,50 @@ export default function Auth() {
         console.log('SignUp:');
         console.log(formValuesSignUp);
 
-        signup(formValuesSignUp).then((data) => {
+        signup({
+            pseudo: formValuesSignUp.pseudo.value,
+            mail: formValuesSignUp.mail.value,
+            password: formValuesSignUp.password.value
+        }).then((data) => {
             if (data.error) {
-                //TODO : Gestion du message d'erreur
+                switch(data.error.name){
+                    case "UserAlreadyExistsError":{
+                        setInputesValuesSignUp((prevValue) => {
+                            return {...prevValue,
+                                pseudo: {
+                                    ...prevValue.pseudo,
+                                    error: true,
+                                },
+                                mail: {
+                                    ...prevValue.mail,
+                                    error: true,
+                                    errorMessage: "Ce pseudo ou cette adresse mail sont déjà utilisés"
+                                }
+                            }
+                        });
+                        break;
+                    }
+                    case "MissingParameterError":{
+                        setInputesValuesSignUp((prevValue) => {
+                            return {...prevValue,
+                                pseudo: {
+                                    ...prevValue.pseudo,
+                                    error: true,
+                                },
+                                mail: {
+                                    ...prevValue.mail,
+                                    error: true,
+                                },
+                                password: {
+                                    ...prevValue.password,
+                                    error: true,
+                                    errorMessage: "Veuillez remplir tous les champs"
+                                }
+                            }
+                        });
+                        break;
+                    }
+                }
             } else {
                 setInputesValuesSignUp(initialValueSignUp);
                 changement();
@@ -58,10 +153,48 @@ export default function Auth() {
         e.preventDefault();
         console.log('Login:');
         console.log(formValuesLogin);
-        const res = await login(formValuesLogin);
+        const res = await login({
+            mail: formValuesLogin.mail.value,
+            password: formValuesLogin.password.value
+        });
         const payload = await res.json();
         if (payload.status != 'success') {
-            //TODO : Gestion du message d'erreur
+            console.log(data.error.name)
+                switch(data.error.name){
+                    case "MissingParameterError":{
+                        setInputesValuesLogin((prevValue) => {
+                            return {...prevValue,
+                                mail: {
+                                    ...prevValue.mail,
+                                    error: true,
+                                },
+                                password: {
+                                    ...prevValue.password,
+                                    error: true,
+                                    errorMessage: "Veuillez remplir tous les champs"
+                                }
+                            }
+                        });
+                        break;
+                    };
+                    case "UserNotFoundError":
+                    case "InvalidIdentifiersError":{
+                        setInputesValuesLogin((prevValue) => {
+                            return {...prevValue,
+                                mail: {
+                                    ...prevValue.mail,
+                                    error: true,
+                                },
+                                password: {
+                                    ...prevValue.password,
+                                    error: true,
+                                    errorMessage: "Identifiant(s) incorrect(s)"
+                                }
+                            }
+                        });
+                        break;
+                    };
+                }
         } else {
             loginContext(payload.data.token);
             setInputesValuesSignUp(formValuesLogin);
@@ -91,39 +224,45 @@ export default function Auth() {
                                     <input
                                         type="text"
                                         name="pseudo"
-                                        value={formValuesSignUp.pseudo}
+                                        value={formValuesSignUp.pseudo.value}
                                         onChange={handleChangeSignUp}
                                         required
+                                        className={formValuesSignUp.pseudo.error ? 'error-bg' : ''}
                                     />
                                     <div className="auth-underline"></div>
                                     <label>Pseudo</label>
                                 </div>
+                                <div className='error-message'>{formValuesSignUp.pseudo.errorMessage}</div>
                             </div>
                             <div className="auth-form-row">
                                 <div className="auth-input-data auth-mail">
                                     <input
                                         type="mail"
                                         name="mail"
-                                        value={formValuesSignUp.mail}
+                                        value={formValuesSignUp.mail.value}
                                         onChange={handleChangeSignUp}
                                         required
+                                        className={formValuesSignUp.mail.error ? 'error-bg' : ''}
                                     />
                                     <div className="auth-underline"></div>
                                     <label>Mail</label>
                                 </div>
+                                <div className='error-message'>{formValuesSignUp.mail.errorMessage}</div>
                             </div>
                             <div className="auth-form-row">
                                 <div className="auth-input-data">
                                     <input
                                         type="password"
                                         name="password"
-                                        value={formValuesSignUp.password}
+                                        value={formValuesSignUp.password.value}
                                         onChange={handleChangeSignUp}
                                         required
+                                        className={formValuesSignUp.password.error ? 'error-bg' : ''}
                                     />
                                     <div className="auth-underline"></div>
                                     <label>Mot de passe</label>
                                 </div>
+                                <div className='error-message'>{formValuesSignUp.password.errorMessage}</div>
                             </div>
                             <br></br>
                             <div className="auth-center-button">
@@ -148,26 +287,30 @@ export default function Auth() {
                                     <input
                                         type="mail"
                                         name="mail"
-                                        value={formValuesLogin.mail}
+                                        value={formValuesLogin.mail.value}
                                         onChange={handleChangeLogin}
                                         required
+                                        className={formValuesLogin.mail.error ? 'error-bg' : ''}
                                     />
                                     <div className="auth-underline"></div>
                                     <label>Mail</label>
                                 </div>
+                                <div className='error-message'>{formValuesLogin.mail.errorMessage}</div>
                             </div>
                             <div className="auth-form-row">
                                 <div className="auth-input-data">
                                     <input
                                         type="password"
                                         name="password"
-                                        value={formValuesLogin.password}
+                                        value={formValuesLogin.password.value}
                                         onChange={handleChangeLogin}
                                         required
+                                        className={formValuesLogin.password.error ? 'error-bg' : ''}
                                     />
                                     <div className="auth-underline"></div>
                                     <label>Mot de passe</label>
                                 </div>
+                                <div className='error-message'>{formValuesLogin.password.errorMessage}</div>
                             </div>
                             <br></br>
                             <div className="auth-center-button">

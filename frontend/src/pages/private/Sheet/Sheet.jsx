@@ -41,8 +41,6 @@ export default function Sheet() {
     const [cells, setCells] = useState([]);
     const [nameSheet, setNameSheet] = useState('Sans Nom');
     const [draggedCell, setDraggedCell] = useState(null);
-    const [editable, setEditable] = useState(true);
-    const [isDragging, setIsDragging] = useState(false);
     const [idt_sht, setIdt_sht] = useState(null);
     const [sheetExist, setSheetExist] = useState(false);
     const [colSelect, setSelectCol] = useState(null);
@@ -197,11 +195,7 @@ export default function Sheet() {
      */
     function handleDragStart(event, keyCell) {
         if (event.target.innerText === '') return;
-        console.log('dragStart');
         event.dataTransfer.setData('text/plain', cells[keyCell]);
-        setEditable(false);
-        setIsDragging(true);
-        setCells({ ...cells, [keyCell]: '' });
         setDraggedCell(keyCell);
     }
 
@@ -211,9 +205,6 @@ export default function Sheet() {
      * @param {*} keyCell
      */
     function handleDrop(event, keyCell) {
-        console.log('drop');
-        setIsDragging(false);
-        setEditable(true);
         setCells({
             ...cells,
             [keyCell]: event.dataTransfer.getData('text/plain'),
@@ -221,33 +212,26 @@ export default function Sheet() {
 
         const divChild = getDivChild(draggedCell);
         if (divChild) divChild.innerText = '';
+        setCells({ ...cells, [draggedCell]: '' });
         setDraggedCell(null);
 
         const divChildTarget = getDivChild(keyCell);
-        if (divChildTarget) {
-            if (divChildTarget === '') {
-                divChildTarget.innerText =
-                    event.dataTransfer.getData('text/plain');
-            }
-        }
-    }
-
-    function handleMouseDown(nameCol, nameRow) {
-        console.log('mouseDown');
-        setSelectCol(nameCol);
-        setSelectRow(nameRow);
+        divChildTarget.innerText = '';
     }
 
     /**
      *
      * @param {*} event
      */
-    function handleSelectAll(event) {
+    function handleSelectAll(event, nameCol, nameRow) {
         const range = document.createRange();
         range.selectNodeContents(event.target);
         const selection = window.getSelection();
         selection.removeAllRanges();
         selection.addRange(range);
+
+        setSelectCol(nameCol);
+        setSelectRow(nameRow);
     }
 
     function handleSelectAllInput(event) {
@@ -269,8 +253,12 @@ export default function Sheet() {
         }
         return '';
     }
-
-    if (!sheetExist) return <></>;
+    function handleBlur(){
+        setSelectCol(null);
+        setSelectRow(null);
+    }
+   
+    if (!sheetExist) return (<></>);
     return (
         <>
             <input
@@ -318,15 +306,11 @@ export default function Sheet() {
                                             id={nameCol + '_' + nameRow}
                                             key={nameCol + '_' + nameRow}
                                             draggable
-                                            onDrag={() => console.log('yes')}
                                             onDragStart={(event) =>
                                                 handleDragStart(
                                                     event,
                                                     nameCol + '_' + nameRow,
                                                 )
-                                            }
-                                            onDragOver={(event) =>
-                                                event.preventDefault()
                                             }
                                             onDrop={(event) =>
                                                 handleDrop(
@@ -336,9 +320,7 @@ export default function Sheet() {
                                             }
                                         >
                                             <div
-                                                contentEditable={
-                                                    !isDragging && editable
-                                                }
+                                                contentEditable
                                                 onInput={(event) =>
                                                     handleInputChange(
                                                         event,
@@ -358,14 +340,9 @@ export default function Sheet() {
                                                     )
                                                 }
                                                 onFocus={(event) =>
-                                                    handleSelectAll(event)
+                                                    handleSelectAll(event, nameCol, nameRow)
                                                 }
-                                                onMouseDown={(event) =>
-                                                    handleMouseDown(
-                                                        nameCol,
-                                                        nameRow,
-                                                    )
-                                                }
+                    
                                                 onDoubleClick={handleSelectAll}
                                                 onBlur={(event) =>
                                                     updateSheetData(

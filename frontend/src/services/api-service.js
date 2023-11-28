@@ -7,7 +7,15 @@ async function executeRequest(url, options, needAuthentified = true) {
             ...options.headers,
             Authorization: needAuthentified ? getBearerString() : '',
         },
-    });
+    }).then((response) => {
+        if (response.ok) {
+            return response;
+        }else if(response.status === 401 && needAuthentified) {
+            throw new Error('Unauthorized');
+        }
+        return response;
+    })
+    .then((response) => response.json())
 }
 
 export function signup({ pseudo, mail, password }) {
