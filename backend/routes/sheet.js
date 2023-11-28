@@ -1,30 +1,45 @@
 import { Router } from 'express';
 import {
-    getAllFromUser,
-    getOne,
     create,
-    update,
+    getAllForUser,
+    getOne,
+    updateName,
+    updateData,
+    remove,
+    getCells,
 } from '../controllers/sheet.js';
 const router = Router();
 
 /**
- * get all sheets route
+ * Route to get all sheets from a user
  */
-router.get('/', getAllFromUser);
+router.get('/', getAllForUser);
 
 /**
- * get one sheet route
+ * Route to get one sheet
  */
-router.get('/getOne', getOne);
+router.get('/:id', getOne);
+
+router.get('/data/:id', getCells);
 
 /**
- * create sheet route
+ * Route to create sheet
  */
 router.post('/', create);
 
 /**
- * update sheet route
+ * Route to update name's sheet
  */
-router.put('/:id', update);
+router.put('/name/:id', updateName);
+
+/**
+ * Route to update data's sheet
+ */
+router.put('/data/:id', updateData);
+
+/**
+ * Route to delete sheet
+ */
+router.delete('/:id', remove);
 
 export default router;

@@ -1,21 +1,13 @@
+import { decodeToken } from 'react-jwt';
+
 export function getLoggedUser() {
-    const userJSON = localStorage.getItem('loged_user');
-    if (userJSON) {
-        try{
-            const user = JSON.parse(userJSON);
-            return user;
-        }catch{
-            return null;
-        }
+    const token = localStorage.getItem('auth_token');
+    if (token != null) {
+        return decodeToken(token);
     }
     return null;
 }
 
-export function setLoggedUser(user) {
-    localStorage.setItem('loged_user', JSON.stringify(user));
-    return true;
-}
-
 export function removeLoggedUser() {
-    localStorage.removeItem('loged_user');
+    localStorage.removeItem('auth_token');
 }

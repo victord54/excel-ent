@@ -3,10 +3,10 @@
 ```json
 {
     // (si ok)
-    status: "ok",
+    status: "success",
     data: {/* ... */}
     // (si error)
-    status: "ko",
+    status: "error",
     error: {
         type: "MissingParameters",
         code: 400,
@@ -23,6 +23,6 @@
 
 # FIXME
 - [ ] Délai de chargement au login
-- [ ] Renommer champs createur sheet : sht_idtusr_aut
+- [x] Renommer champs créateur sheet : sht_idtusr_aut
 - [x] Cellules écrasées
-- [ ] Bug quand on vient de se login, profile et listing inatteignable (demande refresh pour que ça marche) -> pas une histoire de cache, car on voit l'url s'afficher 0.1s
+- [ ] Bug quand on vient de se login, profile et listing inatteignable (demande refresh pour que ça marche) ==> pas une histoire de cache, car on voit l'url s'afficher 0.1s

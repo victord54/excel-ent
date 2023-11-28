@@ -4,7 +4,7 @@ import { useContext } from 'react';
 import { AuthContext } from '../../../contexts/AuthContext';
 
 export default function TopBar() {
-    const { loged, logoutContext } = useContext(AuthContext);
+    const { logged, logoutContext } = useContext(AuthContext);
 
     return (
         <header>
@@ -13,7 +13,7 @@ export default function TopBar() {
                     Excel-ent
                 </Link>
                 <ul>
-                    {loged ? (
+                    {logged ? (
                         <>
                             <li>
                                 <Link to="/sheet">Mes feuilles</Link>
@@ -40,13 +40,13 @@ export default function TopBar() {
                         </li>
                     )}
                     {/* <li>
-                        {loged ? (
+                        {logged ? (
                             <Link to="/profile">Mon profil</Link>
                         ) : (
                             <Link to="/auth">Inscription/Connexion</Link>
                         )}
                     </li>
-                    {loged && (
+                    {logged && (
                         <li>
                             <a
                                 href={''}

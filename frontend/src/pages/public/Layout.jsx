@@ -8,7 +8,7 @@ export default function Layout() {
     return (
         <>
             <AuthContextProvider
-                defaultValue={{ loged: isLogged(), user: getLoggedUser() }}
+                defaultValue={{ logged: isLogged(), user: getLoggedUser() }}
             >
                 <TopBar />
                 <main id="page-content">

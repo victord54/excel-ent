@@ -1,76 +1,92 @@
 import { getBearerString } from './auth-service';
 
-
-const executeRequest = (url, options, needAuthentified = true) => {
-    return fetch((import.meta.env.VITE_API_URL+url), {
+async function executeRequest(url, options, needAuthentified = true) {
+    return await fetch(import.meta.env.VITE_API_URL + url, {
         ...options,
         headers: {
             ...options.headers,
             Authorization: needAuthentified ? getBearerString() : '',
         },
-    }).then((response) => {
-        if (response.ok) {
-            return response;
-        }else if(response.status === 401 && needAuthentified) {
-            throw new Error('Unauthorized');
-        }
-        return response;
     })
-    .then((response) => response.json())
+        .then((response) => {
+            if (response.ok) {
+                return response;
+            } else if (response.status === 401 && needAuthentified) {
+                throw new Error('Unauthorized');
+            }
+            return response;
+        })
+        .then((response) => response.json());
 }
 
 export function signup({ pseudo, mail, password }) {
-    return executeRequest('/auth/signup', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            usr_pseudo: pseudo,
-            usr_mail: mail,
-            usr_pwd: password,
-        }),
-    }, false);
-}
-
-export function login({ mail, password }) {
-    return executeRequest('/auth/login?usr_mail=' + mail + '&usr_pwd=' + password,
+    return executeRequest(
+        '/auth/signup',
         {
-            method: 'GET',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-        }, false);
+            body: JSON.stringify({
+                usr_pseudo: pseudo,
+                usr_mail: mail,
+                usr_pwd: password,
+            }),
+        },
+        false,
+    );
 }
 
-export function editProfile({ pseudo, mail }) {
+export async function login({ mail, password }) {
     return executeRequest(
-        '/profile/editProfile',
-    {
+        '/auth/login',
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                usr_mail: mail,
+                usr_pwd: password,
+            }),
+        },
+        false,
+    );
+}
+
+export async function fetchUser() {
+    return executeRequest(`/profile`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+}
+
+export async function editProfile({ pseudo, mail }) {
+    return await executeRequest('/profile/editProfile', {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
             usr_pseudo: pseudo,
-            usr_mail: mail
+            usr_mail: mail,
         }),
     });
 }
 
 export function editPassword({ old_password, new_password }) {
-    return executeRequest(
-        '/profile/editPassword',
-        {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                usr_old_password: old_password,
-                usr_new_password: new_password
-            }),
-        });
+    return executeRequest('/profile/editPassword', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            usr_old_password: old_password,
+            usr_new_password: new_password,
+        }),
+    });
 }
 
 export async function saveSheet({
@@ -118,33 +134,81 @@ export async function saveSheet({
     return res;
 }
 
-export async function getAllSheetFromUser(){
-    console.log("getAllSheetFromUser");
-    const res = await fetch( 
-        import.meta.env.VITE_API_URL + '/sheet',
+export async function getAllSheetFromUser() {
+    console.log('getAllSheetFromUser');
+    const res = await fetch(import.meta.env.VITE_API_URL + '/sheet', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: getBearerString(),
+        },
+    });
+
+    return res;
+}
+export async function getSheetById(sht_uuid) {
+    const res = await fetch(
+        import.meta.env.VITE_API_URL + '/sheet/' + sht_uuid,
         {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: getBearerString(),
             },
-        });
-        
+        },
+    );
+
     return res;
 }
-export async function getSheetById(sht_uuid){
-    console.log("getSheetById : " + sht_uuid);
-    const res = await fetch( 
-        import.meta.env.VITE_API_URL + '/sheet/getOne?sht_uuid=' + sht_uuid,
+
+export async function getSheetData(sht_idtsht) {
+    return await fetch(
+        import.meta.env.VITE_API_URL + '/sheet/data/' + sht_idtsht,
         {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: getBearerString(),
             },
-        });
-        
-    return res;
+        },
+    );
 }
 
+export async function renameSheet(sht_idtsht, sht_name) {
+    return await fetch(
+        import.meta.env.VITE_API_URL + '/sheet/name/' + sht_idtsht,
+        {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: getBearerString(),
+            },
+            body: JSON.stringify({
+                sht_name: sht_name,
+            }),
+        },
+    );
+}
 
+export async function updateSheetData(
+    cel_idtsht,
+    cel_idtcel,
+    cel_val,
+    cel_stl,
+) {
+    return await fetch(
+        import.meta.env.VITE_API_URL + '/sheet/data/' + cel_idtsht,
+        {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: getBearerString(),
+            },
+            body: JSON.stringify({
+                cel_idtcel: cel_idtcel,
+                cel_val: cel_val,
+                cel_stl: cel_stl,
+            }),
+        },
+    );
+}

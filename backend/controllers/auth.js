@@ -14,23 +14,26 @@ const { sign } = pkg;
 /**
  * User login
  * @param {Request} req data from the request
+ * @param {string} req.body.usr_mail user mail
+ * @param {string} req.body.usr_pwd user password
  * @param {Response} res data to send back
+ * @param {NextFunction} next next middleware (error middleware)
  * @returns {Promise<Response>} data to send back
  */
 export async function login(req, res, next) {
-    const { usr_mail, usr_pwd } = req.query;
+    const { usr_mail, usr_pwd } = req.body;
 
     try {
         // validation des données reçues
-        if (!usr_mail || !usr_pwd) {
-            throw new MissingParameterError('Missing parameters');
-        }
+        let missing = '';
+        if (usr_mail === undefined || usr_mail == '') missing += 'usr_mail ';
+        if (usr_pwd === undefined || usr_pwd == '') missing += 'usr_pwd ';
+        if (missing !== '')
+            throw new MissingParameterError(`Missing parameters: ${missing}`);
 
         // vérification de l'existence de l'utilisateur
         const user = (await get({ usr_mail: usr_mail }))[0];
-        if (user === undefined) {
-            throw new UserNotFoundError('User not found');
-        }
+        if (user === undefined) throw new UserNotFoundError('User not found');
 
         // vérification du mot de passe
         const valid = await compare(usr_pwd, user.usr_pwd);
@@ -42,6 +45,8 @@ export async function login(req, res, next) {
         const token = sign(
             {
                 usr_idtusr: user.usr_idtusr,
+                usr_pseudo: user.usr_pseudo,
+                usr_mail: user.usr_mail,
             },
             process.env.JWT_SECRET,
             { expiresIn: process.env.JWT_DURATION },
@@ -49,10 +54,9 @@ export async function login(req, res, next) {
 
         // envoi du token
         return res.status(200).json({
-            token,
-            user: {
-                usr_pseudo: user.usr_pseudo,
-                usr_mail: user.usr_mail,
+            status: 'success',
+            data: {
+                token: token,
             },
         });
     } catch (error) {
@@ -63,7 +67,11 @@ export async function login(req, res, next) {
 /**
  * User signup
  * @param {Request} req data from the request
+ * @param {string} req.body.usr_pseudo user pseudo
+ * @param {string} req.body.usr_mail user mail
+ * @param {string} req.body.usr_pwd user password
  * @param {Response} res data to send back
+ * @param {NextFunction} next next middleware (error middleware)
  * @returns {Promise<Response>} data to send back
  */
 export async function signup(req, res, next) {
@@ -71,9 +79,12 @@ export async function signup(req, res, next) {
 
     try {
         // validation des données reçues
-        if (!usr_pseudo || !usr_mail || !usr_pwd) {
-            throw new MissingParameterError('Missing parameters');
-        }
+        let missing = '';
+        if (usr_pseudo === undefined) missing += 'usr_pseudo ';
+        if (usr_mail === undefined) missing += 'usr_mail ';
+        if (usr_pwd === undefined) missing += 'usr_pwd ';
+        if (missing !== '')
+            throw new MissingParameterError(`Missing parameters: ${missing}`);
 
         // vérification de l'unicité des données reçues (mail et pseudo)
         const userMail = await get({ usr_mail: usr_mail });
@@ -97,7 +108,13 @@ export async function signup(req, res, next) {
         await commitTransaction();
 
         // envoi de la réponse
-        return res.status(201).json({ message: 'user created', user });
+        return res.status(201).json({
+            status: 'success',
+            data: {
+                usr_pseudo: usr_pseudo,
+                usr_mail: usr_mail,
+            },
+        });
     } catch (error) {
         await rollbackTransaction();
         next(error);

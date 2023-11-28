@@ -11,12 +11,16 @@ export async function getAll() {
 /**
  * Fetch one specific sheet
  * @param {Object} object data to fetch a sheet
+ * @param {number} object.sht_idtsht sheet id
  * @returns {Promise<RowDataPacket>} Sheet
  */
-export async function getOne({ sht_uuid }) {
-    console.log('getOne OEOEOE' + sht_uuid);
+export async function getOne({ sht_idtsht, sht_uuid }) {
     // TODO: Vérifier injection SQL /!\
-    if (sht_uuid) {
+    if (sht_idtsht !== undefined) {
+        return executeQuery('SELECT * FROM sht_sheet WHERE sht_idtsht = ?', [
+            sht_idtsht,
+        ]);
+    } else if (sht_uuid !== undefined) {
         return executeQuery('SELECT * FROM sht_sheet WHERE sht_uuid = ?', [
             sht_uuid,
         ]);
@@ -27,13 +31,30 @@ export async function getOne({ sht_uuid }) {
 /**
  * Fetch all sheets from a user
  * @param {Object} object data to fetch a sheet
+ * @param {string} object.sht_idtusr_aut sheet uuid
  * @returns {Promise<RowDataPacket>} Sheet
  */
-export async function getAllFromUser({ sht_idtusr }) {
+export async function getAllForUser({ sht_idtusr_aut }) {
     // TODO: Vérifier injection SQL /!\
-    if (sht_idtusr) {
-        return executeQuery('SELECT * FROM sht_sheet WHERE sht_idtusr = ?', [
-            sht_idtusr,
-        ]);
+    if (sht_idtusr_aut !== undefined) {
+        return executeQuery(
+            'SELECT * FROM sht_sheet WHERE sht_idtusr_aut = ?',
+            [sht_idtusr_aut],
+        );
     }
+    return null;
+}
+
+export async function getCells({ cel_idtsht }) {
+    return executeQuery(
+        'SELECT cel_idtcel, cel_val, cel_stl FROM sht_cell WHERE cel_idtsht = ?',
+        [cel_idtsht],
+    );
+}
+
+export async function getOneCell({ cel_idtcel, cel_idtsht }) {
+    return executeQuery(
+        'SELECT cel_idtcel, cel_val, cel_stl FROM sht_cell WHERE cel_idtcel = ? AND cel_idtsht = ?',
+        [cel_idtcel, cel_idtsht],
+    );
 }

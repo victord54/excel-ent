@@ -5,7 +5,7 @@ const router = Router();
 /**
  * Login route
  */
-router.get('/login', login);
+router.post('/login', login);
 
 /**
  * Signup route

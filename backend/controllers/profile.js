@@ -36,7 +36,7 @@ export async function editProfile(req, res, next) {
 
         const { usr_idtusr } = pkg.decode(token);
 
-        //vérification de l'éxistence de l'utilisateur
+        //vérification de l'existence de l'utilisateur
         const user = (await get({ usr_idtusr }))[0];
         if (!user) throw new UserNotFoundError('User not found');
 
@@ -140,6 +140,33 @@ export async function editPassword(req, res, next) {
         });
     } catch (error) {
         rollbackTransaction();
+        next(error);
+    }
+}
+
+export async function fetchData(req, res, next) {
+    try {
+        //récupération de l'id de l'utilisateur via la payload du token
+        const token =
+            req.headers.authorization &&
+            extractBearer(req.headers.authorization);
+        if (!token) return res.status(401).json({ message: 'Not authorized' });
+
+        const { usr_idtusr } = pkg.decode(token);
+
+        //vérification de l'existence de l'utilisateur
+        const user = (await get({ usr_idtusr }))[0];
+        if (!user) throw new UserNotFoundError('User not found');
+
+        // envoi de la réponse
+        return res.status(201).json({
+            message: 'user editer',
+            user: {
+                usr_pseudo: user.usr_pseudo,
+                usr_mail: user.usr_mail,
+            },
+        });
+    } catch (error) {
         next(error);
     }
 }
