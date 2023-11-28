@@ -7,15 +7,16 @@ async function executeRequest(url, options, needAuthentified = true) {
             ...options.headers,
             Authorization: needAuthentified ? getBearerString() : '',
         },
-    }).then((response) => {
-        if (response.ok) {
-            return response;
-        }else if(response.status === 401 && needAuthentified) {
-            throw new Error('Unauthorized');
-        }
-        return response;
     })
-    .then((response) => response.json())
+        .then((response) => {
+            if (response.ok) {
+                return response;
+            } else if (response.status === 401 && needAuthentified) {
+                throw new Error('Unauthorized');
+            }
+            return response;
+        })
+        .then((response) => response.json());
 }
 
 export function signup({ pseudo, mail, password }) {
@@ -147,7 +148,7 @@ export async function getAllSheetFromUser() {
 }
 export async function getSheetById(sht_uuid) {
     const res = await fetch(
-        import.meta.env.VITE_API_URL + '/sheet/'+ sht_uuid,
+        import.meta.env.VITE_API_URL + '/sheet/' + sht_uuid,
         {
             method: 'GET',
             headers: {
@@ -189,7 +190,12 @@ export async function renameSheet(sht_idtsht, sht_name) {
     );
 }
 
-export async function updateSheetData(cel_idtsht, cel_idtcel, cel_val, cel_stl) {
+export async function updateSheetData(
+    cel_idtsht,
+    cel_idtcel,
+    cel_val,
+    cel_stl,
+) {
     return await fetch(
         import.meta.env.VITE_API_URL + '/sheet/data/' + cel_idtsht,
         {

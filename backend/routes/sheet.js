@@ -1,5 +1,13 @@
 import { Router } from 'express';
-import { create, getAllForUser, getOne, updateName, updateData, remove, getCells } from '../controllers/sheet.js';
+import {
+    create,
+    getAllForUser,
+    getOne,
+    updateName,
+    updateData,
+    remove,
+    getCells,
+} from '../controllers/sheet.js';
 const router = Router();
 
 /**

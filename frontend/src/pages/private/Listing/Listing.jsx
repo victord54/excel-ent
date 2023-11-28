@@ -49,7 +49,7 @@ export default function Listing() {
 
     const handleRowClick = (feuille) => {
         console.log(feuille.sht_uuid);
-        navigate("/sheet/" + feuille.sht_uuid);
+        navigate('/sheet/' + feuille.sht_uuid);
     };
 
     const modifier = (e, feuille) => {
@@ -71,7 +71,7 @@ export default function Listing() {
         let newUuid = uuid();
         let response = await _saveSheet({
             sht_uuid: newUuid,
-            sht_name: "Sans Nom",
+            sht_name: 'Sans Nom',
             sht_data: JSON.stringify({}),
             sht_sharing: 0,
             sht_idtsht: null,
@@ -83,7 +83,7 @@ export default function Listing() {
             newUuid = uuid();
             response = await _saveSheet({
                 sht_uuid: newUuid,
-                sht_name: "Sans Nom",
+                sht_name: 'Sans Nom',
                 sht_data: JSON.stringify({}),
                 sht_sharing: 0,
                 sht_idtsht: null,
@@ -93,13 +93,21 @@ export default function Listing() {
         }
         if (response.status === 200) {
             console.log('ok');
-            setFeuilles([...feuilles, { sht_uuid: newUuid, sht_name: "Sans Nom", sht_created_at: new Date(), sht_updated_at: new Date() }]);        
+            setFeuilles([
+                ...feuilles,
+                {
+                    sht_uuid: newUuid,
+                    sht_name: 'Sans Nom',
+                    sht_created_at: new Date(),
+                    sht_updated_at: new Date(),
+                },
+            ]);
             window.open(`/sheet/${newUuid}`);
         }
         console.log(newUuid);
-    };
+    }
 
-    function reformatDate(date){
+    function reformatDate(date) {
         const dateObject = new Date(date);
 
         const year = dateObject.getFullYear();
@@ -178,8 +186,16 @@ export default function Listing() {
                                     >
                                         <td>{feuille.sht_name}</td>
                                         <td>{user.usr_pseudo}</td>
-                                        <td>{reformatDate(feuille.sht_created_at)}</td>
-                                        <td>{reformatDate(feuille.sht_updated_at)}</td>
+                                        <td>
+                                            {reformatDate(
+                                                feuille.sht_created_at,
+                                            )}
+                                        </td>
+                                        <td>
+                                            {reformatDate(
+                                                feuille.sht_updated_at,
+                                            )}
+                                        </td>
                                         <td>
                                             <button
                                                 className="button-option modifier"

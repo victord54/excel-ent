@@ -160,11 +160,20 @@ export async function updateData(req, res, next) {
         let cell;
         if (existsCell.length === 0) {
             // On la crée
-            cell = await _createData({ cel_idtcel, cel_idtsht, cel_val, cel_stl });
-        }
-        else {
+            cell = await _createData({
+                cel_idtcel,
+                cel_idtsht,
+                cel_val,
+                cel_stl,
+            });
+        } else {
             // On la met à jour
-            cell = await _updateData({ cel_idtcel, cel_idtsht, cel_val, cel_stl });
+            cell = await _updateData({
+                cel_idtcel,
+                cel_idtsht,
+                cel_val,
+                cel_stl,
+            });
         }
         await commitTransaction();
         return res.status(200).json({

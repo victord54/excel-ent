@@ -47,7 +47,7 @@ app.use((err, req, res, next) => {
     errorLogFile(err, req);
     return res.status(err.status).json({
         status: 'error',
-        error: err
+        error: err,
     });
 });
 

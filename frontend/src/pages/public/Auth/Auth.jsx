@@ -12,33 +12,35 @@ export default function Auth() {
         pseudo: {
             value: '',
             error: false,
-            errorMessage: ''
+            errorMessage: '',
         },
         mail: {
             value: '',
             error: false,
-            errorMessage: ''
+            errorMessage: '',
         },
         password: {
             value: '',
             error: false,
-            errorMessage: ''
-        }
+            errorMessage: '',
+        },
     };
     const initialValueLogin = {
         mail: {
             value: '',
             error: false,
-            errorMessage: ''
+            errorMessage: '',
         },
         password: {
             value: '',
             error: false,
-            errorMessage: ''
-        }
+            errorMessage: '',
+        },
     };
-    const [formValuesSignUp, setInputesValuesSignUp] = useState(initialValueSignUp);
-    const [formValuesLogin, setInputesValuesLogin] = useState(initialValueLogin);
+    const [formValuesSignUp, setInputesValuesSignUp] =
+        useState(initialValueSignUp);
+    const [formValuesLogin, setInputesValuesLogin] =
+        useState(initialValueLogin);
     const [onSignUp, setOnSignUp] = useState(true);
 
     const navigate = useNavigate();
@@ -49,24 +51,24 @@ export default function Auth() {
             pseudo: {
                 ...formValuesSignUp.pseudo,
                 error: false,
-                errorMessage: ''
+                errorMessage: '',
             },
             mail: {
                 ...formValuesSignUp.mail,
                 error: false,
-                errorMessage: ''
+                errorMessage: '',
             },
             password: {
                 ...formValuesSignUp.password,
                 error: false,
-                errorMessage: ''
+                errorMessage: '',
             },
             [e.target.name]: {
                 ...formValuesSignUp[e.target.name],
                 value: e.target.value,
                 error: false,
                 errorMessage: '',
-            }
+            },
         });
     }
 
@@ -76,19 +78,19 @@ export default function Auth() {
             mail: {
                 ...formValuesLogin.mail,
                 error: false,
-                errorMessage: ''
+                errorMessage: '',
             },
             password: {
                 ...formValuesLogin.password,
                 error: false,
-                errorMessage: ''
+                errorMessage: '',
             },
 
             [e.target.name]: {
                 ...formValuesLogin[e.target.name],
                 value: e.target.value,
                 error: false,
-                errorMessage: false
+                errorMessage: false,
             },
         });
     }
@@ -101,13 +103,14 @@ export default function Auth() {
         signup({
             pseudo: formValuesSignUp.pseudo.value,
             mail: formValuesSignUp.mail.value,
-            password: formValuesSignUp.password.value
+            password: formValuesSignUp.password.value,
         }).then((data) => {
             if (data.error) {
-                switch(data.error.name){
-                    case "UserAlreadyExistsError":{
+                switch (data.error.name) {
+                    case 'UserAlreadyExistsError': {
                         setInputesValuesSignUp((prevValue) => {
-                            return {...prevValue,
+                            return {
+                                ...prevValue,
                                 pseudo: {
                                     ...prevValue.pseudo,
                                     error: true,
@@ -115,15 +118,17 @@ export default function Auth() {
                                 mail: {
                                     ...prevValue.mail,
                                     error: true,
-                                    errorMessage: "Ce pseudo ou cette adresse mail sont déjà utilisés"
-                                }
-                            }
+                                    errorMessage:
+                                        'Ce pseudo ou cette adresse mail sont déjà utilisés',
+                                },
+                            };
                         });
                         break;
                     }
-                    case "MissingParameterError":{
+                    case 'MissingParameterError': {
                         setInputesValuesSignUp((prevValue) => {
-                            return {...prevValue,
+                            return {
+                                ...prevValue,
                                 pseudo: {
                                     ...prevValue.pseudo,
                                     error: true,
@@ -135,9 +140,10 @@ export default function Auth() {
                                 password: {
                                     ...prevValue.password,
                                     error: true,
-                                    errorMessage: "Veuillez remplir tous les champs"
-                                }
-                            }
+                                    errorMessage:
+                                        'Veuillez remplir tous les champs',
+                                },
+                            };
                         });
                         break;
                     }
@@ -155,46 +161,49 @@ export default function Auth() {
         console.log(formValuesLogin);
         const res = await login({
             mail: formValuesLogin.mail.value,
-            password: formValuesLogin.password.value
+            password: formValuesLogin.password.value,
         });
         const payload = await res.json();
         if (payload.status != 'success') {
-            console.log(data.error.name)
-                switch(data.error.name){
-                    case "MissingParameterError":{
-                        setInputesValuesLogin((prevValue) => {
-                            return {...prevValue,
-                                mail: {
-                                    ...prevValue.mail,
-                                    error: true,
-                                },
-                                password: {
-                                    ...prevValue.password,
-                                    error: true,
-                                    errorMessage: "Veuillez remplir tous les champs"
-                                }
-                            }
-                        });
-                        break;
-                    };
-                    case "UserNotFoundError":
-                    case "InvalidIdentifiersError":{
-                        setInputesValuesLogin((prevValue) => {
-                            return {...prevValue,
-                                mail: {
-                                    ...prevValue.mail,
-                                    error: true,
-                                },
-                                password: {
-                                    ...prevValue.password,
-                                    error: true,
-                                    errorMessage: "Identifiant(s) incorrect(s)"
-                                }
-                            }
-                        });
-                        break;
-                    };
+            console.log(data.error.name);
+            switch (data.error.name) {
+                case 'MissingParameterError': {
+                    setInputesValuesLogin((prevValue) => {
+                        return {
+                            ...prevValue,
+                            mail: {
+                                ...prevValue.mail,
+                                error: true,
+                            },
+                            password: {
+                                ...prevValue.password,
+                                error: true,
+                                errorMessage:
+                                    'Veuillez remplir tous les champs',
+                            },
+                        };
+                    });
+                    break;
                 }
+                case 'UserNotFoundError':
+                case 'InvalidIdentifiersError': {
+                    setInputesValuesLogin((prevValue) => {
+                        return {
+                            ...prevValue,
+                            mail: {
+                                ...prevValue.mail,
+                                error: true,
+                            },
+                            password: {
+                                ...prevValue.password,
+                                error: true,
+                                errorMessage: 'Identifiant(s) incorrect(s)',
+                            },
+                        };
+                    });
+                    break;
+                }
+            }
         } else {
             loginContext(payload.data.token);
             setInputesValuesSignUp(formValuesLogin);
@@ -227,12 +236,18 @@ export default function Auth() {
                                         value={formValuesSignUp.pseudo.value}
                                         onChange={handleChangeSignUp}
                                         required
-                                        className={formValuesSignUp.pseudo.error ? 'error-bg' : ''}
+                                        className={
+                                            formValuesSignUp.pseudo.error
+                                                ? 'error-bg'
+                                                : ''
+                                        }
                                     />
                                     <div className="auth-underline"></div>
                                     <label>Pseudo</label>
                                 </div>
-                                <div className='error-message'>{formValuesSignUp.pseudo.errorMessage}</div>
+                                <div className="error-message">
+                                    {formValuesSignUp.pseudo.errorMessage}
+                                </div>
                             </div>
                             <div className="auth-form-row">
                                 <div className="auth-input-data auth-mail">
@@ -242,12 +257,18 @@ export default function Auth() {
                                         value={formValuesSignUp.mail.value}
                                         onChange={handleChangeSignUp}
                                         required
-                                        className={formValuesSignUp.mail.error ? 'error-bg' : ''}
+                                        className={
+                                            formValuesSignUp.mail.error
+                                                ? 'error-bg'
+                                                : ''
+                                        }
                                     />
                                     <div className="auth-underline"></div>
                                     <label>Mail</label>
                                 </div>
-                                <div className='error-message'>{formValuesSignUp.mail.errorMessage}</div>
+                                <div className="error-message">
+                                    {formValuesSignUp.mail.errorMessage}
+                                </div>
                             </div>
                             <div className="auth-form-row">
                                 <div className="auth-input-data">
@@ -257,12 +278,18 @@ export default function Auth() {
                                         value={formValuesSignUp.password.value}
                                         onChange={handleChangeSignUp}
                                         required
-                                        className={formValuesSignUp.password.error ? 'error-bg' : ''}
+                                        className={
+                                            formValuesSignUp.password.error
+                                                ? 'error-bg'
+                                                : ''
+                                        }
                                     />
                                     <div className="auth-underline"></div>
                                     <label>Mot de passe</label>
                                 </div>
-                                <div className='error-message'>{formValuesSignUp.password.errorMessage}</div>
+                                <div className="error-message">
+                                    {formValuesSignUp.password.errorMessage}
+                                </div>
                             </div>
                             <br></br>
                             <div className="auth-center-button">
@@ -290,12 +317,18 @@ export default function Auth() {
                                         value={formValuesLogin.mail.value}
                                         onChange={handleChangeLogin}
                                         required
-                                        className={formValuesLogin.mail.error ? 'error-bg' : ''}
+                                        className={
+                                            formValuesLogin.mail.error
+                                                ? 'error-bg'
+                                                : ''
+                                        }
                                     />
                                     <div className="auth-underline"></div>
                                     <label>Mail</label>
                                 </div>
-                                <div className='error-message'>{formValuesLogin.mail.errorMessage}</div>
+                                <div className="error-message">
+                                    {formValuesLogin.mail.errorMessage}
+                                </div>
                             </div>
                             <div className="auth-form-row">
                                 <div className="auth-input-data">
@@ -305,12 +338,18 @@ export default function Auth() {
                                         value={formValuesLogin.password.value}
                                         onChange={handleChangeLogin}
                                         required
-                                        className={formValuesLogin.password.error ? 'error-bg' : ''}
+                                        className={
+                                            formValuesLogin.password.error
+                                                ? 'error-bg'
+                                                : ''
+                                        }
                                     />
                                     <div className="auth-underline"></div>
                                     <label>Mot de passe</label>
                                 </div>
-                                <div className='error-message'>{formValuesLogin.password.errorMessage}</div>
+                                <div className="error-message">
+                                    {formValuesLogin.password.errorMessage}
+                                </div>
                             </div>
                             <br></br>
                             <div className="auth-center-button">

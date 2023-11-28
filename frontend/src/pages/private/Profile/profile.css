@@ -76,21 +76,20 @@ label {
     filter: blur(2px);
 }
 
-.error{
+.error {
     color: rgb(212, 34, 34);
     text-align: center;
 }
 
-.input-error{
-    border: 3px solid rgb(212, 34, 34) !important; 
+.input-error {
+    border: 3px solid rgb(212, 34, 34) !important;
 }
 
-.password-buttons{
+.password-buttons {
     display: flex;
     gap: 0.5em;
     margin-top: 1em;
     justify-content: space-evenly;
-    
 }
 
 input {
@@ -98,36 +97,40 @@ input {
     box-sizing: border-box;
 }
 
-.bouton-password-edit{
+.bouton-password-edit {
     margin-top: 1em;
     border-radius: 0.5em;
     width: 50%;
     border: none;
 }
 
-.bouton-password-edit:hover{
+.bouton-password-edit:hover {
     filter: brightness(90%);
 }
 
-.bouton-password-edit:active{
+.bouton-password-edit:active {
     filter: brightness(80%);
     transform: scale(0.9);
     transition: 0.1s ease-in-out;
 }
 
-.bouton-password-edit-annuler{
+.bouton-password-edit-annuler {
     background-color: rgb(211, 122, 122);
 }
 
-.bouton-password-edit-valider{
+.bouton-password-edit-valider {
     background-color: rgb(108, 197, 115);
 }
 
-.wrapper-boutons-passwords{
+.wrapper-boutons-passwords {
     animation: fadeIn 0.4s ease-in;
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-      to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
