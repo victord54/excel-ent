@@ -3,7 +3,8 @@ import {
     getAll as _getAll,
     getOne as _getOne,
     getAllForUser as _getAllForUser,
-    getCell as _getCell,
+    getCells as _getCells,
+    getOneCell as _getOneCell,
 } from '../models/sht_sheet_dql.js';
 import {
     create as _create,
@@ -44,9 +45,9 @@ export async function getAll(req, res, next) {
  * @returns {Promise<Response>} data to send back
  */
 export async function getOne(req, res, next) {
-    const sht_idtsht = req.params.id;
+    const sht_uuid = req.params.id;
     try {
-        const sheet = await _getOne({ sht_idtsht });
+        const sheet = await _getOne({ sht_uuid });
         if (sheet.length === 0) throw new SheetNotFoundError('Sheet not found');
         return res.status(200).json({
             status: 'success',
@@ -113,7 +114,7 @@ export async function updateName(req, res, next) {
     try {
         // validation des données reçues
         let missing = '';
-        if (!sht_name) {
+        if (sht_name === undefined) {
             missing += 'sht_name ';
         }
         if (missing !== '') {
@@ -155,7 +156,7 @@ export async function updateData(req, res, next) {
         }
 
         // vérification existence de la cellule
-        const existsCell = await _getCell({ cel_idtsht, cel_idtcel });
+        const existsCell = await _getOneCell({ cel_idtsht, cel_idtcel });
         let cell;
         if (existsCell.length === 0) {
             // On la crée
@@ -201,6 +202,19 @@ export async function remove(req, res, next) {
         return res.status(200).json({
             status: 'success',
             data: deletedSheet,
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+export async function getCells(req, res, next) {
+    const cel_idtsht = req.params.id;
+    try {
+        const cells = await _getCells({ cel_idtsht });
+        return res.status(200).json({
+            status: 'success',
+            data: cells,
         });
     } catch (error) {
         next(error);

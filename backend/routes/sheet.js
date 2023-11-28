@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { create, getAllForUser, getOne, updateName, updateData, remove } from '../controllers/sheet.js';
+import { create, getAllForUser, getOne, updateName, updateData, remove, getCells } from '../controllers/sheet.js';
 const router = Router();
 
 /**
@@ -11,6 +11,8 @@ router.get('/', getAllForUser);
  * Route to get one sheet
  */
 router.get('/:id', getOne);
+
+router.get('/data/:id', getCells);
 
 /**
  * Route to create sheet

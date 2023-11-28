@@ -4,8 +4,12 @@ import './sheet.css';
 import { evaluateur } from '../../../services/evaluateur';
 import { getLoggedUser } from '../../../services/user-service';
 
-import { saveSheet as _saveSheet } from '../../../services/api-service';
-import { getSheetById } from '../../../services/api-service';
+import {
+    saveSheet as _saveSheet,
+    renameSheet as _renameSheet,
+    updateSheetData as _updateSheetData,
+} from '../../../services/api-service';
+import { getSheetById, getSheetData } from '../../../services/api-service';
 
 import { io } from 'socket.io-client';
 
@@ -16,9 +20,10 @@ export default function Sheet() {
     let { idSheet } = useParams();
 
     useEffect(() => {
-        getSheet();
         document.title = 'Feuille de calcul';
         const socket = io('http://localhost:4242');
+
+        getSheet();
 
         // socket.on('connect', () => {
         //     console.log('connected');
@@ -42,12 +47,11 @@ export default function Sheet() {
     const [sheetExist, setSheetExist] = useState(false);
     const [colSelect, setSelectCol] = useState(null);
     const [rowSelect, setSelectRow] = useState(null);
-
-    const nameRows = Array.from(
-        { length: numberOfRows },
-        (_, index) => index + 1,
+    const [keyDownHandled, setKeyDownHandled] = useState(false);
+    const [nameRows, setNameRows] = useState(
+        Array.from({ length: numberOfRows }, (_, index) => index + 1),
     );
-    const nameColums = generateNameColumns();
+    const [nameColums, setNameColums] = useState(generateNameColumns());
 
     /**
      *
@@ -63,43 +67,54 @@ export default function Sheet() {
             }
             res.push(str);
         }
-
         return res;
     }
 
     /**
      *
      */
-    async function saveSheet() {
+    async function renameSheet() {
         console.log('save');
         console.log(cells);
         console.log(idt_sht);
-        const response = await _saveSheet({
-            sht_uuid: idSheet,
-            sht_name: nameSheet,
-            sht_data: cells,
-            sht_sharing: 0,
-            sht_idtsht: idt_sht,
-        });
-        const _body = await response.json();
-        console.log(_body);
+        const response = await _renameSheet(idt_sht, nameSheet);
+
         if (response.status === 200) {
             console.log('ok');
-            setIdt_sht(_body);
+            const _body = await response.json();
+            console.log(_body);
         }
     }
 
+    async function updateSheetData(cell, val) {
+        console.log('update data');
+        console.log(idt_sht);
+        if (val === '' || val === '/n') return;
+        console.log({ cell, val });
+        const response = await _updateSheetData(idt_sht, cell, val, '');
+    }
 
     async function getSheet() {
-        const response = await getSheetById(idSheet);
-        const _body = await response.json();
-        if (response.status === 200) {
-            setNameSheet(_body.sht_name);
-            setCells(_body.sht_data);
-            setIdt_sht(_body.sht_idtsht);
-            for (const key in _body.sht_data) {
-                const divChild = getDivChild(key);
-                if (divChild) divChild.innerText = _body.sht_data[key];
+        console.log('get sheet');
+        console.log(new Date().getTime());
+        const sheetResponse = await getSheetById(idSheet);
+        const sheetBody = await sheetResponse.json();
+        const sheetData = sheetBody.data;
+        if (sheetResponse.status === 200) {
+            setNameSheet(sheetData.sht_name);
+
+            setIdt_sht(sheetData.sht_idtsht);
+            console.log('idtsht:', sheetData.sht_idtsht);
+            const cellsResponse = await getSheetData(sheetData.sht_idtsht);
+            const cellsBody = await cellsResponse.json();
+            console.log('cells: ', cellsBody);
+            setCells(cellsBody.data);
+            for (let key in cellsBody.data) {
+                console.log(cellsBody.data[key]);
+                const divChild = getDivChild(cellsBody.data[key].cel_idtcel);
+                console.log(divChild);
+                console.log(cellsBody.data[key].cel_idtcel);
+                if (divChild) divChild.innerText = cellsBody.data[key].cel_val;
             }
             setSheetExist(true);
         } else {
@@ -114,17 +129,21 @@ export default function Sheet() {
      * @param {*} cellKey
      */
     function handleKeyDown(event, cellKey) {
+        if (keyDownHandled) setKeyDownHandled(false);
         if (event.key === 'Enter') {
             event.preventDefault();
             if (cells[cellKey].startsWith('=')) {
                 const res = evaluateur(cells[cellKey].substring(1));
                 setCells({ ...cells, [cellKey]: res });
+                console.log(cells);
                 event.target.innerText = res;
             }
             event.target.blur();
+            updateSheetData(cellKey, event.target.innerText);
         }
         if (event.ctrlKey && event.key === 'c') {
             handleCopy();
+            updateSheetData(cellKey, event.target.innerText);
         }
     }
 
@@ -260,7 +279,7 @@ export default function Sheet() {
                 onChange={nameSheetChange}
                 onClick={handleSelectAllInput}
             ></input>
-            <button onClick={saveSheet}>Save</button>
+            <button onClick={renameSheet}>Save</button>
             <div className="sht-container-all">
                 <div className="sht-container-tab">
                     <table className="sht-table">
@@ -348,6 +367,12 @@ export default function Sheet() {
                                                     )
                                                 }
                                                 onDoubleClick={handleSelectAll}
+                                                onBlur={(event) =>
+                                                    updateSheetData(
+                                                        nameCol + '_' + nameRow,
+                                                        event.target.innerText,
+                                                    )
+                                                }
                                             ></div>
                                         </td>
                                     ))}

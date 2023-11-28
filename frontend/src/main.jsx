@@ -5,7 +5,5 @@ import Router from './routes/Router';
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-    <React.StrictMode>
         <RouterProvider router={createBrowserRouter(Router)} />
-    </React.StrictMode>,
 );

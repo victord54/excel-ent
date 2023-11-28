@@ -138,9 +138,8 @@ export async function getAllSheetFromUser() {
     return res;
 }
 export async function getSheetById(sht_uuid) {
-    console.log('getSheetById : ' + sht_uuid);
     const res = await fetch(
-        import.meta.env.VITE_API_URL + '/sheet/getOne?sht_uuid=' + sht_uuid,
+        import.meta.env.VITE_API_URL + '/sheet/'+ sht_uuid,
         {
             method: 'GET',
             headers: {
@@ -151,4 +150,51 @@ export async function getSheetById(sht_uuid) {
     );
 
     return res;
+}
+
+export async function getSheetData(sht_idtsht) {
+    return await fetch(
+        import.meta.env.VITE_API_URL + '/sheet/data/' + sht_idtsht,
+        {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: getBearerString(),
+            },
+        },
+    );
+}
+
+export async function renameSheet(sht_idtsht, sht_name) {
+    return await fetch(
+        import.meta.env.VITE_API_URL + '/sheet/name/' + sht_idtsht,
+        {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: getBearerString(),
+            },
+            body: JSON.stringify({
+                sht_name: sht_name,
+            }),
+        },
+    );
+}
+
+export async function updateSheetData(cel_idtsht, cel_idtcel, cel_val, cel_stl) {
+    return await fetch(
+        import.meta.env.VITE_API_URL + '/sheet/data/' + cel_idtsht,
+        {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: getBearerString(),
+            },
+            body: JSON.stringify({
+                cel_idtcel: cel_idtcel,
+                cel_val: cel_val,
+                cel_stl: cel_stl,
+            }),
+        },
+    );
 }

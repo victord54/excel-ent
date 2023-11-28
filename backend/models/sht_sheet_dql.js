@@ -45,9 +45,16 @@ export async function getAllForUser({ sht_idtusr_aut }) {
     return null;
 }
 
-export async function getCell({ cel_idtcel, cel_idtsht }) {
+export async function getCells({ cel_idtsht }) {
     return executeQuery(
-        'SELECT * FROM sht_cell WHERE cel_idtcel = ? AND cel_idtsht = ?',
+        'SELECT cel_idtcel, cel_val, cel_stl FROM sht_cell WHERE cel_idtsht = ?',
+        [cel_idtsht],
+    );
+}
+
+export async function getOneCell({ cel_idtcel, cel_idtsht }) {
+    return executeQuery(
+        'SELECT cel_idtcel, cel_val, cel_stl FROM sht_cell WHERE cel_idtcel = ? AND cel_idtsht = ?',
         [cel_idtcel, cel_idtsht],
     );
 }
