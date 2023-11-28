@@ -85,6 +85,8 @@ export default function Sheet() {
     }
 
     async function updateSheetData(cell, val) {
+        setSelectCol(null);
+        setSelectRow(null);
         console.log('update data');
         console.log(idt_sht);
         if (val === '' || val === '/n') return;
@@ -253,12 +255,8 @@ export default function Sheet() {
         }
         return '';
     }
-    function handleBlur(){
-        setSelectCol(null);
-        setSelectRow(null);
-    }
-   
-    if (!sheetExist) return (<></>);
+
+    if (!sheetExist) return <></>;
     return (
         <>
             <input
@@ -340,9 +338,12 @@ export default function Sheet() {
                                                     )
                                                 }
                                                 onFocus={(event) =>
-                                                    handleSelectAll(event, nameCol, nameRow)
+                                                    handleSelectAll(
+                                                        event,
+                                                        nameCol,
+                                                        nameRow,
+                                                    )
                                                 }
-                    
                                                 onDoubleClick={handleSelectAll}
                                                 onBlur={(event) =>
                                                     updateSheetData(

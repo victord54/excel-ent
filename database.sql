@@ -41,14 +41,14 @@ CREATE TABLE
 CREATE TABLE
     `sht_link_sht_usr` (
         `lsu_idtsht`        BIGINT          NOT NULL                            COMMENT 'Sheet FK',
-        `lsu_idtusr_aut`    BIGINT          NOT NULL                            COMMENT 'User FK',
+        `lsu_idtusr_shared` BIGINT          NOT NULL                            COMMENT 'User FK',
         `lsu_created_at`    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP  COMMENT 'Date of link creation',
         `lsu_updated_at`    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP  COMMENT 'Date of link update',
-        PRIMARY KEY (`lsu_idtsht`, `lsu_idtusr_aut`),
+        PRIMARY KEY (`lsu_idtsht`, `lsu_idtusr_shared`),
         CONSTRAINT `lsu_sht_fk` FOREIGN KEY (`lsu_idtsht`) REFERENCES `sht_sheet` (`sht_idtsht`),
-        CONSTRAINT `lsu_usr_aut_fk` FOREIGN KEY (`lsu_idtusr_aut`) REFERENCES `usr_user` (`usr_idtusr`),
+        CONSTRAINT `lsu_usr_aut_fk` FOREIGN KEY (`lsu_idtusr_shared`) REFERENCES `usr_user` (`usr_idtusr`),
         KEY `lsu_sht_fk_i` (`lsu_idtsht`),
-        KEY `lsu_usr_aut_fk_i` (`lsu_idtusr_aut`)
+        KEY `lsu_usr_aut_fk_i` (`lsu_idtusr_shared`)
     ) ENGINE = InnoDB DEFAULT CHARSET = UTF8MB4 COMMENT = 'User sheet shared table';
 
 CREATE TABLE
