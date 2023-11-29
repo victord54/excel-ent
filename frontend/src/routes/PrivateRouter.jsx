@@ -1,6 +1,5 @@
-import { Route, createRoutesFromElements } from 'react-router-dom';
 import AuthGuard from './AuthGuard';
-import { isLogged } from '../services/auth-service';
+import { Route } from 'react-router-dom';
 import Layout from '../pages/private/Layout';
 import ErrorPage from '../pages/public/ErrorPage/ErrorPage';
 import Sheet from '../pages/private/Sheet/Sheet';
@@ -11,7 +10,7 @@ const router = (
     <Route
         path="/"
         element={
-            <AuthGuard user={isLogged()}>
+            <AuthGuard>
                 <Layout />
             </AuthGuard>
         }

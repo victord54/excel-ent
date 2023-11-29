@@ -1,7 +1,8 @@
 import { Navigate } from 'react-router-dom';
+import { isLogged } from '../services/auth-service';
 
-function AuthGuard({ user, children }) {
-    if (!user) return <Navigate to={'/'} replace />;
+function AuthGuard({ children }) {
+    if (!isLogged()) return <Navigate to={'/'} replace />;
     return children;
 }
 
