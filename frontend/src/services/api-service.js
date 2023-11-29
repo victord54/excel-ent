@@ -1,22 +1,24 @@
 import { getBearerString } from './auth-service';
 
 async function executeRequest(url, options, needAuthentified = true) {
-    return await fetch(import.meta.env.VITE_API_URL + url, {
+    const response = await fetch(import.meta.env.VITE_API_URL + url, {
         ...options,
         headers: {
             ...options.headers,
             Authorization: needAuthentified ? getBearerString() : '',
         },
-    })
-        .then((response) => {
-            if (response.ok) {
-                return response;
-            } else if (response.status === 401 && needAuthentified) {
-                throw new Error('Unauthorized');
-            }
-            return response;
-        })
-        .then((response) => response.json());
+    });
+console.log('response: ');
+console.log(response);
+    if (response.status === 401 && needAuthentified) {
+        throw new Error('Unauthorized');
+    }
+    else {
+        const payload = await response.json();
+        console.log('payload: ');
+        console.log(payload);
+        return payload
+    }
 }
 
 export function signup({ pseudo, mail, password }) {

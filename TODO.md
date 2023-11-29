@@ -22,7 +22,7 @@
 - [ ] socket.io
 
 # FIXME
-- [ ] Délai de chargement au login
+- [x] Délai de chargement au login
 - [x] Renommer champs créateur sheet : sht_idtusr_aut
 - [x] Cellules écrasées
 - [ ] Bug quand on vient de se login, profile et listing inatteignable (demande refresh pour que ça marche) ==> pas une histoire de cache, car on voit l'url s'afficher 0.1s

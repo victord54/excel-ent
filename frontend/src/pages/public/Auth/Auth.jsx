@@ -163,7 +163,7 @@ export default function Auth() {
             mail: formValuesLogin.mail.value,
             password: formValuesLogin.password.value,
         });
-        const payload = await res.json();
+        const payload = res;
         if (payload.status != 'success') {
             console.log(data.error.name);
             switch (data.error.name) {
