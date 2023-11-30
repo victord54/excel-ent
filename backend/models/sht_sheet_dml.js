@@ -51,7 +51,20 @@ export async function updateData({ cel_idtcel, cel_idtsht, cel_val, cel_stl }) {
 }
 
 export async function remove({ sht_idtsht }) {
-    return executeQuery('DELETE FROM sht_sheet WHERE sht_idtsht = ?', [
-        sht_idtsht,
-    ]);
+    const deleteCells = await executeQuery(
+        'DELETE FROM sht_cell WHERE cel_idtsht = ?',
+        [sht_idtsht],
+    );
+
+    const deleteSharing = await executeQuery(
+        'DELETE FROM sht_link_sht_usr WHERE lsu_idtsht = ?',
+        [sht_idtsht],
+    );
+
+    const deleteSheet = await executeQuery(
+        'DELETE FROM sht_sheet WHERE sht_idtsht = ?',
+        [sht_idtsht],
+    );
+
+    return [deleteCells, deleteSharing, deleteSheet];
 }
