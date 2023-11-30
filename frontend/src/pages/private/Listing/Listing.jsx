@@ -108,6 +108,8 @@ export default function Listing() {
         e.stopPropagation();
         console.log('Supprimer');
         const res = await _deleteSheet(feuille.sht_idtsht);
+
+        //TODO : error
         if (res.status === 200) {
             const _body = await res.json();
             console.log(_body);
@@ -159,7 +161,7 @@ export default function Listing() {
                     sht_updated_at: new Date(),
                 },
             ]);
-            window.open(`/sheet/${newUuid}`);
+           navigate(`/sheet/${newUuid}`);
         }
         console.log(newUuid);
     }

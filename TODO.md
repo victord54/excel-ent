@@ -16,8 +16,11 @@
 ```
 - [ ] Gestion des messages d'erreur
 - [ ] Renommer, partager, supprimer feuille depuis le listing
+- [ ] Afficher bouton supprimer ssi l'utilisateur est l'auteur
 - [ ] Filtre de recherche
-- [ ] Récupérer les feuilles partagées (filtre de gauche)
+- [ ] Récupérer les feuilles partagées dans le Listing (modifier requête dans le back ?)
+- [ ] Vérifier injections SQL
+- [ ] Feuille : Check si l'user est l'auteur, si non check si la feuille est partagé -> Si non agir en conséquence, si oui -> add l'utilisateur dans la table des feuilles partagés si pas déjà présent
 - [ ] Tester si le token de l'uti est pas expiré à chaque requete
 - [ ] socket.io
 
