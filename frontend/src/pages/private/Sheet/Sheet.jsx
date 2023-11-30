@@ -256,6 +256,12 @@ export default function Sheet() {
         return '';
     }
 
+    function handleKeyDownInput(event) {
+        if (event.key === 'Enter') {
+            event.target.blur();
+        }
+    }
+
     if (!sheetExist) return <></>;
     return (
         <>
@@ -264,8 +270,9 @@ export default function Sheet() {
                 value={nameSheet}
                 onChange={nameSheetChange}
                 onClick={handleSelectAllInput}
+                onBlur={renameSheet}
+                onKeyDown={handleKeyDownInput}
             ></input>
-            <button onClick={renameSheet}>Save</button>
             <div className="sht-container-all">
                 <div className="sht-container-tab">
                     <table className="sht-table">
