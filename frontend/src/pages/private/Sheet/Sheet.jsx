@@ -23,8 +23,6 @@ export default function Sheet() {
         document.title = 'Feuille de calcul';
         const socket = io('http://localhost:4242');
 
-        getSheet();
-
         // socket.on('connect', () => {
         //     console.log('connected');
         //     socket.emit('join-room', idSheet);
@@ -34,6 +32,8 @@ export default function Sheet() {
             console.log('sheet-update');
             console.log(data);
         });
+
+        getSheet();
     }, []);
 
     const numberOfRows = 100;
@@ -108,14 +108,14 @@ export default function Sheet() {
             const cellsResponse = await getSheetData(sheetData.sht_idtsht);
             const cellsBody = await cellsResponse.json();
             console.log('cells: ', cellsBody);
-            setCells(cellsBody.data);
             for (let key in cellsBody.data) {
                 console.log(cellsBody.data[key]);
                 const divChild = getDivChild(cellsBody.data[key].cel_idtcel);
-                console.log(divChild);
+                console.log('Child : ' + divChild);
                 console.log(cellsBody.data[key].cel_idtcel);
                 if (divChild) divChild.innerText = cellsBody.data[key].cel_val;
             }
+            setCells(cellsBody.data);
             setSheetExist(true);
         } else {
             //TODO: c'est censé renvoyer une erreur 404 dans le corps de la réponse
