@@ -113,3 +113,9 @@
 .partager {
     background-color: #84a1d3;
 }
+
+/* Désactiver la bordure de sélection pour les éléments éditables */
+[contenteditable="true"]:focus {
+    outline: none;
+    border: none;
+}

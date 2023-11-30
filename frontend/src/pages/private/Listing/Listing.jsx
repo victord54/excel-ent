@@ -7,7 +7,8 @@ import boutonPartager from '../../../assets/bouton-partager.png';
 import { v4 as uuid } from 'uuid';
 import { getAllSheetFromUser } from '../../../services/api-service';
 import { AuthContext } from '../../../contexts/AuthContext';
-import { saveSheet as _saveSheet } from '../../../services/api-service';
+import { saveSheet as _saveSheet, renameSheet as _renameSheet} from '../../../services/api-service';
+// import { deleteSheet as _deleteSheet } from '../../../services/api-service';
 
 // TODO : Ajouter les fonctionnalités modifier, supprimer et partager
 // TODO : Ajouter la fonctionnalité de recherche
@@ -24,7 +25,7 @@ export default function Listing() {
     const [feuilles, setFeuilles] = useState([]);
     const navigate = useNavigate();
     const [selectedFilter, setSelectedFilter] = useState('all');
-
+    const [canRowClick, setCanRowClick] = useState(true);
     const handleFilterClick = (filter) => {
         setSelectedFilter(filter);
         console.log(filter);
@@ -48,16 +49,63 @@ export default function Listing() {
     });
 
     const handleRowClick = (feuille) => {
+        if (!canRowClick) return;
         console.log(feuille.sht_uuid);
-        navigate('/sheet/' + feuille.sht_uuid);
+        window.open('/sheet/' + feuille.sht_uuid, '_blank');    
     };
 
-    const modifier = (e, feuille) => {
-        e.stopPropagation();
+    async function modifier(event, feuille) {
+        event.stopPropagation();
+        setCanRowClick(false);
         console.log('Modifier');
+        const td = document.getElementById(feuille.sht_idtsht + '_Name');
+        td.contentEditable = true;
+        
+        // Sélection du contenu de la td
+        const range = document.createRange();
+        range.selectNodeContents(td);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
     };
 
-    const supprimer = (e, euille) => {
+    async function handleOnBlurTD(event, feuille) {
+        console.log("ok");
+        const idt_sht = feuille.sht_idtsht;
+        const td = event.target;
+        td.contentEditable = false;
+        setCanRowClick(true);
+         // TODO : error
+        const response = await _renameSheet(idt_sht, td.innerText);
+
+        if (response.status === 200) {
+            console.log('ok');
+            const _body = await response.json();
+            console.log(_body);
+
+            setFeuilles(prevFeuilles => {
+                return prevFeuilles.map(feuille => {
+                  if (feuille.sht_idtsht === idt_sht) {
+                    // Si l'id correspond, met à jour le nom
+                    return { ...feuille, sht_name: td.innerText };
+                  }
+                  // Sinon, retourne l'objet feuille sans modification
+                  return feuille;
+                });
+              });
+        }
+    }
+
+    function handleEnterDown(event, feuille) {
+        if (event.key === 'Enter') {
+            handleOnBlurTD(event, feuille);   
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            event.target.blur();
+        }
+    }
+
+    async function supprimer(e, feuille) {
         e.stopPropagation();
         console.log('Supprimer');
     };
@@ -184,7 +232,10 @@ export default function Listing() {
                                         key={i}
                                         onClick={() => handleRowClick(feuille)}
                                     >
-                                        <td>{feuille.sht_name}</td>
+                                        <td id={feuille.sht_idtsht + '_Name'}
+                                            onBlur={(event) => handleOnBlurTD(event, feuille)}
+                                            onKeyDown={(event) => handleEnterDown(event, feuille)}
+                                        >{feuille.sht_name}</td>
                                         <td>{user.usr_pseudo}</td>
                                         <td>
                                             {reformatDate(
