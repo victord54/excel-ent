@@ -7,8 +7,7 @@ import boutonPartager from '../../../assets/bouton-partager.png';
 import { v4 as uuid } from 'uuid';
 import { getAllSheetFromUser } from '../../../services/api-service';
 import { AuthContext } from '../../../contexts/AuthContext';
-import { saveSheet as _saveSheet, renameSheet as _renameSheet} from '../../../services/api-service';
-// import { deleteSheet as _deleteSheet } from '../../../services/api-service';
+import { saveSheet as _saveSheet, renameSheet as _renameSheet, deleteSheet as _deleteSheet} from '../../../services/api-service';
 
 // TODO : Ajouter les fonctionnalités modifier, supprimer et partager
 // TODO : Ajouter la fonctionnalité de recherche
@@ -108,6 +107,16 @@ export default function Listing() {
     async function supprimer(e, feuille) {
         e.stopPropagation();
         console.log('Supprimer');
+        const res = await _deleteSheet(feuille.sht_idtsht);
+        if (res.status === 200) {
+            const _body = await res.json();
+            console.log(_body);
+            setFeuilles(prevFeuilles => {
+                const updatedFeuilless = prevFeuilles.filter(f => f.sht_idtsht !== feuille.sht_idtsht);
+                return updatedFeuilless;
+              });
+
+        }
     };
 
     const partager = (e, feuille) => {

@@ -214,3 +214,16 @@ export async function updateSheetData(
         },
     );
 }
+
+export async function deleteSheet(sht_idtsht) {
+    return await fetch(
+        import.meta.env.VITE_API_URL + '/sheet/' + sht_idtsht,
+        {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: getBearerString(),
+            },
+        },
+    );
+}
