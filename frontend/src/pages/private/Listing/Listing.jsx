@@ -61,12 +61,13 @@ export default function Listing() {
         window.open('/sheet/' + sheet.sht_uuid, '_blank');
     };
 
-    async function handleRenamesheetClick(event, sheet) {
+    async function handleRenameSheetClick(event, sheet) {
         event.stopPropagation();
         setCanRowClick(false);
         const td = document.getElementById(sheet.sht_idtsht + '_Name');
         td.contentEditable = true;
-
+        td.className = 'sht-sheet-title-editable'
+        
         // Sélection du contenu de la td
         const range = document.createRange();
         range.selectNodeContents(td);
@@ -75,17 +76,28 @@ export default function Listing() {
         selection.addRange(range);
     }
 
-    async function handleOnBlurRenameSheet(event, sheet) {
-        console.log('ok');
+    async function handleOnBlurRenameSheet(event, sheet, enter = null) {
+        if (event.target.contentEditable === "false") return;
+        const regex = /^[a-zA-Z0-9*'()_\-/À-ÖØ-öø-ÿ]+$/;
         const idt_sht = sheet.sht_idtsht;
         const td = event.target;
         td.contentEditable = false;
+        td.className = 'sht-sheet-title';
+
+        if (td.innerText === sheet.sht_name) return;
+        
+        if (!regex.test(td.innerText)) {
+            td.innerText = sheet.sht_name;
+            // TODO : Afficher l'error (caractères interdits)
+            return;
+        }
         setCanRowClick(true);
+        
         // TODO : error
         const response = await _renameSheet(idt_sht, td.innerText);
 
         if (response.status === 200) {
-            console.log('ok');
+            console.log('ok :' + td.innerText);
             const _body = await response.json();
             console.log(_body);
 
@@ -102,14 +114,16 @@ export default function Listing() {
         }
     }
 
+
+
     function handleEnterDown(event, sheet) {
+        if (event.target.contentEditable === "false") return;
         if (event.key === 'Enter') {
-            handleOnBlurRenameSheet(event, sheet);
-            const selection = window.getSelection();
-            selection.removeAllRanges();
-            event.target.blur();
+            handleOnBlurRenameSheet(event, sheet, true);
         }
     }
+
+ 
 
     async function handlePopUpConfirmationSupprimer(confirm) {
         setIsPopupDeleteOpen(false);
@@ -280,8 +294,7 @@ export default function Listing() {
                             <thead>
                                 <tr>
                                     <th>Titre</th>
-                                    <th>Crée par</th>
-                                    <th>Date de création</th>
+                                    <th>Auteur</th>
                                     <th>Date de modification</th>
                                     <th></th>
                                 </tr>
@@ -291,8 +304,10 @@ export default function Listing() {
                                     <tr
                                         key={i}
                                         onClick={() => handleRowClick(sheet)}
-                                    >
+                                        className="sht-sheet-row-container"
+                                    >   
                                         <td
+                                            contentEditable={false}
                                             id={sheet.sht_idtsht + '_Name'}
                                             onBlur={(event) =>
                                                 handleOnBlurRenameSheet(
@@ -303,14 +318,13 @@ export default function Listing() {
                                             onKeyDown={(event) =>
                                                 handleEnterDown(event, sheet)
                                             }
+                                            title={sheet.sht_name}
+                                            className="sht-sheet-title"
                                         >
                                             {sheet.sht_name}
                                         </td>
                                         <td>{user.usr_pseudo}</td>
-                                        <td>
-                                            {reformatDate(sheet.sht_created_at)}
-                                        </td>
-                                        <td>
+                                        <td className="sht-sheet-date">
                                             {reformatDate(sheet.sht_updated_at)}
                                         </td>
                                         <td>
@@ -318,7 +332,7 @@ export default function Listing() {
                                                 className="sht-button-option sht-rename"
                                                 title="Modifier le nom"
                                                 onClick={(e) =>
-                                                    handleRenamesheetClick(
+                                                    handleRenameSheetClick(
                                                         e,
                                                         sheet,
                                                     )

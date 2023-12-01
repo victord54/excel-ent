@@ -103,6 +103,23 @@
     transform: scale(1.5);
 }
 
+.sht-sheet-title {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    min-width: 300px;
+    max-width: 300px;
+}
+
+.sht-sheet-title-editable {
+    position:absolute;
+    margin-top: 5px;
+    overflow: visible;
+    background-color: white;
+    width: 75%;
+}
+
+
 .sht-rename {
     background-color: rgb(236, 236, 166);
 }

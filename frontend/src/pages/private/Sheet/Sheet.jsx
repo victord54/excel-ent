@@ -74,12 +74,25 @@ export default function Sheet() {
     async function renameSheet() {
         console.log('save');
         console.log(idt_sht);
+        const regex = /^[a-zA-Z0-9*'()_\-/À-ÖØ-öø-ÿ]+$/;
+        if (!regex.test(nameSheet)){
+            //TODO : afficher un message d'erreur
+            console.log('erreur');
+            return;
+        }
+
         const response = await _renameSheet(idt_sht, nameSheet);
 
         if (response.status === 200) {
             console.log('ok');
             const _body = await response.json();
             console.log(_body);
+        }
+    }
+
+    function handleKeyDownInput(event) {
+        if (event.key === 'Enter') {
+            event.target.blur();
         }
     }
 
@@ -148,16 +161,6 @@ export default function Sheet() {
         }
     }
 
-    /**
-     * Handle the change of the input the user is typing in
-     * @param {*} event the event of the input
-     * @param {string} cellKey id of the cell
-     */
-    function handleInputChange(event, cellKey) {
-        if (event.target.innerText === '/n') event.target.innerText === '';
-       
-        
-    }
 
     /**
      * Copy the selected text
@@ -246,12 +249,6 @@ export default function Sheet() {
         }
     }
 
-    function handleKeyDownInput(event) {
-        if (event.key === 'Enter') {
-            event.target.blur();
-        }
-    }
-
     if (!sheetExist) return <></>;
     return (
         <>
@@ -316,12 +313,7 @@ export default function Sheet() {
                                         >
                                             <div
                                                 contentEditable
-                                                onInput={(event) =>
-                                                    handleInputChange(
-                                                        event,
-                                                        nameCol + '_' + nameRow,
-                                                    )
-                                                }
+                        
                                                 onKeyDown={(event) =>
                                                     handleKeyDown(
                                                         event,
