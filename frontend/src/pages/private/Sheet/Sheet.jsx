@@ -19,7 +19,7 @@ import { io } from 'socket.io-client';
 export default function Sheet() {
     const { idSheet } = useParams();
     const { user } = useContext(AuthContext);
-    
+
     useEffect(() => {
         document.title = 'Feuille de calcul';
         const socket = io('http://localhost:4242');
@@ -108,15 +108,24 @@ export default function Sheet() {
                 }
                 // TODO add l'user à la liste des users qui ont accès à la sheet
             }
-            
+
             setNameSheet(sheetData.sht_name);
             setIdt_sht(sheetData.sht_idtsht);
             const cellsResponse = await getSheetData(sheetData.sht_idtsht);
             const cellsBody = await cellsResponse.json();
 
             for (let key in cellsBody.data) {
-                setCells((oldCells) => {return { ...oldCells, [cellsBody.data[key].cel_idtcel]: cellsBody.data[key].cel_val }});
-                setContentCell(cellsBody.data[key].cel_idtcel, cellsBody.data[key].cel_val);
+                setCells((oldCells) => {
+                    return {
+                        ...oldCells,
+                        [cellsBody.data[key].cel_idtcel]:
+                            cellsBody.data[key].cel_val,
+                    };
+                });
+                setContentCell(
+                    cellsBody.data[key].cel_idtcel,
+                    cellsBody.data[key].cel_val,
+                );
             }
             setSheetExist(true);
         } else {
@@ -221,7 +230,6 @@ export default function Sheet() {
         setContentCell(draggedCell, '');
         setCells({ ...cells, [draggedCell]: '' });
         setDraggedCell(null);
-
     }
 
     /**
@@ -243,7 +251,6 @@ export default function Sheet() {
         event.target.select();
     }
 
-    
     function setContentCell(cellKey, content) {
         console.log(cellKey, content);
         const td = document.getElementById(cellKey);

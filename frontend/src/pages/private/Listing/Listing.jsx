@@ -130,7 +130,6 @@ export default function Listing() {
             }
         }
         setSheetToDeleteOrShare(null);
-
     }
 
     function deleteSheet(e, sheet) {
@@ -144,12 +143,11 @@ export default function Listing() {
         setIsPopupShareOpen(false);
 
         if (confirm) {
-            console.log("Partage confirmer");
+            console.log('Partage confirmer');
             // TODO : Partager la sheet
         }
 
         setSheetToDeleteOrShare(null);
-
     }
 
     function shareSheet(e, sheet) {
@@ -157,7 +155,7 @@ export default function Listing() {
         console.log('Partager');
         setSheetToDeleteOrShare(sheet);
         setIsPopupShareOpen(true);
-    };
+    }
 
     async function newSheet() {
         let newUuid = uuid();
@@ -256,7 +254,9 @@ export default function Listing() {
                         </button>
                         <button
                             className={`sht-filter-button ${
-                                selectedFilter === 'mySheets' ? 'sht-active' : ''
+                                selectedFilter === 'mySheets'
+                                    ? 'sht-active'
+                                    : ''
                             }`}
                             onClick={() => handleFilterClick('mySheets')}
                         >
@@ -268,9 +268,7 @@ export default function Listing() {
                                     ? 'sht-active'
                                     : ''
                             }`}
-                            onClick={() =>
-                                handleFilterClick('sheetsShared')
-                            }
+                            onClick={() => handleFilterClick('sheetsShared')}
                         >
                             Afficher les feuilles partagées
                         </button>
@@ -297,7 +295,10 @@ export default function Listing() {
                                         <td
                                             id={sheet.sht_idtsht + '_Name'}
                                             onBlur={(event) =>
-                                                handleOnBlurRenameSheet(event, sheet)
+                                                handleOnBlurRenameSheet(
+                                                    event,
+                                                    sheet,
+                                                )
                                             }
                                             onKeyDown={(event) =>
                                                 handleEnterDown(event, sheet)
@@ -307,21 +308,20 @@ export default function Listing() {
                                         </td>
                                         <td>{user.usr_pseudo}</td>
                                         <td>
-                                            {reformatDate(
-                                                sheet.sht_created_at,
-                                            )}
+                                            {reformatDate(sheet.sht_created_at)}
                                         </td>
                                         <td>
-                                            {reformatDate(
-                                                sheet.sht_updated_at,
-                                            )}
+                                            {reformatDate(sheet.sht_updated_at)}
                                         </td>
                                         <td>
                                             <button
                                                 className="sht-button-option sht-rename"
                                                 title="Modifier le nom"
                                                 onClick={(e) =>
-                                                    handleRenamesheetClick(e, sheet)
+                                                    handleRenamesheetClick(
+                                                        e,
+                                                        sheet,
+                                                    )
                                                 }
                                             >
                                                 <img
