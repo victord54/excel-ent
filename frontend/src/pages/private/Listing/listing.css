@@ -150,13 +150,12 @@
     background-color: rgba(0, 0, 0, 0.5);
 }
 
-
-.sht-research-container{
+.sht-research-container {
     display: block;
     margin-top: 15px;
 }
 
-.sht-research-container input{
+.sht-research-container input {
     border: black solid 1px;
     border-radius: 5px;
     margin: 5px 0;

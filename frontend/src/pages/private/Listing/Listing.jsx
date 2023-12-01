@@ -32,7 +32,7 @@ export default function Listing() {
     const [isPopupDeleteOpen, setIsPopupDeleteOpen] = useState(false);
     const [isPopupShareOpen, setIsPopupShareOpen] = useState(false);
     const [sheetToDeleteOrShate, setSheetToDeleteOrShare] = useState(null);
-    const [sortedBy, setSortedBy] = useState('last_update'); 
+    const [sortedBy, setSortedBy] = useState('last_update');
 
     const handleFilter = (filter) => {
         if (filter === '') filter = 'all';
@@ -55,12 +55,14 @@ export default function Listing() {
         } else if (selectedFilter === 'sheetsShared') {
             return sheet.sht_idtusr_aut !== user.usr_idtusr;
         } else {
-            return removeAccents(sheet.sht_name.toLowerCase()).includes(removeAccents(selectedFilter.toLowerCase()));
+            return removeAccents(sheet.sht_name.toLowerCase()).includes(
+                removeAccents(selectedFilter.toLowerCase()),
+            );
         }
     });
 
-    function removeAccents(str){
-        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    function removeAccents(str) {
+        return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     }
 
     const handleRowClick = (sheet) => {
@@ -237,21 +239,29 @@ export default function Listing() {
         return formattedDateTime;
     }
 
-    function sortByAuthor(){
+    function sortByAuthor() {
         setSortedBy('author');
-        const sortedSheets = [...sheets].sort((sheet1, sheet2) => sheet1.sht_name.localeCompare(sheet2.sht_name));
+        const sortedSheets = [...sheets].sort((sheet1, sheet2) =>
+            sheet1.sht_name.localeCompare(sheet2.sht_name),
+        );
         setSheets(sortedSheets);
     }
 
-    function sortByDate(){
+    function sortByDate() {
         setSortedBy('last_update');
-        const sortedSheets = [...sheets].sort((sheet1, sheet2) => new Date(sheet1.sht_updated_at) - new Date(sheet2.sht_updated_at));
+        const sortedSheets = [...sheets].sort(
+            (sheet1, sheet2) =>
+                new Date(sheet1.sht_updated_at) -
+                new Date(sheet2.sht_updated_at),
+        );
         setSheets(sortedSheets);
     }
 
-    function sortByName(){
+    function sortByName() {
         setSortedBy('name');
-        const sortedSheets = [...sheets].sort((sheet1, sheet2) => sheet1.sht_name.localeCompare(sheet2.sht_name));
+        const sortedSheets = [...sheets].sort((sheet1, sheet2) =>
+            sheet1.sht_name.localeCompare(sheet2.sht_name),
+        );
         setSheets(sortedSheets);
     }
 
@@ -317,7 +327,11 @@ export default function Listing() {
                         </button>
                     </div>
                     <div className="sht-research-container">
-                        <input type="text" placeholder="Rechercher" onInput={(e) => handleFilter(e.target.value)} />
+                        <input
+                            type="text"
+                            placeholder="Rechercher"
+                            onInput={(e) => handleFilter(e.target.value)}
+                        />
                     </div>
                 </div>
                 <div className="sht-pannel-right">
@@ -327,7 +341,9 @@ export default function Listing() {
                                 <tr>
                                     <th onClick={sortByName}>Nom</th>
                                     <th onClick={sortByAuthor}>Auteur</th>
-                                    <th onClick={sortByDate}>Date de modification</th>
+                                    <th onClick={sortByDate}>
+                                        Date de modification
+                                    </th>
                                     <th></th>
                                 </tr>
                             </thead>
