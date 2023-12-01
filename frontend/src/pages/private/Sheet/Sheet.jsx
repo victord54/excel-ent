@@ -39,7 +39,6 @@ export default function Sheet() {
 
     const numberOfRows = 100;
     const numberOfColumns = 30;
-    const [cells, setCells] = useState([]);
     const [nameSheet, setNameSheet] = useState('Sans Nom');
     const [draggedCell, setDraggedCell] = useState(null);
     const [idt_sht, setIdt_sht] = useState(null);
@@ -74,7 +73,6 @@ export default function Sheet() {
      */
     async function renameSheet() {
         console.log('save');
-        console.log(cells);
         console.log(idt_sht);
         const response = await _renameSheet(idt_sht, nameSheet);
 
@@ -115,13 +113,7 @@ export default function Sheet() {
             const cellsBody = await cellsResponse.json();
 
             for (let key in cellsBody.data) {
-                setCells((oldCells) => {
-                    return {
-                        ...oldCells,
-                        [cellsBody.data[key].cel_idtcel]:
-                            cellsBody.data[key].cel_val,
-                    };
-                });
+            
                 setContentCell(
                     cellsBody.data[key].cel_idtcel,
                     cellsBody.data[key].cel_val,
@@ -143,10 +135,8 @@ export default function Sheet() {
         if (keyDownHandled) setKeyDownHandled(false);
         if (event.key === 'Enter') {
             event.preventDefault();
-            if (cells[cellKey].startsWith('=')) {
-                const res = evaluateur(cells[cellKey].substring(1));
-                setCells({ ...cells, [cellKey]: res });
-                console.log(cells);
+            if (event.target.innerText.startsWith('=')) {
+                const res = evaluateur(event.target.innerText.substring(1));
                 event.target.innerText = res;
             }
             event.target.blur();
@@ -165,9 +155,8 @@ export default function Sheet() {
      */
     function handleInputChange(event, cellKey) {
         if (event.target.innerText === '/n') event.target.innerText === '';
-        const updatedCells = { ...cells };
-        updatedCells[cellKey] = event.target.innerText;
-        setCells(updatedCells);
+       
+        
     }
 
     /**
@@ -188,7 +177,7 @@ export default function Sheet() {
     function handlePaste(event, keyCell) {
         console.log('paste');
         const text = event.clipboardData.getData('text/plain');
-        setCells({ ...cells, [keyCell]: text });
+        setContentCell(keyCell, text);
     }
 
     /**
@@ -207,11 +196,9 @@ export default function Sheet() {
      * @param {*} keyCell
      */
     function handleDragStart(event, keyCell) {
-        console.log(cells);
         if (event.target.innerText === '') return;
-        event.dataTransfer.setData('text/plain', cells[keyCell]);
+        event.dataTransfer.setData('text/plain', event.target.innerText);
         setDraggedCell(keyCell);
-        console.log(cells[keyCell]);
     }
 
     /**
@@ -222,14 +209,11 @@ export default function Sheet() {
     function handleDrop(event, keyCell) {
         console.log(event.dataTransfer.getData('text/plain'));
         setContentCell(keyCell, '');
-        setCells({
-            ...cells,
-            [keyCell]: event.dataTransfer.getData('text/plain'),
-        });
+       
 
         setContentCell(draggedCell, '');
-        setCells({ ...cells, [draggedCell]: '' });
         setDraggedCell(null);
+        updateSheetData(draggedCell, '');
     }
 
     /**
