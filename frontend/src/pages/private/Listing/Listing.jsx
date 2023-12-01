@@ -32,6 +32,7 @@ export default function Listing() {
     const [isPopupDeleteOpen, setIsPopupDeleteOpen] = useState(false);
     const [isPopupShareOpen, setIsPopupShareOpen] = useState(false);
     const [sheetToDeleteOrShate, setSheetToDeleteOrShare] = useState(null);
+    const [sortedBy, setSortedBy] = useState('last_update'); 
 
     const handleFilter = (filter) => {
         if (filter === '') filter = 'all';
@@ -212,6 +213,10 @@ export default function Listing() {
                     sht_sharing: 0,
                 },
             ]);
+            if (sortedBy === 'last_update') sortByDate();
+            else if (sortedBy === 'name') sortByName();
+            else if (sortedBy === 'author') sortByAuthor();
+
             window.open(`/sheet/${newUuid}`, '_blank');
         }
         console.log(newUuid);
@@ -230,6 +235,24 @@ export default function Listing() {
         const formattedDateTime = `${day}/${month}/${year} à ${hours}h${minutes}`;
 
         return formattedDateTime;
+    }
+
+    function sortByAuthor(){
+        setSortedBy('author');
+        const sortedSheets = [...sheets].sort((sheet1, sheet2) => sheet1.sht_name.localeCompare(sheet2.sht_name));
+        setSheets(sortedSheets);
+    }
+
+    function sortByDate(){
+        setSortedBy('last_update');
+        const sortedSheets = [...sheets].sort((sheet1, sheet2) => new Date(sheet1.sht_updated_at) - new Date(sheet2.sht_updated_at));
+        setSheets(sortedSheets);
+    }
+
+    function sortByName(){
+        setSortedBy('name');
+        const sortedSheets = [...sheets].sort((sheet1, sheet2) => sheet1.sht_name.localeCompare(sheet2.sht_name));
+        setSheets(sortedSheets);
     }
 
     return (
@@ -302,9 +325,9 @@ export default function Listing() {
                         <table className="sht-table-sheets">
                             <thead>
                                 <tr>
-                                    <th>Titre</th>
-                                    <th>Auteur</th>
-                                    <th>Date de modification</th>
+                                    <th onClick={sortByName}>Nom</th>
+                                    <th onClick={sortByAuthor}>Auteur</th>
+                                    <th onClick={sortByDate}>Date de modification</th>
                                     <th></th>
                                 </tr>
                             </thead>
