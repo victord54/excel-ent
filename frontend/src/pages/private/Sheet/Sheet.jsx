@@ -1,8 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import './sheet.css';
 import { evaluateur } from '../../../services/evaluateur';
-import { getLoggedUser } from '../../../services/user-service';
+import { AuthContext } from '../../../contexts/AuthContext';
 
 import {
     saveSheet as _saveSheet,
@@ -17,8 +17,9 @@ import { io } from 'socket.io-client';
 // TODO : Modification en même temps
 
 export default function Sheet() {
-    let { idSheet } = useParams();
-
+    const { idSheet } = useParams();
+    const { user } = useContext(AuthContext);
+    
     useEffect(() => {
         document.title = 'Feuille de calcul';
         const socket = io('http://localhost:4242');
@@ -89,7 +90,6 @@ export default function Sheet() {
         setSelectRow(null);
         console.log('update data');
         console.log(idt_sht);
-        if (val === '' || val === '/n') return;
         console.log({ cell, val });
         const response = await _updateSheetData(idt_sht, cell, val, '');
     }
@@ -101,21 +101,23 @@ export default function Sheet() {
         const sheetBody = await sheetResponse.json();
         const sheetData = sheetBody.data;
         if (sheetResponse.status === 200) {
+            if (sheetData.sht_idtusr_aut !== user.usr_idtusr) {
+                if (!sheetData.sht_shared) {
+                    // TODO : a faire mieux ptet jsp ce qu'on pourrait faire
+                    window.location.href = '/404';
+                }
+                // TODO add l'user à la liste des users qui ont accès à la sheet
+            }
+            
             setNameSheet(sheetData.sht_name);
-
             setIdt_sht(sheetData.sht_idtsht);
-            console.log('idtsht:', sheetData.sht_idtsht);
             const cellsResponse = await getSheetData(sheetData.sht_idtsht);
             const cellsBody = await cellsResponse.json();
-            console.log('cells: ', cellsBody);
+
             for (let key in cellsBody.data) {
-                console.log(cellsBody.data[key]);
-                const divChild = getDivChild(cellsBody.data[key].cel_idtcel);
-                console.log('Child : ' + divChild);
-                console.log(cellsBody.data[key].cel_idtcel);
-                if (divChild) divChild.innerText = cellsBody.data[key].cel_val;
+                setCells((oldCells) => {return { ...oldCells, [cellsBody.data[key].cel_idtcel]: cellsBody.data[key].cel_val }});
+                setContentCell(cellsBody.data[key].cel_idtcel, cellsBody.data[key].cel_val);
             }
-            setCells(cellsBody.data);
             setSheetExist(true);
         } else {
             //TODO: c'est censé renvoyer une erreur 404 dans le corps de la réponse
@@ -153,7 +155,7 @@ export default function Sheet() {
      * @param {string} cellKey id of the cell
      */
     function handleInputChange(event, cellKey) {
-        if (event.target.innerText === '/n') return;
+        if (event.target.innerText === '/n') event.target.innerText === '';
         const updatedCells = { ...cells };
         updatedCells[cellKey] = event.target.innerText;
         setCells(updatedCells);
@@ -196,9 +198,11 @@ export default function Sheet() {
      * @param {*} keyCell
      */
     function handleDragStart(event, keyCell) {
+        console.log(cells);
         if (event.target.innerText === '') return;
         event.dataTransfer.setData('text/plain', cells[keyCell]);
         setDraggedCell(keyCell);
+        console.log(cells[keyCell]);
     }
 
     /**
@@ -207,18 +211,17 @@ export default function Sheet() {
      * @param {*} keyCell
      */
     function handleDrop(event, keyCell) {
+        console.log(event.dataTransfer.getData('text/plain'));
+        setContentCell(keyCell, '');
         setCells({
             ...cells,
             [keyCell]: event.dataTransfer.getData('text/plain'),
         });
 
-        const divChild = getDivChild(draggedCell);
-        if (divChild) divChild.innerText = '';
+        setContentCell(draggedCell, '');
         setCells({ ...cells, [draggedCell]: '' });
         setDraggedCell(null);
 
-        const divChildTarget = getDivChild(keyCell);
-        divChildTarget.innerText = '';
     }
 
     /**
@@ -240,20 +243,16 @@ export default function Sheet() {
         event.target.select();
     }
 
-    /**
-     *
-     * @param {*} cellKey
-     * @returns
-     */
-    function getDivChild(cellKey) {
+    
+    function setContentCell(cellKey, content) {
+        console.log(cellKey, content);
         const td = document.getElementById(cellKey);
         if (td) {
             const divChild = td.querySelector('div');
             if (divChild) {
-                return divChild;
+                divChild.innerText = content;
             }
         }
-        return '';
     }
 
     function handleKeyDownInput(event) {
