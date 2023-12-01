@@ -8,16 +8,15 @@ async function executeRequest(url, options, needAuthentified = true) {
             Authorization: needAuthentified ? getBearerString() : '',
         },
     });
-console.log('response: ');
-console.log(response);
+    console.log('response: ');
+    console.log(response);
     if (response.status === 401 && needAuthentified) {
         throw new Error('Unauthorized');
-    }
-    else {
+    } else {
         const payload = await response.json();
         console.log('payload: ');
         console.log(payload);
-        return payload
+        return payload;
     }
 }
 
@@ -213,4 +212,14 @@ export async function updateSheetData(
             }),
         },
     );
+}
+
+export async function deleteSheet(sht_idtsht) {
+    return await fetch(import.meta.env.VITE_API_URL + '/sheet/' + sht_idtsht, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: getBearerString(),
+        },
+    });
 }

@@ -1,8 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import './sheet.css';
 import { evaluateur } from '../../../services/evaluateur';
-import { getLoggedUser } from '../../../services/user-service';
+import { AuthContext } from '../../../contexts/AuthContext';
 
 import {
     saveSheet as _saveSheet,
@@ -17,13 +17,12 @@ import { io } from 'socket.io-client';
 // TODO : Modification en même temps
 
 export default function Sheet() {
-    let { idSheet } = useParams();
+    const { idSheet } = useParams();
+    const { user } = useContext(AuthContext);
 
     useEffect(() => {
         document.title = 'Feuille de calcul';
         const socket = io('http://localhost:4242');
-
-        getSheet();
 
         // socket.on('connect', () => {
         //     console.log('connected');
@@ -34,11 +33,12 @@ export default function Sheet() {
             console.log('sheet-update');
             console.log(data);
         });
+
+        getSheet();
     }, []);
 
     const numberOfRows = 100;
     const numberOfColumns = 30;
-    const [cells, setCells] = useState([]);
     const [nameSheet, setNameSheet] = useState('Sans Nom');
     const [draggedCell, setDraggedCell] = useState(null);
     const [idt_sht, setIdt_sht] = useState(null);
@@ -73,8 +73,14 @@ export default function Sheet() {
      */
     async function renameSheet() {
         console.log('save');
-        console.log(cells);
         console.log(idt_sht);
+        const regex = /^[a-zA-Z0-9*'()_\-/À-ÖØ-öø-ÿ]+$/;
+        if (!regex.test(nameSheet)) {
+            //TODO : afficher un message d'erreur
+            console.log('erreur');
+            return;
+        }
+
         const response = await _renameSheet(idt_sht, nameSheet);
 
         if (response.status === 200) {
@@ -84,12 +90,17 @@ export default function Sheet() {
         }
     }
 
+    function handleKeyDownInput(event) {
+        if (event.key === 'Enter') {
+            event.target.blur();
+        }
+    }
+
     async function updateSheetData(cell, val) {
         setSelectCol(null);
         setSelectRow(null);
         console.log('update data');
         console.log(idt_sht);
-        if (val === '' || val === '/n') return;
         console.log({ cell, val });
         const response = await _updateSheetData(idt_sht, cell, val, '');
     }
@@ -101,20 +112,24 @@ export default function Sheet() {
         const sheetBody = await sheetResponse.json();
         const sheetData = sheetBody.data;
         if (sheetResponse.status === 200) {
-            setNameSheet(sheetData.sht_name);
+            if (sheetData.sht_idtusr_aut !== user.usr_idtusr) {
+                if (!sheetData.sht_shared) {
+                    // TODO : a faire mieux ptet jsp ce qu'on pourrait faire
+                    window.location.href = '/404';
+                }
+                // TODO add l'user à la liste des users qui ont accès à la sheet
+            }
 
+            setNameSheet(sheetData.sht_name);
             setIdt_sht(sheetData.sht_idtsht);
-            console.log('idtsht:', sheetData.sht_idtsht);
             const cellsResponse = await getSheetData(sheetData.sht_idtsht);
             const cellsBody = await cellsResponse.json();
-            console.log('cells: ', cellsBody);
-            setCells(cellsBody.data);
+
             for (let key in cellsBody.data) {
-                console.log(cellsBody.data[key]);
-                const divChild = getDivChild(cellsBody.data[key].cel_idtcel);
-                console.log(divChild);
-                console.log(cellsBody.data[key].cel_idtcel);
-                if (divChild) divChild.innerText = cellsBody.data[key].cel_val;
+                setContentCell(
+                    cellsBody.data[key].cel_idtcel,
+                    cellsBody.data[key].cel_val,
+                );
             }
             setSheetExist(true);
         } else {
@@ -132,10 +147,8 @@ export default function Sheet() {
         if (keyDownHandled) setKeyDownHandled(false);
         if (event.key === 'Enter') {
             event.preventDefault();
-            if (cells[cellKey].startsWith('=')) {
-                const res = evaluateur(cells[cellKey].substring(1));
-                setCells({ ...cells, [cellKey]: res });
-                console.log(cells);
+            if (event.target.innerText.startsWith('=')) {
+                const res = evaluateur(event.target.innerText.substring(1));
                 event.target.innerText = res;
             }
             event.target.blur();
@@ -145,18 +158,6 @@ export default function Sheet() {
             handleCopy();
             updateSheetData(cellKey, event.target.innerText);
         }
-    }
-
-    /**
-     * Handle the change of the input the user is typing in
-     * @param {*} event the event of the input
-     * @param {string} cellKey id of the cell
-     */
-    function handleInputChange(event, cellKey) {
-        if (event.target.innerText === '/n') return;
-        const updatedCells = { ...cells };
-        updatedCells[cellKey] = event.target.innerText;
-        setCells(updatedCells);
     }
 
     /**
@@ -177,7 +178,7 @@ export default function Sheet() {
     function handlePaste(event, keyCell) {
         console.log('paste');
         const text = event.clipboardData.getData('text/plain');
-        setCells({ ...cells, [keyCell]: text });
+        setContentCell(keyCell, text);
     }
 
     /**
@@ -197,7 +198,7 @@ export default function Sheet() {
      */
     function handleDragStart(event, keyCell) {
         if (event.target.innerText === '') return;
-        event.dataTransfer.setData('text/plain', cells[keyCell]);
+        event.dataTransfer.setData('text/plain', event.target.innerText);
         setDraggedCell(keyCell);
     }
 
@@ -207,18 +208,12 @@ export default function Sheet() {
      * @param {*} keyCell
      */
     function handleDrop(event, keyCell) {
-        setCells({
-            ...cells,
-            [keyCell]: event.dataTransfer.getData('text/plain'),
-        });
+        console.log(event.dataTransfer.getData('text/plain'));
+        setContentCell(keyCell, '');
 
-        const divChild = getDivChild(draggedCell);
-        if (divChild) divChild.innerText = '';
-        setCells({ ...cells, [draggedCell]: '' });
+        setContentCell(draggedCell, '');
         setDraggedCell(null);
-
-        const divChildTarget = getDivChild(keyCell);
-        divChildTarget.innerText = '';
+        updateSheetData(draggedCell, '');
     }
 
     /**
@@ -240,20 +235,15 @@ export default function Sheet() {
         event.target.select();
     }
 
-    /**
-     *
-     * @param {*} cellKey
-     * @returns
-     */
-    function getDivChild(cellKey) {
+    function setContentCell(cellKey, content) {
+        console.log(cellKey, content);
         const td = document.getElementById(cellKey);
         if (td) {
             const divChild = td.querySelector('div');
             if (divChild) {
-                return divChild;
+                divChild.innerText = content;
             }
         }
-        return '';
     }
 
     if (!sheetExist) return <></>;
@@ -264,8 +254,9 @@ export default function Sheet() {
                 value={nameSheet}
                 onChange={nameSheetChange}
                 onClick={handleSelectAllInput}
+                onBlur={renameSheet}
+                onKeyDown={handleKeyDownInput}
             ></input>
-            <button onClick={renameSheet}>Save</button>
             <div className="sht-container-all">
                 <div className="sht-container-tab">
                     <table className="sht-table">
@@ -319,12 +310,6 @@ export default function Sheet() {
                                         >
                                             <div
                                                 contentEditable
-                                                onInput={(event) =>
-                                                    handleInputChange(
-                                                        event,
-                                                        nameCol + '_' + nameRow,
-                                                    )
-                                                }
                                                 onKeyDown={(event) =>
                                                     handleKeyDown(
                                                         event,

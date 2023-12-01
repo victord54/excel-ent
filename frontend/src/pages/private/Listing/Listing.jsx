@@ -7,65 +7,165 @@ import boutonPartager from '../../../assets/bouton-partager.png';
 import { v4 as uuid } from 'uuid';
 import { getAllSheetFromUser } from '../../../services/api-service';
 import { AuthContext } from '../../../contexts/AuthContext';
-import { saveSheet as _saveSheet } from '../../../services/api-service';
+import {
+    saveSheet as _saveSheet,
+    renameSheet as _renameSheet,
+    deleteSheet as _deleteSheet,
+} from '../../../services/api-service';
+import PopUp from '../../../components/private/pop-up/PopUp';
 
 // TODO : Ajouter les fonctionnalités modifier, supprimer et partager
 // TODO : Ajouter la fonctionnalité de recherche
-// TODO : Récupérer les feuilles partagées
+// TODO : Récupérer les sheets partagées
 // TODO : Fonctionnalité de tri
 
 export default function Listing() {
     useEffect(() => {
         document.title = 'Mes feuilles';
-        getFeuilles();
+        getSheets();
     }, []);
-    const { user, setUser } = useContext(AuthContext);
-
-    const [feuilles, setFeuilles] = useState([]);
+    const { user } = useContext(AuthContext);
+    const [sheets, setSheets] = useState([]);
     const navigate = useNavigate();
     const [selectedFilter, setSelectedFilter] = useState('all');
+    const [canRowClick, setCanRowClick] = useState(true);
+    const [isPopupDeleteOpen, setIsPopupDeleteOpen] = useState(false);
+    const [isPopupShareOpen, setIsPopupShareOpen] = useState(false);
+    const [sheetToDeleteOrShate, setSheetToDeleteOrShare] = useState(null);
 
     const handleFilterClick = (filter) => {
         setSelectedFilter(filter);
         console.log(filter);
     };
 
-    async function getFeuilles() {
+    async function getSheets() {
         const res = await getAllSheetFromUser();
         const _body = await res.json();
-        setFeuilles(_body);
+        setSheets(_body);
         console.log(_body);
     }
 
-    const filteredFeuilles = feuilles.filter((feuille) => {
+    const filteredSheets = sheets.filter((sheet) => {
         if (selectedFilter === 'all') {
             return true;
-        } else if (selectedFilter === 'mesFeuilles') {
-            return feuille.auteur === 'moa';
-        } else if (selectedFilter === 'feuillesPartagees') {
-            return feuille.auteur !== 'moa';
+        } else if (selectedFilter === 'mySheets') {
+            return sheet.sht_idtusr_aut === user.usr_idtusr;
+        } else if (selectedFilter === 'sheetsShared') {
+            return sheet.sht_idtusr_aut !== user.usr_idtusr;
         }
     });
 
-    const handleRowClick = (feuille) => {
-        console.log(feuille.sht_uuid);
-        navigate('/sheet/' + feuille.sht_uuid);
+    const handleRowClick = (sheet) => {
+        if (!canRowClick) return;
+        console.log(sheet.sht_uuid);
+        window.open('/sheet/' + sheet.sht_uuid, '_blank');
     };
 
-    const modifier = (e, feuille) => {
-        e.stopPropagation();
-        console.log('Modifier');
-    };
+    async function handleRenameSheetClick(event, sheet) {
+        event.stopPropagation();
+        setCanRowClick(false);
+        const td = document.getElementById(sheet.sht_idtsht + '_Name');
+        td.contentEditable = true;
+        td.className = 'sht-sheet-title-editable';
 
-    const supprimer = (e, euille) => {
+        // Sélection du contenu de la td
+        const range = document.createRange();
+        range.selectNodeContents(td);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+    }
+
+    async function handleOnBlurRenameSheet(event, sheet, enter = null) {
+        if (event.target.contentEditable === 'false') return;
+        const regex = /^[a-zA-Z0-9*'()_\-/À-ÖØ-öø-ÿ]+$/;
+        const idt_sht = sheet.sht_idtsht;
+        const td = event.target;
+        td.contentEditable = false;
+        td.className = 'sht-sheet-title';
+
+        if (td.innerText === sheet.sht_name) return;
+
+        if (!regex.test(td.innerText)) {
+            td.innerText = sheet.sht_name;
+            // TODO : Afficher l'error (caractères interdits)
+            return;
+        }
+        setCanRowClick(true);
+
+        // TODO : error
+        const response = await _renameSheet(idt_sht, td.innerText);
+
+        if (response.status === 200) {
+            console.log('ok :' + td.innerText);
+            const _body = await response.json();
+            console.log(_body);
+
+            setSheets((prevSheets) => {
+                return prevSheets.map((sheet) => {
+                    if (sheet.sht_idtsht === idt_sht) {
+                        // Si l'id correspond, met à jour le nom
+                        return { ...sheet, sht_name: td.innerText };
+                    }
+                    // Sinon, retourne l'objet sheet sans modification
+                    return sheet;
+                });
+            });
+        }
+    }
+
+    function handleEnterDown(event, sheet) {
+        if (event.target.contentEditable === 'false') return;
+        if (event.key === 'Enter') {
+            handleOnBlurRenameSheet(event, sheet, true);
+        }
+    }
+
+    async function handlePopUpConfirmationSupprimer(confirm) {
+        setIsPopupDeleteOpen(false);
+
+        if (confirm) {
+            const res = await _deleteSheet(sheetToDeleteOrShate.sht_idtsht);
+
+            //TODO : error
+            if (res.status === 200) {
+                const _body = await res.json();
+                console.log(_body);
+                setSheets((prevSheets) => {
+                    const updatedSheets = prevSheets.filter(
+                        (f) => f.sht_idtsht !== sheetToDeleteOrShate.sht_idtsht,
+                    );
+                    return updatedSheets;
+                });
+            }
+        }
+        setSheetToDeleteOrShare(null);
+    }
+
+    function deleteSheet(e, sheet) {
         e.stopPropagation();
         console.log('Supprimer');
-    };
+        setSheetToDeleteOrShare(sheet);
+        setIsPopupDeleteOpen(true);
+    }
 
-    const partager = (e, feuille) => {
+    async function handlePopUpConfirmationShare(confirm) {
+        setIsPopupShareOpen(false);
+
+        if (confirm) {
+            console.log('Partage confirmer');
+            // TODO : Partager la sheet
+        }
+
+        setSheetToDeleteOrShare(null);
+    }
+
+    function shareSheet(e, sheet) {
         e.stopPropagation();
         console.log('Partager');
-    };
+        setSheetToDeleteOrShare(sheet);
+        setIsPopupShareOpen(true);
+    }
 
     async function newSheet() {
         let newUuid = uuid();
@@ -93,16 +193,19 @@ export default function Listing() {
         }
         if (response.status === 200) {
             console.log('ok');
-            setFeuilles([
-                ...feuilles,
+            setSheets([
+                ...sheets,
                 {
+                    sht_idtusr_aut: user.usr_idtusr,
+                    sht_idtsht: _body.sht_idtsht,
                     sht_uuid: newUuid,
                     sht_name: 'Sans Nom',
                     sht_created_at: new Date(),
                     sht_updated_at: new Date(),
+                    sht_sharing: 0,
                 },
             ]);
-            window.open(`/sheet/${newUuid}`);
+            window.open(`/sheet/${newUuid}`, '_blank');
         }
         console.log(newUuid);
     }
@@ -124,84 +227,114 @@ export default function Listing() {
 
     return (
         <>
-            <div className="container-home">
-                <div className="panneau-gauche">
+            {isPopupDeleteOpen && (
+                <div className="sht-popup">
+                    <PopUp
+                        onAction={handlePopUpConfirmationSupprimer}
+                        type="confirmDelete"
+                    />
+                </div>
+            )}
+            {isPopupShareOpen && (
+                <div className="sht-popup">
+                    <PopUp
+                        onAction={handlePopUpConfirmationShare}
+                        type="confirmShare"
+                        link={sheetToDeleteOrShate.sht_uuid}
+                        alreadyShared={sheetToDeleteOrShate.sht_sharing}
+                    />
+                </div>
+            )}
+            <div className="sht-container-home">
+                <div className="sht-pannel-left">
                     <div>
                         <button
                             onClick={newSheet}
-                            className="button-nouvelle-feuille"
+                            className="sht-button-new-sheet"
                         >
                             Nouvelle feuille
                         </button>
                     </div>
-                    <hr className="barre" />
+                    <hr className="sht-line" />
                     <div>
                         <button
-                            className={`filter-button ${
-                                selectedFilter === 'all' ? 'active' : ''
+                            className={`sht-filter-button ${
+                                selectedFilter === 'all' ? 'sht-active' : ''
                             }`}
                             onClick={() => handleFilterClick('all')}
                         >
                             Afficher tout
                         </button>
                         <button
-                            className={`filter-button ${
-                                selectedFilter === 'mesFeuilles' ? 'active' : ''
+                            className={`sht-filter-button ${
+                                selectedFilter === 'mySheets'
+                                    ? 'sht-active'
+                                    : ''
                             }`}
-                            onClick={() => handleFilterClick('mesFeuilles')}
+                            onClick={() => handleFilterClick('mySheets')}
                         >
                             Afficher mes feuilles
                         </button>
                         <button
-                            className={`filter-button ${
-                                selectedFilter === 'feuillesPartagees'
-                                    ? 'active'
+                            className={`sht-filter-button ${
+                                selectedFilter === 'sheetsShared'
+                                    ? 'sht-active'
                                     : ''
                             }`}
-                            onClick={() =>
-                                handleFilterClick('feuillesPartagees')
-                            }
+                            onClick={() => handleFilterClick('sheetsShared')}
                         >
                             Afficher les feuilles partagées
                         </button>
                     </div>
                 </div>
-                <div className="panneau-droit">
-                    <div className="table-container">
-                        <table className="table-feuilles">
+                <div className="sht-pannel-right">
+                    <div className="sht-table-container">
+                        <table className="sht-table-sheets">
                             <thead>
                                 <tr>
                                     <th>Titre</th>
-                                    <th>Crée par</th>
-                                    <th>Date de création</th>
+                                    <th>Auteur</th>
                                     <th>Date de modification</th>
                                     <th></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {filteredFeuilles.map((feuille, i) => (
+                                {filteredSheets.map((sheet, i) => (
                                     <tr
                                         key={i}
-                                        onClick={() => handleRowClick(feuille)}
+                                        onClick={() => handleRowClick(sheet)}
+                                        className="sht-sheet-row-container"
                                     >
-                                        <td>{feuille.sht_name}</td>
-                                        <td>{user.usr_pseudo}</td>
-                                        <td>
-                                            {reformatDate(
-                                                feuille.sht_created_at,
-                                            )}
+                                        <td
+                                            contentEditable={false}
+                                            id={sheet.sht_idtsht + '_Name'}
+                                            onBlur={(event) =>
+                                                handleOnBlurRenameSheet(
+                                                    event,
+                                                    sheet,
+                                                )
+                                            }
+                                            onKeyDown={(event) =>
+                                                handleEnterDown(event, sheet)
+                                            }
+                                            title={sheet.sht_name}
+                                            className="sht-sheet-title"
+                                        >
+                                            {sheet.sht_name}
                                         </td>
-                                        <td>
-                                            {reformatDate(
-                                                feuille.sht_updated_at,
-                                            )}
+                                        <td>{user.usr_pseudo}</td>
+                                        <td className="sht-sheet-date">
+                                            {reformatDate(sheet.sht_updated_at)}
                                         </td>
                                         <td>
                                             <button
-                                                className="button-option modifier"
+                                                className="sht-button-option sht-rename"
                                                 title="Modifier le nom"
                                                 onClick={(e) =>
-                                                    modifier(e, feuille)
+                                                    handleRenameSheetClick(
+                                                        e,
+                                                        sheet,
+                                                    )
                                                 }
                                             >
                                                 <img
@@ -209,23 +342,29 @@ export default function Listing() {
                                                     width="15px"
                                                 />
                                             </button>
+                                            {sheet.sht_idtusr_aut ===
+                                            user.usr_idtusr ? (
+                                                <button
+                                                    className="sht-button-option sht-delete"
+                                                    title="Supprimer la sheet"
+                                                    onClick={(e) =>
+                                                        deleteSheet(e, sheet)
+                                                    }
+                                                >
+                                                    <img
+                                                        src={boutonSupprimer}
+                                                        width="15px"
+                                                    />
+                                                </button>
+                                            ) : (
+                                                <></>
+                                            )}
+
                                             <button
-                                                className="button-option supprimer"
-                                                title="Supprimer la feuille"
+                                                className="sht-button-option sht-share"
+                                                title="Partager la sheet"
                                                 onClick={(e) =>
-                                                    supprimer(e, feuille)
-                                                }
-                                            >
-                                                <img
-                                                    src={boutonSupprimer}
-                                                    width="15px"
-                                                />
-                                            </button>
-                                            <button
-                                                className="button-option partager"
-                                                title="Partager la feuille"
-                                                onClick={(e) =>
-                                                    partager(e, feuille)
+                                                    shareSheet(e, sheet)
                                                 }
                                             >
                                                 <img
