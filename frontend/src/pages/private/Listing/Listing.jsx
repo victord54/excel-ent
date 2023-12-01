@@ -8,6 +8,7 @@ import { v4 as uuid } from 'uuid';
 import { getAllSheetFromUser } from '../../../services/api-service';
 import { AuthContext } from '../../../contexts/AuthContext';
 import { saveSheet as _saveSheet, renameSheet as _renameSheet, deleteSheet as _deleteSheet} from '../../../services/api-service';
+import PopUp from '../../../components/private/pop-up/PopUp';
 
 // TODO : Ajouter les fonctionnalités modifier, supprimer et partager
 // TODO : Ajouter la fonctionnalité de recherche
@@ -19,12 +20,14 @@ export default function Listing() {
         document.title = 'Mes feuilles';
         getFeuilles();
     }, []);
-    const { user, setUser } = useContext(AuthContext);
-
+    const { user } = useContext(AuthContext);
     const [feuilles, setFeuilles] = useState([]);
     const navigate = useNavigate();
     const [selectedFilter, setSelectedFilter] = useState('all');
     const [canRowClick, setCanRowClick] = useState(true);
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [idSheetToDelete, setIdSheetToDelete] = useState(null);
+
     const handleFilterClick = (filter) => {
         setSelectedFilter(filter);
         console.log(filter);
@@ -41,9 +44,9 @@ export default function Listing() {
         if (selectedFilter === 'all') {
             return true;
         } else if (selectedFilter === 'mesFeuilles') {
-            return feuille.auteur === 'moa';
+            return feuille.sht_idtusr_aut === user.usr_idtusr;
         } else if (selectedFilter === 'feuillesPartagees') {
-            return feuille.auteur !== 'moa';
+            return feuille.sht_idtusr_aut !== user.usr_idtusr;
         }
     });
 
@@ -104,21 +107,29 @@ export default function Listing() {
         }
     }
 
-    async function supprimer(e, feuille) {
+    async function handlePopUpConfirmationSupprimer(confirm) {
+        setIsPopupOpen(false);
+        if (confirm){
+            const res = await _deleteSheet(idSheetToDelete);
+
+            //TODO : error
+            if (res.status === 200) {
+                const _body = await res.json();
+                console.log(_body);
+                setFeuilles(prevFeuilles => {
+                    const updatedFeuilless = prevFeuilles.filter(f => f.sht_idtsht !== idSheetToDelete);
+                    return updatedFeuilless;
+                });
+            }
+        }
+    }
+    
+    function deleteSheet(e, feuille) {
         e.stopPropagation();
         console.log('Supprimer');
-        const res = await _deleteSheet(feuille.sht_idtsht);
-
-        //TODO : error
-        if (res.status === 200) {
-            const _body = await res.json();
-            console.log(_body);
-            setFeuilles(prevFeuilles => {
-                const updatedFeuilless = prevFeuilles.filter(f => f.sht_idtsht !== feuille.sht_idtsht);
-                return updatedFeuilless;
-              });
-
-        }
+        setIdSheetToDelete(feuille.sht_idtsht);
+        setIsPopupOpen(true);
+        
     };
 
     const partager = (e, feuille) => {
@@ -182,7 +193,12 @@ export default function Listing() {
     }
 
     return (
-        <>
+        <>  
+            {isPopupOpen && (
+                <div className='sht-popup'>
+                    <PopUp onAction={handlePopUpConfirmationSupprimer} type="confirm"/>
+                </div>
+            )}
             <div className="container-home">
                 <div className="panneau-gauche">
                     <div>
@@ -271,18 +287,22 @@ export default function Listing() {
                                                     width="15px"
                                                 />
                                             </button>
-                                            <button
-                                                className="button-option supprimer"
-                                                title="Supprimer la feuille"
-                                                onClick={(e) =>
-                                                    supprimer(e, feuille)
-                                                }
-                                            >
-                                                <img
-                                                    src={boutonSupprimer}
-                                                    width="15px"
-                                                />
-                                            </button>
+                                            {feuille.sht_idtusr_aut === user.usr_idtusr ? 
+                                                  <button
+                                                  className="button-option supprimer"
+                                                  title="Supprimer la feuille"
+                                                  onClick={(e) =>
+                                                      deleteSheet(e, feuille)
+                                                  }
+                                                    >
+                                                    <img
+                                                        src={boutonSupprimer}
+                                                        width="15px"
+                                                    />
+                                                    </button>
+                                                : <></>
+                                            }
+                                          
                                             <button
                                                 className="button-option partager"
                                                 title="Partager la feuille"
