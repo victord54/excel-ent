@@ -7,7 +7,11 @@ import boutonPartager from '../../../assets/bouton-partager.png';
 import { v4 as uuid } from 'uuid';
 import { getAllSheetFromUser } from '../../../services/api-service';
 import { AuthContext } from '../../../contexts/AuthContext';
-import { saveSheet as _saveSheet, renameSheet as _renameSheet, deleteSheet as _deleteSheet} from '../../../services/api-service';
+import {
+    saveSheet as _saveSheet,
+    renameSheet as _renameSheet,
+    deleteSheet as _deleteSheet,
+} from '../../../services/api-service';
 import PopUp from '../../../components/private/pop-up/PopUp';
 
 // TODO : Ajouter les fonctionnalités modifier, supprimer et partager
@@ -53,7 +57,7 @@ export default function Listing() {
     const handleRowClick = (feuille) => {
         if (!canRowClick) return;
         console.log(feuille.sht_uuid);
-        window.open('/sheet/' + feuille.sht_uuid, '_blank');    
+        window.open('/sheet/' + feuille.sht_uuid, '_blank');
     };
 
     async function modifier(event, feuille) {
@@ -62,22 +66,22 @@ export default function Listing() {
         console.log('Modifier');
         const td = document.getElementById(feuille.sht_idtsht + '_Name');
         td.contentEditable = true;
-        
+
         // Sélection du contenu de la td
         const range = document.createRange();
         range.selectNodeContents(td);
         const selection = window.getSelection();
         selection.removeAllRanges();
         selection.addRange(range);
-    };
+    }
 
     async function handleOnBlurTD(event, feuille) {
-        console.log("ok");
+        console.log('ok');
         const idt_sht = feuille.sht_idtsht;
         const td = event.target;
         td.contentEditable = false;
         setCanRowClick(true);
-         // TODO : error
+        // TODO : error
         const response = await _renameSheet(idt_sht, td.innerText);
 
         if (response.status === 200) {
@@ -85,22 +89,22 @@ export default function Listing() {
             const _body = await response.json();
             console.log(_body);
 
-            setFeuilles(prevFeuilles => {
-                return prevFeuilles.map(feuille => {
-                  if (feuille.sht_idtsht === idt_sht) {
-                    // Si l'id correspond, met à jour le nom
-                    return { ...feuille, sht_name: td.innerText };
-                  }
-                  // Sinon, retourne l'objet feuille sans modification
-                  return feuille;
+            setFeuilles((prevFeuilles) => {
+                return prevFeuilles.map((feuille) => {
+                    if (feuille.sht_idtsht === idt_sht) {
+                        // Si l'id correspond, met à jour le nom
+                        return { ...feuille, sht_name: td.innerText };
+                    }
+                    // Sinon, retourne l'objet feuille sans modification
+                    return feuille;
                 });
-              });
+            });
         }
     }
 
     function handleEnterDown(event, feuille) {
         if (event.key === 'Enter') {
-            handleOnBlurTD(event, feuille);   
+            handleOnBlurTD(event, feuille);
             const selection = window.getSelection();
             selection.removeAllRanges();
             event.target.blur();
@@ -109,28 +113,29 @@ export default function Listing() {
 
     async function handlePopUpConfirmationSupprimer(confirm) {
         setIsPopupOpen(false);
-        if (confirm){
+        if (confirm) {
             const res = await _deleteSheet(idSheetToDelete);
 
             //TODO : error
             if (res.status === 200) {
                 const _body = await res.json();
                 console.log(_body);
-                setFeuilles(prevFeuilles => {
-                    const updatedFeuilless = prevFeuilles.filter(f => f.sht_idtsht !== idSheetToDelete);
+                setFeuilles((prevFeuilles) => {
+                    const updatedFeuilless = prevFeuilles.filter(
+                        (f) => f.sht_idtsht !== idSheetToDelete,
+                    );
                     return updatedFeuilless;
                 });
             }
         }
     }
-    
+
     function deleteSheet(e, feuille) {
         e.stopPropagation();
         console.log('Supprimer');
         setIdSheetToDelete(feuille.sht_idtsht);
         setIsPopupOpen(true);
-        
-    };
+    }
 
     const partager = (e, feuille) => {
         e.stopPropagation();
@@ -172,7 +177,7 @@ export default function Listing() {
                     sht_updated_at: new Date(),
                 },
             ]);
-           navigate(`/sheet/${newUuid}`);
+            navigate(`/sheet/${newUuid}`);
         }
         console.log(newUuid);
     }
@@ -193,10 +198,13 @@ export default function Listing() {
     }
 
     return (
-        <>  
+        <>
             {isPopupOpen && (
-                <div className='sht-popup'>
-                    <PopUp onAction={handlePopUpConfirmationSupprimer} type="confirm"/>
+                <div className="sht-popup">
+                    <PopUp
+                        onAction={handlePopUpConfirmationSupprimer}
+                        type="confirm"
+                    />
                 </div>
             )}
             <div className="container-home">
@@ -259,10 +267,17 @@ export default function Listing() {
                                         key={i}
                                         onClick={() => handleRowClick(feuille)}
                                     >
-                                        <td id={feuille.sht_idtsht + '_Name'}
-                                            onBlur={(event) => handleOnBlurTD(event, feuille)}
-                                            onKeyDown={(event) => handleEnterDown(event, feuille)}
-                                        >{feuille.sht_name}</td>
+                                        <td
+                                            id={feuille.sht_idtsht + '_Name'}
+                                            onBlur={(event) =>
+                                                handleOnBlurTD(event, feuille)
+                                            }
+                                            onKeyDown={(event) =>
+                                                handleEnterDown(event, feuille)
+                                            }
+                                        >
+                                            {feuille.sht_name}
+                                        </td>
                                         <td>{user.usr_pseudo}</td>
                                         <td>
                                             {reformatDate(
@@ -287,22 +302,24 @@ export default function Listing() {
                                                     width="15px"
                                                 />
                                             </button>
-                                            {feuille.sht_idtusr_aut === user.usr_idtusr ? 
-                                                  <button
-                                                  className="button-option supprimer"
-                                                  title="Supprimer la feuille"
-                                                  onClick={(e) =>
-                                                      deleteSheet(e, feuille)
-                                                  }
-                                                    >
+                                            {feuille.sht_idtusr_aut ===
+                                            user.usr_idtusr ? (
+                                                <button
+                                                    className="button-option supprimer"
+                                                    title="Supprimer la feuille"
+                                                    onClick={(e) =>
+                                                        deleteSheet(e, feuille)
+                                                    }
+                                                >
                                                     <img
                                                         src={boutonSupprimer}
                                                         width="15px"
                                                     />
-                                                    </button>
-                                                : <></>
-                                            }
-                                          
+                                                </button>
+                                            ) : (
+                                                <></>
+                                            )}
+
                                             <button
                                                 className="button-option partager"
                                                 title="Partager la feuille"

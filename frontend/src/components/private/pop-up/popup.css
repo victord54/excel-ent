@@ -4,7 +4,7 @@
     border-radius: 15px;
 }
 
-.popup-title{
+.popup-title {
     border-radius: 15px 15px 0 0;
     padding: 5px 15px 0 15px;
     font-size: 20px;
@@ -13,16 +13,16 @@
     border-bottom: solid black 2px;
 }
 
-.popup-container-content{
+.popup-container-content {
     padding: 5px 15px 10px 15px;
     font-size: 17px;
 }
 
-.popup-container-buttons{
+.popup-container-buttons {
     display: flex;
     flex-direction: row-reverse;
     padding-bottom: 5px;
-    gap:5%;
+    gap: 5%;
 }
 
 .popup-button {
