@@ -34,7 +34,7 @@
     background-color: #cdd1c4;
 }
 
-.button-nouvelle-feuille {
+.button-nouvelle-sheet {
     border: none;
     border-radius: 25px;
     background-color: #5c80bc;
@@ -46,7 +46,7 @@
     font-size: 18px;
 }
 
-.button-nouvelle-feuille:hover {
+.button-nouvelle-sheet:hover {
     background-color: #7a9edb;
     transform: scale(1.1);
 }
@@ -66,13 +66,13 @@
     box-shadow: 1px 1px 25px rgba(0, 0, 0, 0.3);
 }
 
-.table-feuilles {
+.table-sheets {
     width: 100%;
     border-collapse: collapse;
     border-spacing: 0;
 }
 
-.table-feuilles thead th {
+.table-sheets thead th {
     text-align: left;
     position: sticky;
     background-color: rgba(248, 246, 246, 1);
@@ -80,12 +80,12 @@
     height: 40px;
 }
 
-.table-feuilles tr {
+.table-sheets tr {
     border-bottom: 1px dotted rgb(15, 15, 15);
     height: 40px;
 }
 
-.table-feuilles tr:hover {
+.table-sheets tr:hover {
     background-color: #b4bdcc;
     cursor: pointer;
 }

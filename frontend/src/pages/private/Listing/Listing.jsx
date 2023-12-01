@@ -16,16 +16,16 @@ import PopUp from '../../../components/private/pop-up/PopUp';
 
 // TODO : Ajouter les fonctionnalités modifier, supprimer et partager
 // TODO : Ajouter la fonctionnalité de recherche
-// TODO : Récupérer les feuilles partagées
+// TODO : Récupérer les sheets partagées
 // TODO : Fonctionnalité de tri
 
 export default function Listing() {
     useEffect(() => {
         document.title = 'Mes feuilles';
-        getFeuilles();
+        getSheets();
     }, []);
     const { user } = useContext(AuthContext);
-    const [feuilles, setFeuilles] = useState([]);
+    const [sheets, setSheets] = useState([]);
     const navigate = useNavigate();
     const [selectedFilter, setSelectedFilter] = useState('all');
     const [canRowClick, setCanRowClick] = useState(true);
@@ -37,34 +37,33 @@ export default function Listing() {
         console.log(filter);
     };
 
-    async function getFeuilles() {
+    async function getSheets() {
         const res = await getAllSheetFromUser();
         const _body = await res.json();
-        setFeuilles(_body);
+        setSheets(_body);
         console.log(_body);
     }
 
-    const filteredFeuilles = feuilles.filter((feuille) => {
+    const filteredSheets = sheets.filter((sheet) => {
         if (selectedFilter === 'all') {
             return true;
-        } else if (selectedFilter === 'mesFeuilles') {
-            return feuille.sht_idtusr_aut === user.usr_idtusr;
-        } else if (selectedFilter === 'feuillesPartagees') {
-            return feuille.sht_idtusr_aut !== user.usr_idtusr;
+        } else if (selectedFilter === 'mySheets') {
+            return sheet.sht_idtusr_aut === user.usr_idtusr;
+        } else if (selectedFilter === 'sheetsShared') {
+            return sheet.sht_idtusr_aut !== user.usr_idtusr;
         }
     });
 
-    const handleRowClick = (feuille) => {
+    const handleRowClick = (sheet) => {
         if (!canRowClick) return;
-        console.log(feuille.sht_uuid);
-        window.open('/sheet/' + feuille.sht_uuid, '_blank');
+        console.log(sheet.sht_uuid);
+        window.open('/sheet/' + sheet.sht_uuid, '_blank');
     };
 
-    async function modifier(event, feuille) {
+    async function handleRenamesheetClick(event, sheet) {
         event.stopPropagation();
         setCanRowClick(false);
-        console.log('Modifier');
-        const td = document.getElementById(feuille.sht_idtsht + '_Name');
+        const td = document.getElementById(sheet.sht_idtsht + '_Name');
         td.contentEditable = true;
 
         // Sélection du contenu de la td
@@ -75,9 +74,9 @@ export default function Listing() {
         selection.addRange(range);
     }
 
-    async function handleOnBlurTD(event, feuille) {
+    async function handleOnBlurRenameSheet(event, sheet) {
         console.log('ok');
-        const idt_sht = feuille.sht_idtsht;
+        const idt_sht = sheet.sht_idtsht;
         const td = event.target;
         td.contentEditable = false;
         setCanRowClick(true);
@@ -89,22 +88,22 @@ export default function Listing() {
             const _body = await response.json();
             console.log(_body);
 
-            setFeuilles((prevFeuilles) => {
-                return prevFeuilles.map((feuille) => {
-                    if (feuille.sht_idtsht === idt_sht) {
+            setSheets((prevSheets) => {
+                return prevSheets.map((sheet) => {
+                    if (sheet.sht_idtsht === idt_sht) {
                         // Si l'id correspond, met à jour le nom
-                        return { ...feuille, sht_name: td.innerText };
+                        return { ...sheet, sht_name: td.innerText };
                     }
-                    // Sinon, retourne l'objet feuille sans modification
-                    return feuille;
+                    // Sinon, retourne l'objet sheet sans modification
+                    return sheet;
                 });
             });
         }
     }
 
-    function handleEnterDown(event, feuille) {
+    function handleEnterDown(event, sheet) {
         if (event.key === 'Enter') {
-            handleOnBlurTD(event, feuille);
+            handleOnBlurRenameSheet(event, sheet);
             const selection = window.getSelection();
             selection.removeAllRanges();
             event.target.blur();
@@ -120,24 +119,24 @@ export default function Listing() {
             if (res.status === 200) {
                 const _body = await res.json();
                 console.log(_body);
-                setFeuilles((prevFeuilles) => {
-                    const updatedFeuilless = prevFeuilles.filter(
+                setSheets((prevSheets) => {
+                    const updatedSheets = prevSheets.filter(
                         (f) => f.sht_idtsht !== idSheetToDelete,
                     );
-                    return updatedFeuilless;
+                    return updatedSheets;
                 });
             }
         }
     }
 
-    function deleteSheet(e, feuille) {
+    function deleteSheet(e, sheet) {
         e.stopPropagation();
         console.log('Supprimer');
-        setIdSheetToDelete(feuille.sht_idtsht);
+        setIdSheetToDelete(sheet.sht_idtsht);
         setIsPopupOpen(true);
     }
 
-    const partager = (e, feuille) => {
+    const partager = (e, sheet) => {
         e.stopPropagation();
         console.log('Partager');
     };
@@ -168,8 +167,8 @@ export default function Listing() {
         }
         if (response.status === 200) {
             console.log('ok');
-            setFeuilles([
-                ...feuilles,
+            setSheets([
+                ...sheets,
                 {
                     sht_uuid: newUuid,
                     sht_name: 'Sans Nom',
@@ -212,7 +211,7 @@ export default function Listing() {
                     <div>
                         <button
                             onClick={newSheet}
-                            className="button-nouvelle-feuille"
+                            className="button-nouvelle-sheet"
                         >
                             Nouvelle feuille
                         </button>
@@ -229,20 +228,20 @@ export default function Listing() {
                         </button>
                         <button
                             className={`filter-button ${
-                                selectedFilter === 'mesFeuilles' ? 'active' : ''
+                                selectedFilter === 'mySheets' ? 'active' : ''
                             }`}
-                            onClick={() => handleFilterClick('mesFeuilles')}
+                            onClick={() => handleFilterClick('mySheets')}
                         >
-                            Afficher mes feuilles
+                            Afficher my feuilles
                         </button>
                         <button
                             className={`filter-button ${
-                                selectedFilter === 'feuillesPartagees'
+                                selectedFilter === 'sheetsShared'
                                     ? 'active'
                                     : ''
                             }`}
                             onClick={() =>
-                                handleFilterClick('feuillesPartagees')
+                                handleFilterClick('sheetsShared')
                             }
                         >
                             Afficher les feuilles partagées
@@ -251,7 +250,7 @@ export default function Listing() {
                 </div>
                 <div className="panneau-droit">
                     <div className="table-container">
-                        <table className="table-feuilles">
+                        <table className="table-sheets">
                             <thead>
                                 <tr>
                                     <th>Titre</th>
@@ -262,31 +261,31 @@ export default function Listing() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {filteredFeuilles.map((feuille, i) => (
+                                {filteredSheets.map((sheet, i) => (
                                     <tr
                                         key={i}
-                                        onClick={() => handleRowClick(feuille)}
+                                        onClick={() => handleRowClick(sheet)}
                                     >
                                         <td
-                                            id={feuille.sht_idtsht + '_Name'}
+                                            id={sheet.sht_idtsht + '_Name'}
                                             onBlur={(event) =>
-                                                handleOnBlurTD(event, feuille)
+                                                handleOnBlurRenameSheet(event, sheet)
                                             }
                                             onKeyDown={(event) =>
-                                                handleEnterDown(event, feuille)
+                                                handleEnterDown(event, sheet)
                                             }
                                         >
-                                            {feuille.sht_name}
+                                            {sheet.sht_name}
                                         </td>
                                         <td>{user.usr_pseudo}</td>
                                         <td>
                                             {reformatDate(
-                                                feuille.sht_created_at,
+                                                sheet.sht_created_at,
                                             )}
                                         </td>
                                         <td>
                                             {reformatDate(
-                                                feuille.sht_updated_at,
+                                                sheet.sht_updated_at,
                                             )}
                                         </td>
                                         <td>
@@ -294,7 +293,7 @@ export default function Listing() {
                                                 className="button-option modifier"
                                                 title="Modifier le nom"
                                                 onClick={(e) =>
-                                                    modifier(e, feuille)
+                                                    handleRenamesheetClick(e, sheet)
                                                 }
                                             >
                                                 <img
@@ -302,13 +301,13 @@ export default function Listing() {
                                                     width="15px"
                                                 />
                                             </button>
-                                            {feuille.sht_idtusr_aut ===
+                                            {sheet.sht_idtusr_aut ===
                                             user.usr_idtusr ? (
                                                 <button
                                                     className="button-option supprimer"
-                                                    title="Supprimer la feuille"
+                                                    title="Supprimer la sheet"
                                                     onClick={(e) =>
-                                                        deleteSheet(e, feuille)
+                                                        deleteSheet(e, sheet)
                                                     }
                                                 >
                                                     <img
@@ -322,9 +321,9 @@ export default function Listing() {
 
                                             <button
                                                 className="button-option partager"
-                                                title="Partager la feuille"
+                                                title="Partager la sheet"
                                                 onClick={(e) =>
-                                                    partager(e, feuille)
+                                                    partager(e, sheet)
                                                 }
                                             >
                                                 <img
