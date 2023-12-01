@@ -112,13 +112,12 @@
 }
 
 .sht-sheet-title-editable {
-    position:absolute;
+    position: absolute;
     margin-top: 5px;
     overflow: visible;
     background-color: white;
     width: 75%;
 }
-
 
 .sht-rename {
     background-color: rgb(236, 236, 166);

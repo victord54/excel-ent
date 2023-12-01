@@ -66,8 +66,8 @@ export default function Listing() {
         setCanRowClick(false);
         const td = document.getElementById(sheet.sht_idtsht + '_Name');
         td.contentEditable = true;
-        td.className = 'sht-sheet-title-editable'
-        
+        td.className = 'sht-sheet-title-editable';
+
         // Sélection du contenu de la td
         const range = document.createRange();
         range.selectNodeContents(td);
@@ -77,7 +77,7 @@ export default function Listing() {
     }
 
     async function handleOnBlurRenameSheet(event, sheet, enter = null) {
-        if (event.target.contentEditable === "false") return;
+        if (event.target.contentEditable === 'false') return;
         const regex = /^[a-zA-Z0-9*'()_\-/À-ÖØ-öø-ÿ]+$/;
         const idt_sht = sheet.sht_idtsht;
         const td = event.target;
@@ -85,14 +85,14 @@ export default function Listing() {
         td.className = 'sht-sheet-title';
 
         if (td.innerText === sheet.sht_name) return;
-        
+
         if (!regex.test(td.innerText)) {
             td.innerText = sheet.sht_name;
             // TODO : Afficher l'error (caractères interdits)
             return;
         }
         setCanRowClick(true);
-        
+
         // TODO : error
         const response = await _renameSheet(idt_sht, td.innerText);
 
@@ -114,16 +114,12 @@ export default function Listing() {
         }
     }
 
-
-
     function handleEnterDown(event, sheet) {
-        if (event.target.contentEditable === "false") return;
+        if (event.target.contentEditable === 'false') return;
         if (event.key === 'Enter') {
             handleOnBlurRenameSheet(event, sheet, true);
         }
     }
-
- 
 
     async function handlePopUpConfirmationSupprimer(confirm) {
         setIsPopupDeleteOpen(false);
@@ -200,13 +196,16 @@ export default function Listing() {
             setSheets([
                 ...sheets,
                 {
+                    sht_idtusr_aut: user.usr_idtusr,
+                    sht_idtsht: _body.sht_idtsht,
                     sht_uuid: newUuid,
                     sht_name: 'Sans Nom',
                     sht_created_at: new Date(),
                     sht_updated_at: new Date(),
+                    sht_sharing: 0,
                 },
             ]);
-            navigate(`/sheet/${newUuid}`);
+            window.open(`/sheet/${newUuid}`, '_blank');
         }
         console.log(newUuid);
     }
@@ -305,7 +304,7 @@ export default function Listing() {
                                         key={i}
                                         onClick={() => handleRowClick(sheet)}
                                         className="sht-sheet-row-container"
-                                    >   
+                                    >
                                         <td
                                             contentEditable={false}
                                             id={sheet.sht_idtsht + '_Name'}

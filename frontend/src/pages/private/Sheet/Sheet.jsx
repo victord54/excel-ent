@@ -75,7 +75,7 @@ export default function Sheet() {
         console.log('save');
         console.log(idt_sht);
         const regex = /^[a-zA-Z0-9*'()_\-/À-ÖØ-öø-ÿ]+$/;
-        if (!regex.test(nameSheet)){
+        if (!regex.test(nameSheet)) {
             //TODO : afficher un message d'erreur
             console.log('erreur');
             return;
@@ -126,7 +126,6 @@ export default function Sheet() {
             const cellsBody = await cellsResponse.json();
 
             for (let key in cellsBody.data) {
-            
                 setContentCell(
                     cellsBody.data[key].cel_idtcel,
                     cellsBody.data[key].cel_val,
@@ -160,7 +159,6 @@ export default function Sheet() {
             updateSheetData(cellKey, event.target.innerText);
         }
     }
-
 
     /**
      * Copy the selected text
@@ -212,7 +210,6 @@ export default function Sheet() {
     function handleDrop(event, keyCell) {
         console.log(event.dataTransfer.getData('text/plain'));
         setContentCell(keyCell, '');
-       
 
         setContentCell(draggedCell, '');
         setDraggedCell(null);
@@ -313,7 +310,6 @@ export default function Sheet() {
                                         >
                                             <div
                                                 contentEditable
-                        
                                                 onKeyDown={(event) =>
                                                     handleKeyDown(
                                                         event,
