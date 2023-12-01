@@ -29,8 +29,9 @@ export default function Listing() {
     const navigate = useNavigate();
     const [selectedFilter, setSelectedFilter] = useState('all');
     const [canRowClick, setCanRowClick] = useState(true);
-    const [isPopupOpen, setIsPopupOpen] = useState(false);
-    const [idSheetToDelete, setIdSheetToDelete] = useState(null);
+    const [isPopupDeleteOpen, setIsPopupDeleteOpen] = useState(false);
+    const [isPopupShareOpen, setIsPopupShareOpen] = useState(false);
+    const [sheetToDeleteOrShate, setSheetToDeleteOrShare] = useState(null);
 
     const handleFilterClick = (filter) => {
         setSelectedFilter(filter);
@@ -111,9 +112,10 @@ export default function Listing() {
     }
 
     async function handlePopUpConfirmationSupprimer(confirm) {
-        setIsPopupOpen(false);
+        setIsPopupDeleteOpen(false);
+
         if (confirm) {
-            const res = await _deleteSheet(idSheetToDelete);
+            const res = await _deleteSheet(sheetToDeleteOrShate.sht_idtsht);
 
             //TODO : error
             if (res.status === 200) {
@@ -121,24 +123,40 @@ export default function Listing() {
                 console.log(_body);
                 setSheets((prevSheets) => {
                     const updatedSheets = prevSheets.filter(
-                        (f) => f.sht_idtsht !== idSheetToDelete,
+                        (f) => f.sht_idtsht !== sheetToDeleteOrShate.sht_idtsht,
                     );
                     return updatedSheets;
                 });
             }
         }
+        setSheetToDeleteOrShare(null);
+
     }
 
     function deleteSheet(e, sheet) {
         e.stopPropagation();
         console.log('Supprimer');
-        setIdSheetToDelete(sheet.sht_idtsht);
-        setIsPopupOpen(true);
+        setSheetToDeleteOrShare(sheet);
+        setIsPopupDeleteOpen(true);
     }
 
-    const partager = (e, sheet) => {
+    async function handlePopUpConfirmationShare(confirm) {
+        setIsPopupShareOpen(false);
+
+        if (confirm) {
+            console.log("Partage confirmer");
+            // TODO : Partager la sheet
+        }
+
+        setSheetToDeleteOrShare(null);
+
+    }
+
+    function shareSheet(e, sheet) {
         e.stopPropagation();
         console.log('Partager');
+        setSheetToDeleteOrShare(sheet);
+        setIsPopupShareOpen(true);
     };
 
     async function newSheet() {
@@ -198,11 +216,21 @@ export default function Listing() {
 
     return (
         <>
-            {isPopupOpen && (
+            {isPopupDeleteOpen && (
                 <div className="sht-popup">
                     <PopUp
                         onAction={handlePopUpConfirmationSupprimer}
-                        type="confirm"
+                        type="confirmDelete"
+                    />
+                </div>
+            )}
+            {isPopupShareOpen && (
+                <div className="sht-popup">
+                    <PopUp
+                        onAction={handlePopUpConfirmationShare}
+                        type="confirmShare"
+                        link={sheetToDeleteOrShate.sht_uuid}
+                        alreadyShared={sheetToDeleteOrShate.sht_sharing}
                     />
                 </div>
             )}
@@ -323,7 +351,7 @@ export default function Listing() {
                                                 className="sht-button-option sht-share"
                                                 title="Partager la sheet"
                                                 onClick={(e) =>
-                                                    partager(e, sheet)
+                                                    shareSheet(e, sheet)
                                                 }
                                             >
                                                 <img
