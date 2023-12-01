@@ -1,19 +1,20 @@
-.container-home {
+.sht-container-home {
     margin: 2%;
     display: flex;
     gap: 25px;
 }
 
-.panneau-gauche {
+.sht-pannel-left {
     flex: 20%;
     display: flex;
     flex-direction: column;
 }
-.barre {
+
+.sht-line {
     width: 100%;
 }
 
-.filter-button {
+.sht-filter-button {
     border: none;
     border-radius: 25px;
     background-color: #aec1e2;
@@ -25,16 +26,16 @@
     font-size: 15px;
 }
 
-.filter-button:not(.active):hover {
+.sht-filter-button:not(.active):hover {
     background-color: #cdd1c4;
     transform: scale(1.1);
 }
 
-.active {
+.sht-active {
     background-color: #cdd1c4;
 }
 
-.button-nouvelle-sheet {
+.sht-button-new-sheet {
     border: none;
     border-radius: 25px;
     background-color: #5c80bc;
@@ -46,33 +47,33 @@
     font-size: 18px;
 }
 
-.button-nouvelle-sheet:hover {
+.sht-button-new-sheet:hover {
     background-color: #7a9edb;
     transform: scale(1.1);
 }
 
-.panneau-droit {
+.sht-pannel-right {
     flex: 80%;
 }
 
-.table-container {
+.sht-table-container {
     overflow: auto;
     height: 750px;
 }
 
-.panneau-droit {
+.sht-panneau-droit {
     padding: 15px;
     border-radius: 25px;
     box-shadow: 1px 1px 25px rgba(0, 0, 0, 0.3);
 }
 
-.table-sheets {
+.sht-table-sheets {
     width: 100%;
     border-collapse: collapse;
     border-spacing: 0;
 }
 
-.table-sheets thead th {
+.sht-table-sheets thead th {
     text-align: left;
     position: sticky;
     background-color: rgba(248, 246, 246, 1);
@@ -80,17 +81,17 @@
     height: 40px;
 }
 
-.table-sheets tr {
+.sht-table-sheets tr {
     border-bottom: 1px dotted rgb(15, 15, 15);
     height: 40px;
 }
 
-.table-sheets tr:hover {
+.sht-table-sheets tr:hover {
     background-color: #b4bdcc;
     cursor: pointer;
 }
 
-.button-option {
+.sht-button-option {
     cursor: pointer;
     border: none;
     margin-left: 5px;
@@ -98,19 +99,19 @@
     transition: all ease-in-out 0.2s;
     border-radius: 5px;
 }
-.button-option:hover {
+.sht-button-option:hover {
     transform: scale(1.5);
 }
 
-.modifier {
+.sht-rename {
     background-color: rgb(236, 236, 166);
 }
 
-.supprimer {
+.sht-delete {
     background-color: rgb(211, 122, 122);
 }
 
-.partager {
+.sht-share {
     background-color: #84a1d3;
 }
 

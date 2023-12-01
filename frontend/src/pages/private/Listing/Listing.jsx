@@ -206,38 +206,38 @@ export default function Listing() {
                     />
                 </div>
             )}
-            <div className="container-home">
-                <div className="panneau-gauche">
+            <div className="sht-container-home">
+                <div className="sht-pannel-left">
                     <div>
                         <button
                             onClick={newSheet}
-                            className="button-nouvelle-sheet"
+                            className="sht-button-new-sheet"
                         >
                             Nouvelle feuille
                         </button>
                     </div>
-                    <hr className="barre" />
+                    <hr className="sht-line" />
                     <div>
                         <button
-                            className={`filter-button ${
-                                selectedFilter === 'all' ? 'active' : ''
+                            className={`sht-filter-button ${
+                                selectedFilter === 'all' ? 'sht-active' : ''
                             }`}
                             onClick={() => handleFilterClick('all')}
                         >
                             Afficher tout
                         </button>
                         <button
-                            className={`filter-button ${
-                                selectedFilter === 'mySheets' ? 'active' : ''
+                            className={`sht-filter-button ${
+                                selectedFilter === 'mySheets' ? 'sht-active' : ''
                             }`}
                             onClick={() => handleFilterClick('mySheets')}
                         >
-                            Afficher my feuilles
+                            Afficher mes feuilles
                         </button>
                         <button
-                            className={`filter-button ${
+                            className={`sht-filter-button ${
                                 selectedFilter === 'sheetsShared'
-                                    ? 'active'
+                                    ? 'sht-active'
                                     : ''
                             }`}
                             onClick={() =>
@@ -248,9 +248,9 @@ export default function Listing() {
                         </button>
                     </div>
                 </div>
-                <div className="panneau-droit">
-                    <div className="table-container">
-                        <table className="table-sheets">
+                <div className="sht-pannel-right">
+                    <div className="sht-table-container">
+                        <table className="sht-table-sheets">
                             <thead>
                                 <tr>
                                     <th>Titre</th>
@@ -290,7 +290,7 @@ export default function Listing() {
                                         </td>
                                         <td>
                                             <button
-                                                className="button-option modifier"
+                                                className="sht-button-option sht-rename"
                                                 title="Modifier le nom"
                                                 onClick={(e) =>
                                                     handleRenamesheetClick(e, sheet)
@@ -304,7 +304,7 @@ export default function Listing() {
                                             {sheet.sht_idtusr_aut ===
                                             user.usr_idtusr ? (
                                                 <button
-                                                    className="button-option supprimer"
+                                                    className="sht-button-option sht-delete"
                                                     title="Supprimer la sheet"
                                                     onClick={(e) =>
                                                         deleteSheet(e, sheet)
@@ -320,7 +320,7 @@ export default function Listing() {
                                             )}
 
                                             <button
-                                                className="button-option partager"
+                                                className="sht-button-option sht-share"
                                                 title="Partager la sheet"
                                                 onClick={(e) =>
                                                     partager(e, sheet)
