@@ -20,6 +20,9 @@
 - [ ] Récupérer les feuilles partagées (filtre de gauche)
 - [ ] Tester si le token de l'uti est pas expiré à chaque requete
 - [ ] socket.io
+- [x] Ajout dans la route getAllFromUser la liste des feuilles partagées + auteur + tri par date récent
+- [x] Route pour sharing
+- [x] Route pour recherche de sheet par nom
 
 # FIXME
 - [x] Délai de chargement au login

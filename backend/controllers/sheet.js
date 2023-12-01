@@ -5,6 +5,7 @@ import {
     getAllForUser as _getAllForUser,
     getCells as _getCells,
     getOneCell as _getOneCell,
+    // search as _search,
 } from '../models/sht_sheet_dql.js';
 import {
     create as _create,
@@ -12,8 +13,14 @@ import {
     remove as _remove,
     createData as _createData,
     updateData as _updateData,
+    addSharing as _addSharing,
+    removeSharing as _removeSharing,
 } from '../models/sht_sheet_dml.js';
-import { MissingParameterError, SheetNotFoundError } from '../utils/error.js';
+import {
+    MissingParameterError,
+    SheetNotFoundError,
+    SheetAlreadyExistsError,
+} from '../utils/error.js';
 import { getIdtUsr as _getIdtUsr } from '../utils/jwt-check.js';
 
 /**
@@ -210,11 +217,13 @@ export async function remove(req, res, next) {
     const sht_idtsht = req.params.id;
     try {
         const deletedSheet = await _remove({ sht_idtsht });
+        await commitTransaction();
         return res.status(200).json({
             status: 'success',
             data: deletedSheet,
         });
     } catch (error) {
+        await rollbackTransaction();
         next(error);
     }
 }
@@ -231,3 +240,74 @@ export async function getCells(req, res, next) {
         next(error);
     }
 }
+
+export async function addSharing(req, res, next) {
+    const { lsu_idtusr_shared } = req.body;
+    const lsu_idtsht = req.params.id;
+    try {
+        // validation des données reçues
+        let missing = '';
+        if (lsu_idtsht === undefined) {
+            missing += 'lsu_idtsht ';
+        }
+        if (lsu_idtusr_shared === undefined) {
+            missing += 'lsu_idtusr_shared ';
+        }
+        if (missing !== '') {
+            throw new MissingParameterError('Missing parameters: ' + missing);
+        }
+        const sharing = await _addSharing({ lsu_idtsht, lsu_idtusr_shared });
+        await commitTransaction();
+        return res.status(200).json({
+            status: 'success',
+            data: sharing,
+        });
+    } catch (error) {
+        await rollbackTransaction();
+        next(error);
+    }
+}
+
+export async function removeSharing(req, res, next) {
+    const { lsu_idtusr_shared } = req.body;
+    const lsu_idtsht = req.params.id;
+    try {
+        // validation des données reçues
+        let missing = '';
+        if (lsu_idtsht === undefined) {
+            missing += 'lsu_idtsht ';
+        }
+        if (lsu_idtusr_shared === undefined) {
+            missing += 'lsu_idtusr_shared ';
+        }
+        if (missing !== '') {
+            throw new MissingParameterError('Missing parameters: ' + missing);
+        }
+        const deletedSharing = await _removeSharing({
+            lsu_idtsht,
+            lsu_idtusr_shared,
+        });
+        await commitTransaction();
+        return res.status(200).json({
+            status: 'success',
+            data: deletedSharing,
+        });
+    } catch (error) {
+        await rollbackTransaction();
+        next(error);
+    }
+}
+
+// export async function search(req, res, next) {
+//     const keywords = req.params.keywords;
+//     const keywordsArray = keywords.split(' ');
+//     try {
+//         const sheets = await _search({ keywordsArray });
+//         return res.status(200).json({
+//             status: 'success',
+//             data: sheets,
+//         });
+//     } catch (error) {
+//         next(error);
+//     }
+// }

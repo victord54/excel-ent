@@ -1,3 +1,4 @@
+import e from 'express';
 import { executeQuery } from '../utils/database.js';
 
 /**
@@ -38,8 +39,8 @@ export async function getAllForUser({ sht_idtusr_aut }) {
     // TODO: Vérifier injection SQL /!\
     if (sht_idtusr_aut !== undefined) {
         return executeQuery(
-            'SELECT * FROM sht_sheet WHERE sht_idtusr_aut = ?',
-            [sht_idtusr_aut],
+            'SELECT sht_idtsht, sht_idtusr_aut, sht_name, sht_sharing, sht_uuid FROM sht_sheet LEFT JOIN sht_link_sht_usr ON sht_idtsht = lsu_idtsht WHERE sht_idtusr_aut = ? OR lsu_idtusr_shared = ?',
+            [sht_idtusr_aut, sht_idtusr_aut],
         );
     }
     return null;
@@ -58,3 +59,11 @@ export async function getOneCell({ cel_idtcel, cel_idtsht }) {
         [cel_idtcel, cel_idtsht],
     );
 }
+
+// export async function search({ keywords }) {
+//     const transformed = keywords.map((e) => `.*${e}.*`);
+//     return executeQuery(
+//         'SELECT * FROM sht_sheet WHERE sht_name REGEXP ?',
+//         [keywords.join('|')],
+//     );
+// }

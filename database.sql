@@ -1,4 +1,5 @@
-CREATE DATABASE IF NOT EXISTS `excelent`;
+DROP DATABASE IF EXISTS `excelent`;
+CREATE DATABASE `excelent`;
 USE `excelent`;
 
 DROP TABLE IF EXISTS `sht_link_sht_cel`;
@@ -62,4 +63,4 @@ CREATE TABLE
         PRIMARY KEY (`cel_idtcel`, `cel_idtsht`),
         CONSTRAINT `cel_idtsht_fk` FOREIGN KEY (`cel_idtsht`) REFERENCES `sht_sheet` (`sht_idtsht`),
         KEY `cel_idtsht_fk_i` (`cel_idtsht`)
-    )
+    ) ENGINE = InnoDB DEFAULT CHARSET = UTF8MB4 COMMENT = 'Cell table';

@@ -44,6 +44,8 @@ app.use('*', (req, res) => {
 });
 
 app.use((err, req, res, next) => {
+    if (err.status === undefined) err.status = 500;
+    console.log(err);
     errorLogFile(err, req);
     return res.status(err.status).json({
         status: 'error',

@@ -68,3 +68,17 @@ export async function remove({ sht_idtsht }) {
 
     return [deleteCells, deleteSharing, deleteSheet];
 }
+
+export async function addSharing({ lsu_idtsht, lsu_idtusr_shared }) {
+    return executeQuery(
+        'INSERT INTO sht_link_sht_usr (lsu_idtsht, lsu_idtusr_shared) VALUES (?, ?)',
+        [lsu_idtsht, lsu_idtusr_shared],
+    );
+}
+
+export async function removeSharing({ lsu_idtsht, lsu_idtusr_shared }) {
+    return executeQuery(
+        'DELETE FROM sht_link_sht_usr WHERE lsu_idtsht = ? AND lsu_idtusr_shared = ?',
+        [lsu_idtsht, lsu_idtusr_shared],
+    );
+}

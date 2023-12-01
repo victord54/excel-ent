@@ -7,6 +7,9 @@ import {
     updateData,
     remove,
     getCells,
+    addSharing,
+    removeSharing,
+    // search
 } from '../controllers/sheet.js';
 const router = Router();
 
@@ -20,6 +23,9 @@ router.get('/', getAllForUser);
  */
 router.get('/:id', getOne);
 
+/**
+ * Route to get all cells from a sheet
+ */
 router.get('/data/:id', getCells);
 
 /**
@@ -41,5 +47,11 @@ router.put('/data/:id', updateData);
  * Route to delete sheet
  */
 router.delete('/:id', remove);
+
+router.post('/share/:id', addSharing);
+
+router.delete('/share/:id', removeSharing);
+
+// router.get('/search/:keywords', search);
 
 export default router;
