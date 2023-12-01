@@ -33,7 +33,8 @@ export default function Listing() {
     const [isPopupShareOpen, setIsPopupShareOpen] = useState(false);
     const [sheetToDeleteOrShate, setSheetToDeleteOrShare] = useState(null);
 
-    const handleFilterClick = (filter) => {
+    const handleFilter = (filter) => {
+        if (filter === '') filter = 'all';
         setSelectedFilter(filter);
         console.log(filter);
     };
@@ -52,8 +53,14 @@ export default function Listing() {
             return sheet.sht_idtusr_aut === user.usr_idtusr;
         } else if (selectedFilter === 'sheetsShared') {
             return sheet.sht_idtusr_aut !== user.usr_idtusr;
+        } else {
+            return removeAccents(sheet.sht_name.toLowerCase()).includes(removeAccents(selectedFilter.toLowerCase()));
         }
     });
+
+    function removeAccents(str){
+        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    }
 
     const handleRowClick = (sheet) => {
         if (!canRowClick) return;
@@ -261,7 +268,7 @@ export default function Listing() {
                             className={`sht-filter-button ${
                                 selectedFilter === 'all' ? 'sht-active' : ''
                             }`}
-                            onClick={() => handleFilterClick('all')}
+                            onClick={() => handleFilter('all')}
                         >
                             Afficher tout
                         </button>
@@ -271,7 +278,7 @@ export default function Listing() {
                                     ? 'sht-active'
                                     : ''
                             }`}
-                            onClick={() => handleFilterClick('mySheets')}
+                            onClick={() => handleFilter('mySheets')}
                         >
                             Afficher mes feuilles
                         </button>
@@ -281,10 +288,13 @@ export default function Listing() {
                                     ? 'sht-active'
                                     : ''
                             }`}
-                            onClick={() => handleFilterClick('sheetsShared')}
+                            onClick={() => handleFilter('sheetsShared')}
                         >
                             Afficher les feuilles partagées
                         </button>
+                    </div>
+                    <div className="sht-research-container">
+                        <input type="text" placeholder="Rechercher" onInput={(e) => handleFilter(e.target.value)} />
                     </div>
                 </div>
                 <div className="sht-pannel-right">
