@@ -39,7 +39,7 @@ export async function getAllForUser({ sht_idtusr_aut }) {
     // TODO: Vérifier injection SQL /!\
     if (sht_idtusr_aut !== undefined) {
         return executeQuery(
-            'SELECT sht_idtsht, sht_idtusr_aut, sht_name, sht_sharing, sht_uuid FROM sht_sheet LEFT JOIN sht_link_sht_usr ON sht_idtsht = lsu_idtsht WHERE sht_idtusr_aut = ? OR lsu_idtusr_shared = ?',
+            'SELECT sht_idtsht, sht_idtusr_aut, sht_name, sht_sharing, sht_uuid, sht_updated_at, usr_pseudo FROM sht_sheet LEFT JOIN sht_link_sht_usr ON sht_idtsht = lsu_idtsht LEFT JOIN usr_user ON lsu_idtusr_shared = usr_idtusr WHERE sht_idtusr_aut = ? OR lsu_idtusr_shared = ?',
             [sht_idtusr_aut, sht_idtusr_aut],
         );
     }
