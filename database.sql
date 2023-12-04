@@ -2,6 +2,7 @@ DROP DATABASE IF EXISTS `excelent`;
 CREATE DATABASE `excelent`;
 USE `excelent`;
 
+DROP TABLE IF EXISTS `tmp_invitation`;
 DROP TABLE IF EXISTS `sht_link_sht_cel`;
 DROP TABLE IF EXISTS `usr_sht_link_sheet_user`;
 DROP TABLE IF EXISTS `sht_sheet`;
@@ -61,6 +62,23 @@ CREATE TABLE
         `cel_created_at`    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP  COMMENT 'Date of column creation',
         `cel_updated_at`    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP  COMMENT 'Date of column update',
         PRIMARY KEY (`cel_idtcel`, `cel_idtsht`),
-        CONSTRAINT `cel_idtsht_fk` FOREIGN KEY (`cel_idtsht`) REFERENCES `sht_sheet` (`sht_idtsht`),
-        KEY `cel_idtsht_fk_i` (`cel_idtsht`)
+        CONSTRAINT `cel_sht_fk` FOREIGN KEY (`cel_idtsht`) REFERENCES `sht_sheet` (`sht_idtsht`),
+        KEY `cel_sht_fk_i` (`cel_idtsht`)
     ) ENGINE = InnoDB DEFAULT CHARSET = UTF8MB4 COMMENT = 'Cell table';
+
+CREATE TABLE
+    `tmp_invitation` (
+        inv_idtsht         BIGINT          NOT NULL                            COMMENT 'Sheet FK',
+        inv_link           VARCHAR(255)    NOT NULL                            COMMENT 'Invitation link',
+        inv_created_at     DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP  COMMENT 'Date of invitation creation',
+        CONSTRAINT `inv_sht_fk` FOREIGN KEY (`inv_idtsht`) REFERENCES `sht_sheet` (`sht_idtsht`),
+        KEY `inv_sht_fk_i` (`inv_idtsht`),
+        CONSTRAINT `inv_link_u` UNIQUE (`inv_link`)
+    ) ENGINE = InnoDB DEFAULT CHARSET = UTF8MB4 COMMENT = 'Invitation table';
+
+CREATE EVENT IF NOT EXISTS `clean_tmp_invitation`
+    ON SCHEDULE EVERY 1 DAY
+    ON COMPLETION PRESERVE
+    COMMENT 'Clean tmp_invitation table'
+    DO
+        DELETE FROM `tmp_invitation` WHERE `inv_created_at` < DATE_SUB(NOW(), INTERVAL 30 MINUTE);
