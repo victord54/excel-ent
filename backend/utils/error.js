@@ -66,3 +66,27 @@ export class SheetAlreadyExistsError extends SheetError {
         super(message, 409);
     }
 }
+
+export class LinkError extends CustomError {
+    constructor(message, status) {
+        super(message, status);
+    }
+}
+
+export class LinkNotFoundError extends LinkError {
+    constructor(message) {
+        super(message, 404);
+    }
+}
+
+export class LinkAlreadyExistsError extends LinkError {
+    constructor(message) {
+        super(message, 409);
+    }
+}
+
+export class LinkExpiredError extends LinkError {
+    constructor(message) {
+        super(message, 401);
+    }
+}
