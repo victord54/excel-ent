@@ -70,15 +70,29 @@ export async function remove({ sht_idtsht }) {
 }
 
 export async function addSharing({ lsu_idtsht, lsu_idtusr_shared }) {
-    return executeQuery(
+    const insertShare = executeQuery(
         'INSERT INTO sht_link_sht_usr (lsu_idtsht, lsu_idtusr_shared) VALUES (?, ?)',
         [lsu_idtsht, lsu_idtusr_shared],
     );
+
+    const updateShare = executeQuery(
+        'UPDATE sht_sheet SET sht_sharing = 1 WHERE sht_idtsht = ?',
+        [lsu_idtsht],
+    );
+
+    return [insertShare, updateShare];
 }
 
 export async function removeSharing({ lsu_idtsht, lsu_idtusr_shared }) {
     return executeQuery(
         'DELETE FROM sht_link_sht_usr WHERE lsu_idtsht = ? AND lsu_idtusr_shared = ?',
         [lsu_idtsht, lsu_idtusr_shared],
+    );
+}
+
+export async function createLink({ inv_idtsht, inv_link }) {
+    return executeQuery(
+        'INSERT INTO tmp_invitation (inv_idtsht, inv_link) VALUES (?, ?)',
+        [inv_idtsht, inv_link],
     );
 }

@@ -60,6 +60,26 @@ export async function getOneCell({ cel_idtcel, cel_idtsht }) {
     );
 }
 
+export async function getOneLink({ inv_idtsht, inv_link }) {
+    if (inv_idtsht !== undefined) {
+        return executeQuery(
+            'SELECT inv_idtsht FROM tmp_invitation WHERE inv_idtsht = ?',
+            [inv_idtsht],
+        );
+    }
+    return executeQuery(
+        'SELECT inv_idtsht FROM tmp_invitation WHERE inv_link = ? AND inv_created_at > DATE_SUB(NOW(), INTERVAL 30 MINUTE)',
+        [inv_link],
+    );
+}
+
+export async function getOneWithAccess({ sht_uuid, sht_idtusr_aut }) {
+    return executeQuery(
+        'SELECT sht_idtsht, sht_idtusr_aut, sht_name, sht_sharing, sht_uuid, sht_updated_at, usr_pseudo FROM sht_sheet LEFT JOIN sht_link_sht_usr ON sht_idtsht = lsu_idtsht LEFT JOIN usr_user ON sht_idtusr_aut = usr_idtusr WHERE sht_uuid = ? AND (sht_idtusr_aut = ? OR lsu_idtusr_shared = ?)',
+        [sht_uuid, sht_idtusr_aut, sht_idtusr_aut],
+    );
+}
+
 // export async function search({ keywords }) {
 //     const transformed = keywords.map((e) => `.*${e}.*`);
 //     return executeQuery(

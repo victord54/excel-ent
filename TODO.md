@@ -18,19 +18,19 @@
 - [~] Renommer, partager, supprimer feuille depuis le listing
 - [x] Afficher bouton supprimer ssi l'utilisateur est l'auteur
 - [x] Filtre de recherche
-- [ ] Récupérer les feuilles partagées dans le Listing (modifier requête dans le back ?)
+- [ ] Récupérer les feuilles partagées dans le Listing
 - [ ] Vérifier injections SQL
 - [~] Feuille : Check si l'user est l'auteur, si non check si la feuille est partagé -> Si non agir en conséquence, si oui -> add l'utilisateur dans la table des feuilles partagés si pas déjà présent
 - [ ] Tester si le token de l'uti est pas expiré à chaque requete
-- [ ] socket.io
+- [x] socket.io
 - [x] Ajout dans la route getAllFromUser la liste des feuilles partagées + auteur + tri par date récent + pseudo
-- [ ] Route pour vérifier si une feuille est accessible par l'user /sheet/check/:uuid (retourne true ou false)
-- [ ] Table des invitations temporaires (30min) : idtsht, lien_invit, date_exp
-- [ ] Route pour créer une invitation temporaire /sheet/invite/:idsht body {lien} (check si lien invit existe deja)
-- [ ] Ajouter check si le lien est tjrs valide dans /share/:id
+- [x] Route pour vérifier si une feuille est accessible par l'user /sheet/check/:uuid (retourne true ou false)
+- [x] Table des invitations temporaires (30min) : idtsht, lien_invit, date_exp
+- [x] Route pour créer une invitation temporaire /sheet/invite/:idsht body {lien} (check si lien invit existe deja)
+- [x] Ajouter check si le lien est tjrs valide dans /share/:id
 - [x] Route pour sharing
 - [x] Route pour recherche de sheet par nom
-- [ ] update la date de modification des feuilles
+- [ ] Update la date de modification des feuilles
 
 # FIXME
 - [x] Délai de chargement au login

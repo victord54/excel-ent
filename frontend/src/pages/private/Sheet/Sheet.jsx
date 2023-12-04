@@ -22,16 +22,17 @@ export default function Sheet() {
 
     useEffect(() => {
         document.title = 'Feuille de calcul';
-        const socket = io('http://localhost:4242');
+        const socket = io(import.meta.env.VITE_API_URL);
 
         // socket.on('connect', () => {
         //     console.log('connected');
         //     socket.emit('join-room', idSheet);
         // });
 
-        socket.on(`sheet-update/${idSheet}`, (data) => {
-            console.log('sheet-update');
-            console.log(data);
+        socket.on(`updateData/${idt_sht}`, (data) => {
+            if (data.usr_idtusr === user.usr_idtusr) return;
+            console.log('updateData');
+            console.log('data: ', data);
         });
 
         getSheet();

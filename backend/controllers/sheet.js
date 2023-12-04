@@ -5,6 +5,8 @@ import {
     getAllForUser as _getAllForUser,
     getCells as _getCells,
     getOneCell as _getOneCell,
+    getOneLink as _getOneLink,
+    getOneWithAccess as _getOneWithAccess,
     // search as _search,
 } from '../models/sht_sheet_dql.js';
 import {
@@ -15,11 +17,14 @@ import {
     updateData as _updateData,
     addSharing as _addSharing,
     removeSharing as _removeSharing,
+    createLink as _createLink,
 } from '../models/sht_sheet_dml.js';
 import {
     MissingParameterError,
     SheetNotFoundError,
     SheetAlreadyExistsError,
+    LinkExpiredError,
+    LinkAlreadyExistsError,
 } from '../utils/error.js';
 import { getIdtUsr as _getIdtUsr } from '../utils/jwt-check.js';
 
@@ -148,6 +153,9 @@ export async function updateName(req, res, next) {
 export async function updateData(req, res, next) {
     const cel_idtsht = req.params.id;
     const { cel_idtcel, cel_val, cel_stl } = req.body;
+    // get the user id from the token
+    const token = req.headers.authorization;
+    const cel_idtusr_aut = _getIdtUsr(token);
     try {
         // validation des données reçues
         let missing = '';
@@ -185,6 +193,14 @@ export async function updateData(req, res, next) {
             });
         }
         await commitTransaction();
+        // emit event to all users that are on the sheet
+        req.io.emit(`updateData/${cel_idtcel}`, {
+            cel_idtcel,
+            cel_idtsht,
+            cel_idtusr_aut,
+            cel_val,
+            cel_stl,
+        });
         return res.status(200).json({
             status: 'success',
             data: {
@@ -242,23 +258,23 @@ export async function getCells(req, res, next) {
 }
 
 export async function addSharing(req, res, next) {
-    const { lsu_idtusr_shared } = req.body;
+    const { lsu_idtusr_shared, inv_link } = req.body;
     const lsu_idtsht = req.params.id;
     try {
         // validation des données reçues
         let missing = '';
-        if (lsu_idtsht === undefined) {
+        if (lsu_idtsht === undefined || lsu_idtsht === '') {
             missing += 'lsu_idtsht ';
         }
-        if (lsu_idtusr_shared === undefined) {
+        if (lsu_idtusr_shared === undefined || lsu_idtusr_shared === '') {
             missing += 'lsu_idtusr_shared ';
         }
         if (missing !== '') {
             throw new MissingParameterError('Missing parameters: ' + missing);
         }
-        // TODO: Check si lien est tjrs valide (dans le body) err : 410 si lien expiré
+        const link = await _getOneLink({ inv_link });
+        if (link.length === 0) throw new LinkExpiredError('Link expired');
         const sharing = await _addSharing({ lsu_idtsht, lsu_idtusr_shared });
-        // TODO: Passer le share à 1
         await commitTransaction();
         return res.status(200).json({
             status: 'success',
@@ -293,6 +309,43 @@ export async function removeSharing(req, res, next) {
         return res.status(200).json({
             status: 'success',
             data: deletedSharing,
+        });
+    } catch (error) {
+        await rollbackTransaction();
+        next(error);
+    }
+}
+
+export async function createLink(req, res, next) {
+    const inv_idtsht = req.params.id;
+    const { inv_link } = req.body;
+    try {
+        // check if link already exists
+        const linkExists = await _getOneLink({ inv_idtsht });
+        if (linkExists.length !== 0)
+            throw new LinkAlreadyExistsError('Link already exists');
+        const link = await _createLink({ inv_idtsht, inv_link });
+        await commitTransaction();
+        return res.status(200).json({
+            status: 'success',
+            data: link,
+        });
+    } catch (error) {
+        await rollbackTransaction();
+        next(error);
+    }
+}
+
+export async function checkAccess(req, res, next) {
+    const sht_uuid = req.params.id;
+    const token = req.headers.authorization;
+    const sht_idtusr_aut = _getIdtUsr(token);
+    try {
+        const sheet = await _getOneWithAccess({ sht_uuid, sht_idtusr_aut });
+        if (sheet.length === 0) throw new SheetNotFoundError('Sheet not found');
+        return res.status(200).json({
+            status: 'success',
+            data: sheet[0],
         });
     } catch (error) {
         await rollbackTransaction();

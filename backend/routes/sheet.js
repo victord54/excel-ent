@@ -9,6 +9,8 @@ import {
     getCells,
     addSharing,
     removeSharing,
+    createLink,
+    checkAccess,
     // search
 } from '../controllers/sheet.js';
 const router = Router();
@@ -51,6 +53,10 @@ router.delete('/:id', remove);
 router.post('/share/:id', addSharing);
 
 router.delete('/share/:id', removeSharing);
+
+router.post('/invite/:id', createLink);
+
+router.get('/check/:id', checkAccess);
 
 // router.get('/search/:keywords', search);
 
