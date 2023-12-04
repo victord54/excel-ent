@@ -245,6 +245,7 @@ export default function Listing() {
             sheet1.sht_name.localeCompare(sheet2.sht_name),
         );
         setSheets(sortedSheets);
+        console.log(sheets);
     }
 
     function sortByDate() {
@@ -371,7 +372,7 @@ export default function Listing() {
                                         >
                                             {sheet.sht_name}
                                         </td>
-                                        <td>{user.usr_pseudo}</td>
+                                        <td>{sheet.usr_pseudo}</td>
                                         <td className="sht-sheet-date">
                                             {reformatDate(sheet.sht_updated_at)}
                                         </td>
