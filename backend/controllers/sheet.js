@@ -256,7 +256,9 @@ export async function addSharing(req, res, next) {
         if (missing !== '') {
             throw new MissingParameterError('Missing parameters: ' + missing);
         }
+        // TODO: Check si lien est tjrs valide (dans le body) err : 410 si lien expiré
         const sharing = await _addSharing({ lsu_idtsht, lsu_idtusr_shared });
+        // TODO: Passer le share à 1
         await commitTransaction();
         return res.status(200).json({
             status: 'success',
