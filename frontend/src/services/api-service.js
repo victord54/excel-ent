@@ -238,7 +238,6 @@ export async function createLink(inv_idtsht, inv_link){
 }
 
 export async function addSharing(lsu_idtusr_shared, inv_link){
-    console.log(inv_link);
     return await fetch(import.meta.env.VITE_API_URL + '/sheet/share/' + inv_link, {
         method: 'POST',
         headers: {
@@ -248,5 +247,15 @@ export async function addSharing(lsu_idtusr_shared, inv_link){
         body: JSON.stringify({
             lsu_idtusr_shared: lsu_idtusr_shared
         }),
+    });
+}
+
+export async function checkAccess(sht_uuid){
+    return await fetch(import.meta.env.VITE_API_URL + '/sheet/check/' + sht_uuid, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: getBearerString(),
+        }
     });
 }

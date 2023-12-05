@@ -8,6 +8,7 @@ import {
     saveSheet as _saveSheet,
     renameSheet as _renameSheet,
     updateSheetData as _updateSheetData,
+    checkAccess as _checkAccess
 } from '../../../services/api-service';
 import { getSheetById, getSheetData } from '../../../services/api-service';
 
@@ -22,6 +23,7 @@ export default function Sheet() {
 
     useEffect(() => {
         document.title = 'Feuille de calcul';
+        checkAccess();
         const socket = io(import.meta.env.VITE_API_URL);
 
         // socket.on('connect', () => {
@@ -67,6 +69,16 @@ export default function Sheet() {
             res.push(str);
         }
         return res;
+    }
+
+    async function checkAccess(){
+        const response = await _checkAccess(idSheet);
+        console.log(response);
+        if (response.status === 200){
+
+        } else {
+            window.location.href = "/404";
+        }
     }
 
     /**

@@ -14,6 +14,17 @@ export default function Invitation(){
         console.log(link);
         const response = await _addSharing(user.usr_idtusr, link);
         console.log(response);
+        if (response.status === 200){
+
+        }
+        else {
+
+        }
     }
+
+    return (
+        <>
+        </>
+    );
 
 }
