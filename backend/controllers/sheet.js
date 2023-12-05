@@ -155,7 +155,7 @@ export async function updateData(req, res, next) {
     const { cel_idtcel, cel_val, cel_stl } = req.body;
     // get the user id from the token
     const token = req.headers.authorization;
-    const cel_idtusr_aut = _getIdtUsr(token);
+    const idtusr_ori = _getIdtUsr(token);
     try {
         // validation des données reçues
         let missing = '';
@@ -194,10 +194,10 @@ export async function updateData(req, res, next) {
         }
         await commitTransaction();
         // emit event to all users that are on the sheet
-        req.io.emit(`updateData/${cel_idtcel}`, {
+        req.io.emit('udpdateData', {
             cel_idtcel,
             cel_idtsht,
-            cel_idtusr_aut,
+            idtusr_ori,
             cel_val,
             cel_stl,
         });

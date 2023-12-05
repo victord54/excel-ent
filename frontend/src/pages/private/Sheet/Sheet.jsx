@@ -30,9 +30,10 @@ export default function Sheet() {
         //     console.log('connected');
         //     socket.emit('join-room', idSheet);
         // });
-
-        socket.on(`updateData/${idt_sht}`, (data) => {
-            if (data.usr_idtusr === user.usr_idtusr) return;
+        socket.on('udpdateData', (data) => {
+            if (data.idtusr_ori == user.usr_idtusr || idt_sht != data.cel_idtsht) return;
+            console.log('client user: ', user.usr_idtusr);
+            console.log('sheet id:', idt_sht);
             console.log('updateData');
             console.log('data: ', data);
         });
