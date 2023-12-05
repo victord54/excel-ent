@@ -35,6 +35,8 @@ export default function Sheet() {
             if (data.usr_idtusr === user.usr_idtusr) return;
             console.log('updateData');
             console.log('data: ', data);
+            setContentCell(data.cell, data.val);
+            setTest(true);
         });
 
         getSheet();
@@ -53,7 +55,7 @@ export default function Sheet() {
         Array.from({ length: numberOfRows }, (_, index) => index + 1),
     );
     const [nameColums, setNameColums] = useState(generateNameColumns());
-
+    const [test, setTest] = useState(true);
     /**
      *
      * @returns
@@ -85,8 +87,6 @@ export default function Sheet() {
      *
      */
     async function renameSheet() {
-        console.log('save');
-        console.log(idt_sht);
         const regex = /^[a-zA-Z0-9*'()_\-/À-ÖØ-öø-ÿ]+$/;
         if (!regex.test(nameSheet)) {
             //TODO : afficher un message d'erreur
@@ -112,27 +112,17 @@ export default function Sheet() {
     async function updateSheetData(cell, val) {
         setSelectCol(null);
         setSelectRow(null);
-        console.log('update data');
-        console.log(idt_sht);
-        console.log({ cell, val });
+        // console.log('update data');
+        // console.log(idt_sht);
+        // console.log({ cell, val });
         const response = await _updateSheetData(idt_sht, cell, val, '');
     }
 
     async function getSheet() {
-        console.log('get sheet');
-        console.log(new Date().getTime());
         const sheetResponse = await getSheetById(idSheet);
         const sheetBody = await sheetResponse.json();
         const sheetData = sheetBody.data;
         if (sheetResponse.status === 200) {
-            if (sheetData.sht_idtusr_aut !== user.usr_idtusr) {
-                if (!sheetData.sht_shared) {
-                    // TODO : a faire mieux ptet jsp ce qu'on pourrait faire
-                    window.location.href = '/404';
-                }
-                // TODO add l'user à la liste des users qui ont accès à la sheet
-            }
-
             setNameSheet(sheetData.sht_name);
             setIdt_sht(sheetData.sht_idtsht);
             const cellsResponse = await getSheetData(sheetData.sht_idtsht);
@@ -177,7 +167,6 @@ export default function Sheet() {
      * Copy the selected text
      */
     function handleCopy() {
-        console.log('copy');
         const selection = window.getSelection();
         const copiedText = selection.focusNode.nodeValue;
         navigator.clipboard.writeText(copiedText);
@@ -189,7 +178,6 @@ export default function Sheet() {
      * @param {*} keyCell id of the receiving cell
      */
     function handlePaste(event, keyCell) {
-        console.log('paste');
         const text = event.clipboardData.getData('text/plain');
         setContentCell(keyCell, text);
     }
@@ -249,7 +237,6 @@ export default function Sheet() {
     }
 
     function setContentCell(cellKey, content) {
-        console.log(cellKey, content);
         const td = document.getElementById(cellKey);
         if (td) {
             const divChild = td.querySelector('div');

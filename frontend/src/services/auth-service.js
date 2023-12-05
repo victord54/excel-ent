@@ -10,7 +10,7 @@ export function removeToken() {
 
 export function isLogged() {
     const token = localStorage.getItem('auth_token');
-    console.log('token', token);
+    // console.log('token', token);
     return token !== null && token !== undefined && getLoggedUser() !== null;
 }
 
