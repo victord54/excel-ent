@@ -36,8 +36,7 @@ export default function Sheet() {
             console.log('sheet id:', idt_sht);
             console.log('updateData');
             console.log('data: ', data);
-            setContentCell(data.cell, data.val);
-            setTest(true);
+            setContentCell(data.cel_idtcel, data.cel_val);
         });
 
         getSheet();
@@ -56,7 +55,7 @@ export default function Sheet() {
         Array.from({ length: numberOfRows }, (_, index) => index + 1),
     );
     const [nameColums, setNameColums] = useState(generateNameColumns());
-    const [test, setTest] = useState(true);
+
     /**
      *
      * @returns
@@ -111,6 +110,7 @@ export default function Sheet() {
     }
 
     async function updateSheetData(cell, val) {
+        console.log("updateSheetData");
         setSelectCol(null);
         setSelectRow(null);
         // console.log('update data');
@@ -156,7 +156,7 @@ export default function Sheet() {
                 event.target.innerText = res;
             }
             event.target.blur();
-            updateSheetData(cellKey, event.target.innerText);
+            //updateSheetData(cellKey, event.target.innerText);
         }
         if (event.ctrlKey && event.key === 'c') {
             handleCopy();
@@ -238,6 +238,7 @@ export default function Sheet() {
     }
 
     function setContentCell(cellKey, content) {
+        console.log("SetContent:" , cellKey, content);
         const td = document.getElementById(cellKey);
         if (td) {
             const divChild = td.querySelector('div');
