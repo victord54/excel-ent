@@ -258,14 +258,11 @@ export async function getCells(req, res, next) {
 }
 
 export async function addSharing(req, res, next) {
-    const { lsu_idtusr_shared, inv_link } = req.body;
-    const lsu_idtsht = req.params.id;
+    const { lsu_idtusr_shared } = req.body;
+    const inv_link = req.params.id;
     try {
         // validation des données reçues
         let missing = '';
-        if (lsu_idtsht === undefined || lsu_idtsht === '') {
-            missing += 'lsu_idtsht ';
-        }
         if (lsu_idtusr_shared === undefined || lsu_idtusr_shared === '') {
             missing += 'lsu_idtusr_shared ';
         }
@@ -274,6 +271,7 @@ export async function addSharing(req, res, next) {
         }
         const link = await _getOneLink({ inv_link });
         if (link.length === 0) throw new LinkExpiredError('Link expired');
+        const lsu_idtsht = link[0].inv_idtsht;
         const sharing = await _addSharing({ lsu_idtsht, lsu_idtusr_shared });
         await commitTransaction();
         return res.status(200).json({
@@ -321,7 +319,7 @@ export async function createLink(req, res, next) {
     const { inv_link } = req.body;
     try {
         // check if link already exists
-        const linkExists = await _getOneLink({ inv_idtsht });
+        const linkExists = await _getOneLink({ inv_link });
         if (linkExists.length !== 0)
             throw new LinkAlreadyExistsError('Link already exists');
         const link = await _createLink({ inv_idtsht, inv_link });

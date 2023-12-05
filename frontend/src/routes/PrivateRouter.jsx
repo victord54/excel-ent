@@ -5,6 +5,7 @@ import ErrorPage from '../pages/public/ErrorPage/ErrorPage';
 import Sheet from '../pages/private/Sheet/Sheet';
 import Profile from '../pages/private/Profile/Profile';
 import Listing from '../pages/private/Listing/Listing';
+import Invitation from '../pages/private/Invitation/Invitation';
 
 const router = (
     <Route
@@ -21,6 +22,8 @@ const router = (
             <Route path=":idSheet" element={<Sheet />} />
             <Route index element={<Listing />} />
         </Route>
+        <Route path="sheet/invite/:link" element={<Invitation/>}/>
+
     </Route>
 );
 

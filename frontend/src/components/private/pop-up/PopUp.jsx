@@ -1,20 +1,25 @@
 import React, { useState } from 'react';
 import './popup.css';
+import copierSymbol from "../../../assets/copier.png";
 
-function PopUp({ onAction, type, link, alreadyShared }) {
+function PopUp({ onAction, type, link }) {
     function handleAnnuler() {
         onAction(false);
     }
 
     function handleConfirmer() {
-        if (type === 'confirmShare' && alreadyShared) onAction(false);
-        else onAction(true);
+        onAction(true);
     }
 
     function handleClickCopieLink() {
-        navigator.clipboard.writeText(window.location.href + '/' + link);
+        navigator.clipboard.writeText(window.location.href +"/invite/" + link);
         document.getElementById('popup-confirmation').className =
             'popup-link-container-visible';
+        console.log(link);
+    }
+
+    function selectAll(e){
+        e.target.select();
     }
 
     return (
@@ -28,51 +33,46 @@ function PopUp({ onAction, type, link, alreadyShared }) {
                 <div className="popup-content">
                     {type === 'confirmDelete'
                         ? 'Êtes-vous sûr de vouloir supprimer cet élément ?'
-                        : alreadyShared
-                        ? 'Vous avez déjà partagé ce document.'
-                        : 'Êtes-vous sûr de vouloir partager ce document ?'}
+                        : 'Copiez ce lien afin de le partager et cliquez sur confirmer.'}
                 </div>
+                {type === 'confirmShare' ? (
+                        <div className="popup-copy-link">
+                            <input type="text" className="popup-input-link" value={window.location.href +"/invite/" + link} onClick={selectAll} readOnly/>
+                            <button
+                                className="popup-button-link"
+                                onClick={handleClickCopieLink}
+                                title="Copier le lien"
+                            >
+                                <img src={copierSymbol}></img>
+                            </button>
+                            <div
+                                className="popup-link-container-hidden"
+                                id="popup-confirmation"
+                            >
+                                Lien copié !
+                            </div>
+                        </div>
+                    ) : (
+                        <></>
+                    )}
                 <div className="popup-container-buttons">
                     <div>
                         <button
                             className="popup-button popup-confirmer"
                             onClick={handleConfirmer}
                         >
-                            {type === 'confirmShare' && alreadyShared
-                                ? 'Ok'
-                                : 'Confirmer'}
+                            
+                                Confirmer
                         </button>
                     </div>
                     <div>
-                        {!alreadyShared ? (
-                            <button
-                                className="popup-button popup-annuler"
-                                onClick={handleAnnuler}
-                            >
-                                Annuler
-                            </button>
-                        ) : (
-                            <></>
-                        )}
+                        <button
+                            className="popup-button popup-annuler"
+                            onClick={handleAnnuler}
+                        >
+                            Annuler
+                        </button>            
                     </div>
-                    {type === 'confirmShare' ? (
-                        <div>
-                            <button
-                                className="popup-button popup-link"
-                                onClick={handleClickCopieLink}
-                            >
-                                Copier le lien
-                            </button>
-                        </div>
-                    ) : (
-                        <></>
-                    )}
-                </div>
-                <div
-                    className="popup-link-container-hidden"
-                    id="popup-confirmation"
-                >
-                    Lien copié !
                 </div>
             </div>
         </div>

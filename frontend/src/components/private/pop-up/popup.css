@@ -50,12 +50,53 @@
 }
 
 .popup-link-container-visible {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     font-size: 15px;
+
 }
 
 .popup-link-container-hidden {
     display: none;
 }
+
+.popup-copy-link{
+    margin-top: 10px;
+    --height: 25px;
+    display: flex;
+}
+
+.popup-input-link{
+    width: 70%;
+    padding: 0 8px;
+    font-size: 14px;
+    border: 1px solid black;
+    border-right: none;
+    outline: none;
+    overflow: auto;
+
+}
+
+.popup-input-link:hover{
+    background: #eeeeee;
+}
+
+.popup-button-link {
+    width: var(--height);
+    height: var(--height);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: 1px solid black;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+  
+  .popup-button-link img{
+    padding: 1%;
+    height: 20px;
+  }
+
+  .popup-button-link:hover {
+    background: #cccccc;
+  }
+  

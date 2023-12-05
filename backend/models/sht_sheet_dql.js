@@ -60,14 +60,8 @@ export async function getOneCell({ cel_idtcel, cel_idtsht }) {
     );
 }
 
-export async function getOneLink({ inv_idtsht, inv_link }) {
-    if (inv_idtsht !== undefined) {
-        return executeQuery(
-            'SELECT inv_idtsht FROM tmp_invitation WHERE inv_idtsht = ?',
-            [inv_idtsht],
-        );
-    }
-    return executeQuery(
+export async function getOneLink({ inv_link }) {
+     return executeQuery(
         'SELECT inv_idtsht FROM tmp_invitation WHERE inv_link = ? AND inv_created_at > DATE_SUB(NOW(), INTERVAL 30 MINUTE)',
         [inv_link],
     );

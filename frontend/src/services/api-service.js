@@ -223,3 +223,30 @@ export async function deleteSheet(sht_idtsht) {
         },
     });
 }
+
+export async function createLink(inv_idtsht, inv_link){
+    return await fetch(import.meta.env.VITE_API_URL + '/sheet/invite/' + inv_idtsht, {
+        method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: getBearerString(),
+            },
+            body: JSON.stringify({
+                inv_link: inv_link,
+            }),
+    });
+}
+
+export async function addSharing(lsu_idtusr_shared, inv_link){
+    console.log(inv_link);
+    return await fetch(import.meta.env.VITE_API_URL + '/sheet/share/' + inv_link, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: getBearerString(),
+        },
+        body: JSON.stringify({
+            lsu_idtusr_shared: lsu_idtusr_shared
+        }),
+    });
+}
