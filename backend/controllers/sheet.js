@@ -201,7 +201,7 @@ export async function updateData(req, res, next) {
             cel_val,
             cel_stl,
         });
-        return res.status(200).json({
+        return res.status(201).json({
             status: 'success',
             data: {
                 operation: existsCell.length === 0 ? 'create' : 'update',

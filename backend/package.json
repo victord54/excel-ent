@@ -20,7 +20,9 @@
         "jsonwebtoken": "9.0.0",
         "mysql2": "3.6.2",
         "nodemon": "3.0.1",
-        "socket.io": "4.7.2"
+        "socket.io": "4.7.2",
+        "swagger-ui-express": "5.0.0",
+        "yaml": "2.3.4"
     },
     "devDependencies": {
         "@vitest/ui": "0.30.1",

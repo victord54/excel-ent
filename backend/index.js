@@ -5,9 +5,16 @@ import authRoutes from './routes/auth.js';
 import sheetRoutes from './routes/sheet.js';
 import profileRoutes from './routes/profile.js';
 import { accessLogFile, errorLogFile } from './utils/logfile.js';
+import { CustomError } from './utils/error.js';
 import { checkToken } from './utils/jwt-check.js';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
+import fs from 'fs';
+import swaggerUi from 'swagger-ui-express';
+import YAML from 'yaml';
+const file = fs.readFileSync('./documentation.yml', 'utf8');
+const documentation = YAML.parse(file);
+
 
 const app = express();
 const server = createServer(app);
@@ -39,13 +46,16 @@ app.use('/sheet', checkToken, sheetRoutes);
 
 app.use('/profile', checkToken, profileRoutes);
 
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(documentation));
+
 app.use('*', (req, res) => {
     return res.status(501).json('No route found');
 });
 
 app.use((err, req, res, next) => {
     if (err.status === undefined) err.status = 500;
-    console.log(err);
+    if (!err instanceof CustomError)
+        console.error('An error occured : ', err.message);
     errorLogFile(err, req);
     return res.status(err.status).json({
         status: 'error',

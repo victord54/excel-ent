@@ -2,5 +2,7 @@
     "files.eol": "\n",
     "editor.insertSpaces": true,
     "editor.detectIndentation": false,
-    "editor.tabSize": 4
+    "editor.tabSize": 4,
+    "yaml.completion": true,
+    "yaml.format.printWidth": 80,
 }

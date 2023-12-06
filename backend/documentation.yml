@@ -1,0 +1,1284 @@
+openapi: 3.0.2
+info:
+  title: Excel-ENT API
+  description: |-
+    ## API documentation for the Excel-ENT application
+    This documentation is generated using the OpenAPI 3.0.2 specification.
+
+    You can find the source code of this documentation on the [Github repository](https://github.com/victord54/excel-ent/tree/main/backend)
+
+    This API is developed by :
+    - [Théo Faedo](https://github.com/TheoFaedo)
+    - [Claire Kurth](https://github.com/clairekth)
+    - [Victor Dallé](https://github.com/victord54)
+  version: 1.0.1
+servers:
+  - url: http://localhost:4242
+    description: Local server
+  - url: https://api.medvitech.fr/excelent
+    description: Production server
+tags:
+  - name: Test
+    description: Test endpoint for the API
+  - name: Authentication
+    description: Authentication endpoints for the API
+  - name: Profile
+    description: User endpoints for the API
+  - name: Sheet
+    description: Sheet endpoints for the API
+paths:
+  "/":
+    get:
+      tags:
+        - Test
+      summary: Test endpoint
+      description: Test endpoint
+      responses:
+        "200":
+          description: OK
+          content:
+            string:
+              example: I'm online stepbro !
+  "/auth/login":
+    post:
+      tags:
+        - Authentication
+      summary: Login to the application
+      description: Login to the application
+      requestBody:
+        description: User credentials
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                usr_mail:
+                  type: string
+                  example: admin@admin.fr
+                usr_pwd:
+                  type: string
+                  example: admin
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3JfbWFpbCI6ImFkb
+        "400":
+          description: Bad Request - Missing credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  error:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: MissingParameterError
+                      message:
+                        type: string
+                        example: "Missing parameters: usr_mail"
+                      status:
+                        type: integer
+                        example: 400
+        "401":
+          description: Unauthorized - Invalid credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  error:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: InvalidIdentifiersError
+                      message:
+                        type: string
+                        example: Invalid identifiers
+                      status:
+                        type: integer
+                        example: 401
+        "404":
+          description: Not found - User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  error:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: UserNotFoundError
+                      message:
+                        type: string
+                        example: User not found
+                      status:
+                        type: integer
+                        example: 404
+  "/auth/signup":
+    post:
+      tags:
+        - Authentication
+      summary: Signup to the application
+      description: Signup to the application
+      requestBody:
+        description: User informations
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                usr_pseudo:
+                  type: string
+                  example: admin
+                usr_mail:
+                  type: string
+                  example: vihi@nuk.gustring
+                usr_pwd:
+                  type: string
+                  example: admin
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: user created
+                  user:
+                    type: object
+                    properties:
+                      insertId:
+                        type: integer
+                        example: 1
+        "400":
+          description: Bad Request - Missing credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  error:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: MissingParameterError
+                      message:
+                        type: string
+                        example: "Missing parameters: usr_mail"
+                      status:
+                        type: integer
+                        example: 400
+        "409":
+          description: Conflict - User already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  error:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: UserAlreadyExistsError
+                      message:
+                        type: string
+                        example: User already exists
+                      status:
+                        type: integer
+                        example: 409
+  "/profile":
+    get:
+      tags:
+        - Profile
+      summary: Get user informations
+      description: Get user informations
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      usr_pseudo:
+                        type: string
+                        example: admin
+                      usr_mail:
+                        type: string
+                        example: admin@admin.fr
+        "404":
+          description: Not found - User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  error:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: UserNotFoundError
+                      message:
+                        type: string
+                        example: User not found
+                      status:
+                        type: integer
+                        example: 404
+  "/profile/editprofile":
+    put:
+      tags:
+        - Profile
+      summary: Edit user informations
+      description: Edit user informations
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: User informations
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                usr_pseudo:
+                  type: string
+                  example: admin
+                usr_mail:
+                  type: string
+                  example: admin@admin.com
+      responses:
+        "201":
+          description: Created - User updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      usr_pseudo:
+                        type: string
+                        example: admin
+                      usr_mail:
+                        type: string
+                        example: admin@admin.com
+        "400":
+          description: Bad Request - Missing parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  error:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: MissingParameterError
+                      message:
+                        type: string
+                        example: "Missing parameters: usr_mail"
+                      status:
+                        type: integer
+                        example: 400
+        "404":
+          description: Not found - User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  error:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: UserNotFoundError
+                      message:
+                        type: string
+                        example: User not found
+                      status:
+                        type: integer
+                        example: 404
+        "409":
+          description: Conflict - User already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  error:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: UserAlreadyExistsError
+                      message:
+                        type: string
+                        example: User already exists
+                      status:
+                        type: integer
+                        example: 409
+  "/profile/editpassword":
+    put:
+      tags:
+        - Profile
+      summary: Edit user password
+      description: Edit user password
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: User password
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                usr_old_password:
+                  type: string
+                  example: monsupermotdepasse
+                usr_new_password:
+                  type: string
+                  example: monnouveausupermotdepasse
+      responses:
+        "201":
+          description: Created - Password updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      usr_pseudo:
+                        type: string
+                        example: admin
+                      usr_mail:
+                        type: string
+                        example: admin@admin.com
+        "400":
+          description: Bad Request - Missing parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  error:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: MissingParameterError
+                      message:
+                        type: string
+                        example: "Missing parameters: usr_mail"
+                      status:
+                        type: integer
+                        example: 400
+        "401":
+          description: Unauthorized - Invalid password
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  error:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: InvalidIdentifiersError
+                      message:
+                        type: string
+                        example: Invalid identifiers
+                      status:
+                        type: integer
+                        example: 401
+        "404":
+          description: Not found - User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  error:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: UserNotFoundError
+                      message:
+                        type: string
+                        example: User not found
+                      status:
+                        type: integer
+                        example: 404
+  "/sheet":
+    get:
+      tags:
+        - Sheet
+      summary: Get all sheets that belong to the user or shared with him
+      description: Get all sheets that belong to the user or shared with him
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        sht_idtsht:
+                          type: integer
+                        sht_idtusr_aut:
+                          type: integer
+                        sht_name:
+                          type: string
+                        sht_sharing:
+                          type: integer
+                        sht_uuid:
+                          type: string
+                        sht_updated_at:
+                          type: string
+                        usr_pseudo:
+                          type: string
+                    example:
+                      - sht_idtsht: 1
+                        sht_idtusr_aut: 1
+                        sht_name: My first sheet
+                        sht_sharing: 0
+                        sht_uuid: cd41cb81-fe36-5b82-8836-decec8d8ec9c
+                        sht_updated_at: 2021-05-01T00:00:00.000Z
+                        usr_pseudo: admin
+                      - sht_idtsht: 2
+                        sht_idtusr_aut: 2
+                        sht_name: My second sheet
+                        sht_sharing: 0
+                        sht_uuid: cd41cb81-fe56-5b82-8836-decec8d8ec9c
+                        sht_updated_at: 2021-05-01T00:00:00.000Z
+                        usr_pseudo: user
+    post:
+      tags:
+        - Sheet
+      summary: Create a new sheet
+      description: Create a new sheet
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: Sheet informations
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sht_name:
+                  type: string
+                  example: My first sheet
+                sht_sharing:
+                  type: integer
+                  example: 0
+                sht_uuid:
+                  type: string
+                  example: cd41cb81-fe56-5b82-8936-decec8d8ec9c
+      responses:
+        "201":
+          description: Created - Sheet created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      sht_idtsht:
+                        type: integer
+                        example: 1
+                      sht_idtusr_aut:
+                        type: integer
+                        example: 1
+                      sht_name:
+                        type: string
+                        example: My first sheet
+                      sht_sharing:
+                        type: integer
+                        example: 0
+                      sht_uuid:
+                        type: string
+                        example: cd41cb81-fe56-5b82-8936-decec8d8ec9c
+                      sht_updated_at:
+                        type: string
+                        example: 2021-05-01T00:00:00.000Z
+        "400":
+          description: Bad Request - Missing parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  error:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: MissingParameterError
+                      message:
+                        type: string
+                        example: "Missing parameters: sht_name"
+                      status:
+                        type: integer
+                        example: 400
+        "409":
+          description: Conflict - Sheet already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  error:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: SheetAlreadyExistsError
+                      message:
+                        type: string
+                        example: Sheet (uuid) already exists
+                      status:
+                        type: integer
+                        example: 409
+    delete:
+      tags:
+        - Sheet
+      summary: Delete a sheet
+      description: Delete a sheet
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: query
+          description: Sheet id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+        "404":
+          description: Not found - Sheet not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+  "/sheet/{uuid}":
+    get:
+      tags:
+        - Sheet
+      summary: Get all sheets that belong to the user or shared with him
+      description: Get all sheets that belong to the user or shared with him
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: uuid
+          in: path
+          description: Sheet uuid
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      sht_idtsht:
+                        type: integer
+                        example: 1
+                      sht_idtusr_aut:
+                        type: integer
+                        example: 1
+                      sht_name:
+                        type: string
+                        example: My first sheet
+                      sht_sharing:
+                        type: integer
+                        example: 0
+                      sht_uuid:
+                        type: string
+                        example: cd41cb81-fe56-5b82-8936-decec8d8ec9c
+                      sht_updated_at:
+                        type: string
+                        example: 2021-05-01T00:00:00.000Z
+                      usr_pseudo:
+                        type: string
+                        example: admin
+        "404":
+          description: Not found - Sheet not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  error:
+                    type: object
+                    example:
+                      name: SheetNotFoundError
+                      message: Sheet not found
+                      status: 404
+  "/sheet/data/{id}":
+    get:
+      tags:
+        - Sheet
+      summary: Get all cells from a sheet
+      description: Get all cells from a sheet
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: Sheet id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        cel_idtcel:
+                          type: string
+                        cel_val:
+                          type: string
+                        cel_stl:
+                          type: string
+                    example:
+                      - cel_idtcel: C_15
+                        cel_val: My first cell
+                        cel_stl: ""
+                      - cel_idtcel: C_16
+                        cel_val: My second cell
+                        cel_stl: "background-color: #aef451; color: #ff45a5;"
+        "404":
+          description: Not found - Sheet not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  error:
+                    type: object
+                    example:
+                      name: SheetNotFoundError
+                      message: Sheet not found
+                      status: 404
+    put:
+      tags:
+        - Sheet
+      summary: Edit or add a cell in a sheet
+      description: Edit or add a cell in a sheet
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: Sheet id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: Cell data
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cel_idtcel:
+                  type: string
+                  example: C_15
+                cel_val:
+                  type: string
+                  example: My first cell
+                cel_stl:
+                  type: string
+                  example: "background-color: #aef451; color: #ff45a5;"
+      responses:
+        "201":
+          description: Created - Cell updated or created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      operation:
+                        type: string
+                        example: update || create
+                      cel_idtcel:
+                        type: string
+                        example: C_15
+                      cel_idtsht:
+                        type: integer
+                        example: 1
+        "400":
+          description: Bad Request - Missing parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  error:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: MissingParameterError
+                      message:
+                        type: string
+                        example: "Missing parameters: cel_idtcel"
+                      status:
+                        type: integer
+                        example: 400
+  "/sheet/name/{id}":
+    put:
+      tags:
+        - Sheet
+      summary: Edit sheet name
+      description: Edit sheet name
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: Sheet id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: Sheet name
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sht_name:
+                  type: string
+                  example: My first sheet
+      responses:
+        "201":
+          description: Created - Sheet name updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+        "400":
+          description: Bad Request - Missing parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+        "404":
+          description: Not found - Sheet not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+  "/sheet/check/{uuid}":
+    get:
+      tags:
+        - Sheet
+      summary: Check if a sheet is accessible by the user
+      description: Check if a sheet is accessible by the user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: uuid
+          in: path
+          description: Sheet uuid
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK - Sheet is accessible
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      sht_idtsht:
+                        type: integer
+                        example: 1
+                      sht_idtusr_aut:
+                        type: integer
+                        example: 1
+                      sht_name:
+                        type: string
+                        example: My first sheet
+                      sht_sharing:
+                        type: integer
+                        example: 0
+                      sht_uuid:
+                        type: string
+                        example: cd41cb81-fe56-5b82-8936-decec8d8ec9c
+                      sht_updated_at:
+                        type: string
+                        example: 2021-05-01T00:00:00.000Z
+                      usr_pseudo:
+                        type: string
+                        example: admin
+        "404":
+          description: Not found - Sheet not found or not accessible by the user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  error:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: SheetNotFoundError
+                      message:
+                        type: string
+                        example: Sheet not found
+                      status:
+                        type: integer
+                        example: 404
+  "/sheet/invite/{id}":
+    post:
+      tags:
+        - Sheet
+      summary: Create a temporary invitation link for a sheet
+      description: Create a temporary invitation link for a sheet
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: Sheet id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: Invitation link
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                inv_link:
+                  type: string
+                  example: cd41cb81-fe56-5b82-8836-decec8d8ec9c
+      responses:
+        "201":
+          description: Created - Invitation link created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+        "400":
+          description: Bad Request - Missing parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  error:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: MissingParameterError
+                      message:
+                        type: string
+                        example: "Missing parameters: inv_link"
+                      status:
+                        type: integer
+                        example: 400
+        "404":
+          description: Not found - Sheet not found or not accessible by the user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  error:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: SheetNotFoundError
+                      message:
+                        type: string
+                        example: Sheet not found
+                      status:
+                        type: integer
+                        example: 404
+        "409":
+          description: Conflict - Invitation link already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  error:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: InvitationLinkAlreadyExistsError
+                      message:
+                        type: string
+                        example: Invitation link already exists
+                      status:
+                        type: integer
+                        example: 409
+  "/sheet/share/{link}":
+    post:
+      tags:
+        - Sheet
+      summary: Share a sheet with a user
+      description: Share a sheet with a user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: link
+          in: path
+          description: Invitation link
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: User id to share the sheet with
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                lsu_idtusr_shared:
+                  type: integer
+                  example: 2
+      responses:
+        "201":
+          description: Created - Sheet shared with the user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+        "400":
+          description: Bad Request - Missing parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  error:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: MissingParameterError
+                      message:
+                        type: string
+                        example: "Missing parameters: lsu_idtusr_shared"
+                      status:
+                        type: integer
+                        example: 400
+        "401":
+          description: Unauthorized - Invalid invitation link
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  error:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: LinkExpiredError
+                      message:
+                        type: string
+                        example: "Link expired"
+                      status:
+                        type: integer
+                        example: 400
+        "404":
+          description: Not found - Sheet not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  error:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: SheetNotFoundError
+                      message:
+                        type: string
+                        example: "Sheet not found"
+                      status:
+                        type: integer
+                        example: 400
+  "/sheet/share/{id}":
+    delete:
+      tags:
+        - Sheet
+      summary: Remove a user from a shared sheet
+      description: Remove a user from a shared sheet
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: Sheet id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: User id to remove from the shared sheet
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                lsu_idtusr_shared:
+                  type: integer
+                  example: 2
+      responses:
+        "200":
+          description: OK - User removed from the shared sheet
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+        "400":
+          description: Bad Request - Missing parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  error:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: MissingParameterError
+                      message:
+                        type: string
+                        example: "Missing parameters: lsu_idtusr_shared"
+                      status:
+                        type: integer
+                        example: 400
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
