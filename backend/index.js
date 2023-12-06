@@ -46,7 +46,7 @@ app.use('/sheet', checkToken, sheetRoutes);
 
 app.use('/profile', checkToken, profileRoutes);
 
-app.use('/docs', swaggerUi.serve, swaggerUi.setup(documentation));
+app.get('/docs', swaggerUi.serve, swaggerUi.setup(documentation));
 
 app.use('*', (req, res) => {
     return res.status(501).json('No route found');
