@@ -51,20 +51,19 @@
 
 .popup-link-container-visible {
     font-size: 15px;
-
 }
 
 .popup-link-container-hidden {
     display: none;
 }
 
-.popup-copy-link{
+.popup-copy-link {
     margin-top: 10px;
     --height: 25px;
     display: flex;
 }
 
-.popup-input-link{
+.popup-input-link {
     width: 70%;
     padding: 0 8px;
     font-size: 14px;
@@ -72,10 +71,9 @@
     border-right: none;
     outline: none;
     overflow: auto;
-
 }
 
-.popup-input-link:hover{
+.popup-input-link:hover {
     background: #eeeeee;
 }
 
@@ -89,14 +87,13 @@
     border: 1px solid black;
     cursor: pointer;
     margin-right: 10px;
-  }
-  
-  .popup-button-link img{
+}
+
+.popup-button-link img {
     padding: 1%;
     height: 20px;
-  }
+}
 
-  .popup-button-link:hover {
+.popup-button-link:hover {
     background: #cccccc;
-  }
-  
+}

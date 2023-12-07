@@ -15,12 +15,12 @@
 }
 ```
 - [ ] Gestion des messages d'erreur
-- [~] Renommer, partager, supprimer feuille depuis le listing
+- [x] Renommer, partager, supprimer feuille depuis le listing
 - [x] Afficher bouton supprimer ssi l'utilisateur est l'auteur
 - [x] Filtre de recherche
-- [ ] Récupérer les feuilles partagées dans le Listing
+- [x] Récupérer les feuilles partagées dans le Listing
 - [ ] Vérifier injections SQL
-- [~] Feuille : Check si l'user est l'auteur, si non check si la feuille est partagé -> Si non agir en conséquence, si oui -> add l'utilisateur dans la table des feuilles partagés si pas déjà présent
+- [x] Feuille : Check si l'user est l'auteur, si non check si la feuille est partagé -> Si non agir en conséquence, si oui -> add l'utilisateur dans la table des feuilles partagés si pas déjà présent
 - [ ] Tester si le token de l'uti est pas expiré à chaque requete
 - [x] socket.io
 - [x] Ajout dans la route getAllFromUser la liste des feuilles partagées + auteur + tri par date récent + pseudo
@@ -31,6 +31,7 @@
 - [x] Route pour sharing
 - [x] Route pour recherche de sheet par nom
 - [ ] Update la date de modification des feuilles
+- [ ] Table pour dire qui a lock telle case -> bloquer la case en front
 
 # FIXME
 - [x] Délai de chargement au login

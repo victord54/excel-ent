@@ -11,7 +11,7 @@ import {
     saveSheet as _saveSheet,
     renameSheet as _renameSheet,
     deleteSheet as _deleteSheet,
-    createLink as _createLink
+    createLink as _createLink,
 } from '../../../services/api-service';
 import PopUp from '../../../components/private/pop-up/PopUp';
 
@@ -165,8 +165,11 @@ export default function Listing() {
 
         if (confirm) {
             console.log('Partage confirmer');
-            const response = await _createLink(sheetToDeleteOrShare.sht_idtsht, sheetToDeleteOrShare.link);
-            if (response.status === 200){
+            const response = await _createLink(
+                sheetToDeleteOrShare.sht_idtsht,
+                sheetToDeleteOrShare.link,
+            );
+            if (response.status === 200) {
                 console.log(response);
             }
             // TODO :error
@@ -272,14 +275,17 @@ export default function Listing() {
         setSheets(sortedSheets);
     }
 
-    function generateLink(sht_idtsht){
-        const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-&_";
-        let randomString = "";
+    function generateLink(sht_idtsht) {
+        const charset =
+            'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-&_';
+        let randomString = '';
         for (let i = 0; i < 8; i++) {
-          const randomIndex = Math.floor(Math.random() * charset.length);
-          randomString += charset.charAt(randomIndex);
+            const randomIndex = Math.floor(Math.random() * charset.length);
+            randomString += charset.charAt(randomIndex);
         }
-        const randomIndex = Math.floor(Math.random() * (randomString.length + 1));
+        const randomIndex = Math.floor(
+            Math.random() * (randomString.length + 1),
+        );
         const urlPart1 = randomString.substring(0, randomIndex);
         const urlPart2 = randomString.substring(randomIndex);
         const url = `${urlPart1}e&${sht_idtsht}${urlPart2}`;

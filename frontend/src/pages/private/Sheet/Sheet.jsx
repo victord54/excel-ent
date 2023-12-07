@@ -8,7 +8,7 @@ import {
     saveSheet as _saveSheet,
     renameSheet as _renameSheet,
     updateSheetData as _updateSheetData,
-    checkAccess as _checkAccess
+    checkAccess as _checkAccess,
 } from '../../../services/api-service';
 import { getSheetById, getSheetData } from '../../../services/api-service';
 
@@ -30,17 +30,20 @@ export default function Sheet() {
         socket.on('udpdateData', (data) => {
             console.log('data: ', data);
             console.log('user: ', user.usr_idtusr);
-            console.log('u: ', data.idtusr_ori );
+            console.log('u: ', data.idtusr_ori);
             console.log('s: ', data.cel_idtsht);
             console.log('idt_sht: ', idt_sht);
-            if (data.idtusr_ori === user.usr_idtusr || idsht !== data.cel_idtsht) return;
+            if (
+                data.idtusr_ori === user.usr_idtusr ||
+                idsht !== data.cel_idtsht
+            )
+                return;
             console.log('client user: ', user.usr_idtusr);
             console.log('sheet id:', idt_sht);
             console.log('updateData');
             console.log('data: ', data);
             setContentCell(data.cel_idtcel, data.cel_val);
         });
-
     }, []);
 
     const numberOfRows = 100;
@@ -74,13 +77,12 @@ export default function Sheet() {
         return res;
     }
 
-    async function checkAccess(){
+    async function checkAccess() {
         const response = await _checkAccess(idSheet);
         console.log(response);
-        if (response.status === 200){
-
+        if (response.status === 200) {
         } else {
-            window.location.href = "/404";
+            window.location.href = '/404';
         }
     }
 
@@ -111,7 +113,7 @@ export default function Sheet() {
     }
 
     async function updateSheetData(cell, val) {
-        console.log("updateSheetData");
+        console.log('updateSheetData');
         setSelectCol(null);
         setSelectRow(null);
         // console.log('update data');
@@ -241,7 +243,7 @@ export default function Sheet() {
     }
 
     function setContentCell(cellKey, content) {
-        console.log("SetContent:" , cellKey, content);
+        console.log('SetContent:', cellKey, content);
         const td = document.getElementById(cellKey);
         if (td) {
             const divChild = td.querySelector('div');

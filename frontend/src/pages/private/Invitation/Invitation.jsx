@@ -3,7 +3,7 @@ import { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../../../contexts/AuthContext';
 import { addSharing as _addSharing } from '../../../services/api-service';
 
-export default function Invitation(){
+export default function Invitation() {
     const { link } = useParams();
     const { user } = useContext(AuthContext);
     const navigate = useNavigate();
@@ -12,26 +12,22 @@ export default function Invitation(){
         addUserToSheet();
     }, []);
 
-    async function addUserToSheet(){
+    async function addUserToSheet() {
         console.log(link);
         const response = await _addSharing(user.usr_idtusr, link);
         const body = await response.json();
         const data = body.data;
-        if (response.status === 200){
+        if (response.status === 200) {
             console.log(data.link);
             const link = data.link;
             navigate(`/sheet/${link}`);
         }
         // TODO : Handle errors
-        else { 
+        else {
             //navigate('/404');
             console.log(response.error);
         }
     }
 
-    return (
-        <>
-        </>
-    );
-
+    return <></>;
 }

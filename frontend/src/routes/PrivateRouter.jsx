@@ -22,8 +22,7 @@ const router = (
             <Route path=":idSheet" element={<Sheet />} />
             <Route index element={<Listing />} />
         </Route>
-        <Route path="sheet/invite/:link" element={<Invitation/>}/>
-
+        <Route path="sheet/invite/:link" element={<Invitation />} />
     </Route>
 );
 
