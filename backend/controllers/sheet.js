@@ -7,6 +7,7 @@ import {
     getOneCell as _getOneCell,
     getOneLink as _getOneLink,
     getOneWithAccess as _getOneWithAccess,
+    checkDuplicateSharing as _checkDuplicateSharing,
     // search as _search,
 } from '../models/sht_sheet_dql.js';
 import {
@@ -272,11 +273,22 @@ export async function addSharing(req, res, next) {
         const link = await _getOneLink({ inv_link });
         if (link.length === 0) throw new LinkExpiredError('Link expired');
         const lsu_idtsht = link[0].inv_idtsht;
+
+        const alreadySharedWithUser = await _checkDuplicateSharing({lsu_idtsht, lsu_idtusr_shared});
+        console.log(alreadySharedWithUser);
+        if (alreadySharedWithUser.length !== 0) {
+            console.log("dedans")
+            return res.status(200).json({
+                status: 'success',
+                data: {link: link[0].sht_uuid},
+            });
+        }
         const sharing = await _addSharing({ lsu_idtsht, lsu_idtusr_shared });
         await commitTransaction();
+        console.log("sharing");
         return res.status(200).json({
             status: 'success',
-            data: sharing,
+            data: {sharing: sharing, link: link[0].sht_uuid},
         });
     } catch (error) {
         await rollbackTransaction();

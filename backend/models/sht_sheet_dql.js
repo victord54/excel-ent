@@ -62,7 +62,7 @@ export async function getOneCell({ cel_idtcel, cel_idtsht }) {
 
 export async function getOneLink({ inv_link }) {
      return executeQuery(
-        'SELECT inv_idtsht FROM tmp_invitation WHERE inv_link = ? AND inv_created_at > DATE_SUB(NOW(), INTERVAL 30 MINUTE)',
+        'SELECT inv_idtsht, sht_uuid FROM tmp_invitation LEFT JOIN sht_sheet ON inv_idtsht = sht_idtsht WHERE inv_link = ? AND inv_created_at > DATE_SUB(NOW(), INTERVAL 30 MINUTE)',
         [inv_link],
     );
 }
@@ -71,6 +71,13 @@ export async function getOneWithAccess({ sht_uuid, sht_idtusr_aut }) {
     return executeQuery(
         'SELECT sht_idtsht, sht_idtusr_aut, sht_name, sht_sharing, sht_uuid, sht_updated_at, usr_pseudo FROM sht_sheet LEFT JOIN sht_link_sht_usr ON sht_idtsht = lsu_idtsht LEFT JOIN usr_user ON sht_idtusr_aut = usr_idtusr WHERE sht_uuid = ? AND (sht_idtusr_aut = ? OR lsu_idtusr_shared = ?)',
         [sht_uuid, sht_idtusr_aut, sht_idtusr_aut],
+    );
+}
+
+export async function checkDuplicateSharing({ lsu_idtsht, lsu_idtusr_shared }) {
+    return executeQuery(
+        'SELECT * FROM sht_link_sht_usr WHERE lsu_idtsht = ? AND lsu_idtusr_shared = ?',
+        [lsu_idtsht, lsu_idtusr_shared],
     );
 }
 

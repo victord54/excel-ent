@@ -139,6 +139,7 @@ export default function Sheet() {
         } else {
             //TODO: c'est censé renvoyer une erreur 404 dans le corps de la réponse
             window.location.href = '/404';
+            //console.log(sheetResponse);
         }
     }
 
