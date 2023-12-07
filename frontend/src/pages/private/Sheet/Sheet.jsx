@@ -25,13 +25,15 @@ export default function Sheet() {
         document.title = 'Feuille de calcul';
         checkAccess();
         const socket = io(import.meta.env.VITE_API_URL);
+        const idsht = getSheet();
 
-        // socket.on('connect', () => {
-        //     console.log('connected');
-        //     socket.emit('join-room', idSheet);
-        // });
         socket.on('udpdateData', (data) => {
-            if (data.idtusr_ori == user.usr_idtusr || idt_sht != data.cel_idtsht) return;
+            console.log('data: ', data);
+            console.log('user: ', user.usr_idtusr);
+            console.log('u: ', data.idtusr_ori );
+            console.log('s: ', data.cel_idtsht);
+            console.log('idt_sht: ', idt_sht);
+            if (data.idtusr_ori === user.usr_idtusr || idsht !== data.cel_idtsht) return;
             console.log('client user: ', user.usr_idtusr);
             console.log('sheet id:', idt_sht);
             console.log('updateData');
@@ -39,7 +41,6 @@ export default function Sheet() {
             setContentCell(data.cel_idtcel, data.cel_val);
         });
 
-        getSheet();
     }, []);
 
     const numberOfRows = 100;
@@ -136,6 +137,7 @@ export default function Sheet() {
                 );
             }
             setSheetExist(true);
+            return sheetData.sht_idtsht;
         } else {
             //TODO: c'est censé renvoyer une erreur 404 dans le corps de la réponse
             window.location.href = '/404';
