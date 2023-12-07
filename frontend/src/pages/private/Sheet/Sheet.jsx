@@ -14,9 +14,6 @@ import { getSheetById, getSheetData } from '../../../services/api-service';
 
 import { io } from 'socket.io-client';
 
-// TODO : Save automatique
-// TODO : Modification en même temps
-
 export default function Sheet() {
     const { idSheet } = useParams();
     const { user } = useContext(AuthContext);
@@ -61,8 +58,9 @@ export default function Sheet() {
     const [nameColums, setNameColums] = useState(generateNameColumns());
 
     /**
+     * Method that generate the name of the columns.
      *
-     * @returns
+     * @returns {Array} Array of the name of the columns.
      */
     function generateNameColumns() {
         const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -77,6 +75,11 @@ export default function Sheet() {
         return res;
     }
 
+    /**
+     * Method that check if the user has access to the sheet.
+     * Send a request to the server.
+     * Redirect to the 404 page if the user doesn't have access.
+     */
     async function checkAccess() {
         const response = await _checkAccess(idSheet);
         console.log(response);
@@ -87,7 +90,7 @@ export default function Sheet() {
     }
 
     /**
-     *
+     * Method that handle when the user rename the sheet.
      */
     async function renameSheet() {
         const regex = /^[a-zA-Z0-9*'()_\-/À-ÖØ-öø-ÿ]+$/;
@@ -106,22 +109,37 @@ export default function Sheet() {
         }
     }
 
+    /**
+     * Method that handle when the user press enter in the input of the name.
+     *
+     * @param {Event} event The event.
+     */
     function handleKeyDownInput(event) {
         if (event.key === 'Enter') {
             event.target.blur();
         }
     }
 
+    /**
+     * Method that save the data of a cell.
+     * Send a request to the server.
+     *
+     * @param {String} cell The id of the cell.
+     * @param {String} val The value of the cell.
+     */
     async function updateSheetData(cell, val) {
         console.log('updateSheetData');
         setSelectCol(null);
         setSelectRow(null);
-        // console.log('update data');
-        // console.log(idt_sht);
-        // console.log({ cell, val });
         const response = await _updateSheetData(idt_sht, cell, val, '');
     }
 
+    /**
+     * Method that get the sheet.
+     * Send a request to the server.
+     *
+     * @returns {BigInt} The id of the sheet.
+     */
     async function getSheet() {
         const sheetResponse = await getSheetById(idSheet);
         const sheetBody = await sheetResponse.json();
@@ -148,9 +166,10 @@ export default function Sheet() {
     }
 
     /**
+     * Method that handle when the user press a key in a cell.
      *
-     * @param {*} event
-     * @param {*} cellKey
+     * @param {Event} event The event.
+     * @param {String} cellKey The id of the cell.
      */
     function handleKeyDown(event, cellKey) {
         if (keyDownHandled) setKeyDownHandled(false);
@@ -170,7 +189,7 @@ export default function Sheet() {
     }
 
     /**
-     * Copy the selected text
+     * Method that copy the selected text.
      */
     function handleCopy() {
         const selection = window.getSelection();
@@ -179,9 +198,10 @@ export default function Sheet() {
     }
 
     /**
-     * Past the text in the clipboard
-     * @param {*} event event of the paste
-     * @param {*} keyCell id of the receiving cell
+     * Method that past the text in the clipboard.
+     *
+     * @param {Event} event The vent of the paste.
+     * @param {String} keyCell The id of the receiving cell.
      */
     function handlePaste(event, keyCell) {
         const text = event.clipboardData.getData('text/plain');
@@ -189,8 +209,9 @@ export default function Sheet() {
     }
 
     /**
-     * Change the sheet name
-     * @param {*} event event of the change
+     * Method that change the sheet name.
+     *
+     * @param {Event} event The event.
      */
     function nameSheetChange(event) {
         setNameSheet(event.target.value);
@@ -199,9 +220,10 @@ export default function Sheet() {
     }
 
     /**
+     * Method that handle when the user start to drag a cell.
      *
-     * @param {*} event
-     * @param {*} keyCell
+     * @param {Event} event The event.
+     * @param {String} keyCell The id of the cell.
      */
     function handleDragStart(event, keyCell) {
         if (event.target.innerText === '') return;
@@ -210,9 +232,10 @@ export default function Sheet() {
     }
 
     /**
+     * Meethod that handle when the user drop a cell.
      *
-     * @param {*} event
-     * @param {*} keyCell
+     * @param {Event} event The event.
+     * @param {String} keyCell The id of the cell.
      */
     function handleDrop(event, keyCell) {
         console.log(event.dataTransfer.getData('text/plain'));
@@ -224,8 +247,11 @@ export default function Sheet() {
     }
 
     /**
+     * Method that handle when the user click on a cell.
      *
-     * @param {*} event
+     * @param {Event} event The event.
+     * @param {String} nameCol The name of the column.
+     * @param {String} nameRow The name of the row.
      */
     function handleSelectAll(event, nameCol, nameRow) {
         const range = document.createRange();
@@ -238,12 +264,22 @@ export default function Sheet() {
         setSelectRow(nameRow);
     }
 
+    /**
+     * Method that handle when the user click on the input of the name.
+     *
+     * @param {Event} event The event.
+     */
     function handleSelectAllInput(event) {
         event.target.select();
     }
 
+    /**
+     * Method that set a content to a cell.
+     *
+     * @param {String} cellKey The id of the cell.
+     * @param {String} content The content to set.
+     */
     function setContentCell(cellKey, content) {
-        console.log('SetContent:', cellKey, content);
         const td = document.getElementById(cellKey);
         if (td) {
             const divChild = td.querySelector('div');

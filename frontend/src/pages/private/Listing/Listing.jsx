@@ -15,11 +15,6 @@ import {
 } from '../../../services/api-service';
 import PopUp from '../../../components/private/pop-up/PopUp';
 
-// TODO : Ajouter les fonctionnalités modifier, supprimer et partager
-// TODO : Ajouter la fonctionnalité de recherche
-// TODO : Récupérer les sheets partagées
-// TODO : Fonctionnalité de tri
-
 export default function Listing() {
     useEffect(() => {
         document.title = 'Mes feuilles';
@@ -27,7 +22,6 @@ export default function Listing() {
     }, []);
     const { user } = useContext(AuthContext);
     const [sheets, setSheets] = useState([]);
-    const navigate = useNavigate();
     const [selectedFilter, setSelectedFilter] = useState('all');
     const [canRowClick, setCanRowClick] = useState(true);
     const [isPopupDeleteOpen, setIsPopupDeleteOpen] = useState(false);
@@ -35,19 +29,30 @@ export default function Listing() {
     const [sheetToDeleteOrShare, setSheetToDeleteOrShare] = useState(null);
     const [sortedBy, setSortedBy] = useState('last_update');
 
+    /**
+     * Method that handle the filter selected.
+     *
+     * @param {String} filter The name of the filter to apply.
+     */
     const handleFilter = (filter) => {
         if (filter === '') filter = 'all';
         setSelectedFilter(filter);
-        console.log(filter);
     };
 
+    /**
+     * Method that get all sheets from the user.
+     * Send a request to the server to get all the sheets.
+     */
     async function getSheets() {
+        // TODO : error
         const res = await getAllSheetFromUser();
         const _body = await res.json();
         setSheets(_body);
-        console.log(_body);
     }
 
+    /**
+     * Method that filter the sheets.
+     */
     const filteredSheets = sheets.filter((sheet) => {
         if (selectedFilter === 'all') {
             return true;
@@ -62,16 +67,32 @@ export default function Listing() {
         }
     });
 
+    /**
+     * Method that remove accents from a string.
+     *
+     * @param {String} str The string to remove accents.
+     * @returns str without accents.
+     */
     function removeAccents(str) {
         return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     }
 
+    /**
+     * Method that handle the click on a row. Relocate the user to the sheet.
+     *
+     * @param {Object} sheet The sheet clicked.
+     */
     const handleRowClick = (sheet) => {
         if (!canRowClick) return;
-        console.log(sheet.sht_uuid);
         window.open('/sheet/' + sheet.sht_uuid, '_blank');
     };
 
+    /**
+     * Method that handle the click on the rename button.
+     *
+     * @param {Event} event The event.
+     * @param {Object} sheet The sheet to rename.
+     */
     async function handleRenameSheetClick(event, sheet) {
         event.stopPropagation();
         setCanRowClick(false);
@@ -87,7 +108,14 @@ export default function Listing() {
         selection.addRange(range);
     }
 
-    async function handleOnBlurRenameSheet(event, sheet, enter = null) {
+    /**
+     * Method that handle when the user has finished to rename the sheet.
+     * Send the request to the server to rename the sheet.
+     *
+     * @param {Event} event The event.
+     * @param {Object} sheet The sheet to rename.
+     */
+    async function handleOnBlurRenameSheet(event, sheet) {
         if (event.target.contentEditable === 'false') return;
         const regex = /^[a-zA-Z0-9*'()_\-/À-ÖØ-öø-ÿ]+$/;
         const idt_sht = sheet.sht_idtsht;
@@ -125,23 +153,33 @@ export default function Listing() {
         }
     }
 
+    /**
+     * Method that handle when the user press enter when renaming a sheet.
+     *
+     * @param {Event} event The event.
+     * @param {Object} sheet The sheet.
+     */
     function handleEnterDown(event, sheet) {
         if (event.target.contentEditable === 'false') return;
         if (event.key === 'Enter') {
-            handleOnBlurRenameSheet(event, sheet, true);
+            handleOnBlurRenameSheet(event, sheet);
         }
     }
 
+    /**
+     * Method that handle the confirmation of the popup to delete a sheet.
+     * Send the request to the server to delete the sheet if the user has confirm.
+     *
+     * @param {boolean} confirm The confirmation.
+     */
     async function handlePopUpConfirmationSupprimer(confirm) {
         setIsPopupDeleteOpen(false);
 
         if (confirm) {
             const res = await _deleteSheet(sheetToDeleteOrShare.sht_idtsht);
-
             //TODO : error
             if (res.status === 200) {
                 const _body = await res.json();
-                console.log(_body);
                 setSheets((prevSheets) => {
                     const updatedSheets = prevSheets.filter(
                         (f) => f.sht_idtsht !== sheetToDeleteOrShare.sht_idtsht,
@@ -153,18 +191,28 @@ export default function Listing() {
         setSheetToDeleteOrShare(null);
     }
 
+    /**
+     * Method that handle the click on the delete button.
+     *
+     * @param {Event} e The event.
+     * @param {Object} sheet The sheet.
+     */
     function deleteSheet(e, sheet) {
         e.stopPropagation();
-        console.log('Supprimer');
         setSheetToDeleteOrShare(sheet);
         setIsPopupDeleteOpen(true);
     }
 
+    /**
+     * Method that handle the confirmation of the popup to share a sheet.
+     * Send the request to the server to create a sharing link if the user has confirm.
+     *
+     * @param {boolean} confirm
+     */
     async function handlePopUpConfirmationShare(confirm) {
         setIsPopupShareOpen(false);
 
         if (confirm) {
-            console.log('Partage confirmer');
             const response = await _createLink(
                 sheetToDeleteOrShare.sht_idtsht,
                 sheetToDeleteOrShare.link,
@@ -178,14 +226,22 @@ export default function Listing() {
         setSheetToDeleteOrShare(null);
     }
 
+    /**
+     * Method that handle the click on the share button.
+     *
+     * @param {Event} e The event.
+     * @param {Object} sheet The sheet.
+     */
     function shareSheet(e, sheet) {
         e.stopPropagation();
-        console.log('Partager');
         sheet.link = generateLink(sheet.sht_idtsht);
         setSheetToDeleteOrShare(sheet);
         setIsPopupShareOpen(true);
     }
 
+    /**
+     * Method that create a new sheet and redirect the user to the sheet.
+     */
     async function newSheet() {
         let newUuid = uuid();
         let response = await _saveSheet({
@@ -224,15 +280,21 @@ export default function Listing() {
                     sht_sharing: 0,
                 },
             ]);
+
             if (sortedBy === 'last_update') sortByDate();
             else if (sortedBy === 'name') sortByName();
             else if (sortedBy === 'author') sortByAuthor();
 
             window.open(`/sheet/${newUuid}`, '_blank');
         }
-        console.log(newUuid);
     }
 
+    /**
+     * Method that reformat a date to the format "dd/mm/yyyy à hh:mm".
+     *
+     * @param {Date} date The date to reformat.
+     * @returns date in the format "dd/mm/yyyy à hh:mm".
+     */
     function reformatDate(date) {
         const dateObject = new Date(date);
 
@@ -248,15 +310,20 @@ export default function Listing() {
         return formattedDateTime;
     }
 
+    /**
+     * Method that sort the sheets by author.
+     */
     function sortByAuthor() {
         setSortedBy('author');
         const sortedSheets = [...sheets].sort((sheet1, sheet2) =>
             sheet1.sht_name.localeCompare(sheet2.sht_name),
         );
         setSheets(sortedSheets);
-        console.log(sheets);
     }
 
+    /**
+     * Method that sort the sheets by date.
+     */
     function sortByDate() {
         setSortedBy('last_update');
         const sortedSheets = [...sheets].sort(
@@ -267,6 +334,9 @@ export default function Listing() {
         setSheets(sortedSheets);
     }
 
+    /**
+     * Method that sort the sheets by name.
+     */
     function sortByName() {
         setSortedBy('name');
         const sortedSheets = [...sheets].sort((sheet1, sheet2) =>
@@ -275,6 +345,12 @@ export default function Listing() {
         setSheets(sortedSheets);
     }
 
+    /**
+     * Method that generate a sharing link.
+     *
+     * @param {BigInt} sht_idtsht
+     * @returns The generated link.
+     */
     function generateLink(sht_idtsht) {
         const charset =
             'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-&_';
