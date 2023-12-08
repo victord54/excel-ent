@@ -22,24 +22,26 @@ export default function Sheet() {
         document.title = 'Feuille de calcul';
         checkAccess();
         const socket = io(import.meta.env.VITE_API_URL);
-        const idsht = getSheet();
-
-        socket.on('udpdateData', (data) => {
-            console.log('data: ', data);
-            console.log('user: ', user.usr_idtusr);
-            console.log('u: ', data.idtusr_ori);
-            console.log('s: ', data.cel_idtsht);
-            console.log('idt_sht: ', idt_sht);
-            if (
-                data.idtusr_ori === user.usr_idtusr ||
-                idsht !== data.cel_idtsht
-            )
-                return;
-            console.log('client user: ', user.usr_idtusr);
-            console.log('sheet id:', idt_sht);
-            console.log('updateData');
-            console.log('data: ', data);
-            setContentCell(data.cel_idtcel, data.cel_val);
+        const idsht = getSheet().then((idsht) => {
+            socket.on('udpdateData', (data) => {
+                console.log('socket udpdateData');
+                console.log('user: ', user.usr_idtusr);
+                console.log('u: ', data.idtusr_ori);
+                console.log('s: ', data.cel_idtsht);
+                console.log('sheet: ', idsht);
+                if (
+                    data.idtusr_ori === user.usr_idtusr ||
+                    idsht != data.cel_idtsht
+                )
+                    return;
+                console.log('data: ', data);
+                console.log('idt_sht: ', idt_sht);
+                console.log('client user: ', user.usr_idtusr);
+                console.log('sheet id:', idt_sht);
+                console.log('updateData');
+                console.log('data: ', data);
+                setContentCell(data.cel_idtcel, data.cel_val);
+            });
         });
     }, []);
 
@@ -82,7 +84,7 @@ export default function Sheet() {
      */
     async function checkAccess() {
         const response = await _checkAccess(idSheet);
-        console.log(response);
+        // console.log(response);
         if (response.status === 200) {
         } else {
             window.location.href = '/404';
@@ -93,7 +95,7 @@ export default function Sheet() {
      * Method that handle when the user rename the sheet.
      */
     async function renameSheet() {
-        const regex = /^[a-zA-Z0-9*'()_\-/À-ÖØ-öø-ÿ]+$/;
+        const regex = /^[a-z\sA-Z0-9*'()_\-/À-ÖØ-öø-ÿ]+$/;
         if (!regex.test(nameSheet)) {
             //TODO : afficher un message d'erreur
             console.log('erreur');
@@ -157,6 +159,7 @@ export default function Sheet() {
                 );
             }
             setSheetExist(true);
+            console.log(sheetData.sht_idtsht);
             return sheetData.sht_idtsht;
         } else {
             //TODO: c'est censé renvoyer une erreur 404 dans le corps de la réponse
@@ -280,6 +283,7 @@ export default function Sheet() {
      * @param {String} content The content to set.
      */
     function setContentCell(cellKey, content) {
+        console.log('setContentCell');
         const td = document.getElementById(cellKey);
         if (td) {
             const divChild = td.querySelector('div');

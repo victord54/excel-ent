@@ -117,7 +117,7 @@ export default function Listing() {
      */
     async function handleOnBlurRenameSheet(event, sheet) {
         if (event.target.contentEditable === 'false') return;
-        const regex = /^[a-zA-Z0-9*'()_\-/À-ÖØ-öø-ÿ]+$/;
+        const regex = /^[a-z\sA-Z0-9*'()_\-/À-ÖØ-öø-ÿ]+$/;
         const idt_sht = sheet.sht_idtsht;
         const td = event.target;
         td.contentEditable = false;
