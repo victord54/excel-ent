@@ -393,6 +393,7 @@ export default function Listing() {
                         <button
                             onClick={newSheet}
                             className="sht-button-new-sheet"
+                            title="Créer une nouvelle feuille"
                         >
                             Nouvelle feuille
                         </button>
@@ -403,6 +404,7 @@ export default function Listing() {
                             className={`sht-filter-button ${
                                 selectedFilter === 'all' ? 'sht-active' : ''
                             }`}
+                            title="Afficher toutes les feuilles"
                             onClick={() => handleFilter('all')}
                         >
                             Afficher tout
@@ -413,6 +415,7 @@ export default function Listing() {
                                     ? 'sht-active'
                                     : ''
                             }`}
+                            title="Afficher les feuilles dont je suis l'auteur"
                             onClick={() => handleFilter('mySheets')}
                         >
                             Afficher mes feuilles
@@ -423,6 +426,7 @@ export default function Listing() {
                                     ? 'sht-active'
                                     : ''
                             }`}
+                            title="Afficher les feuilles dont je ne suis pas l'auteur"
                             onClick={() => handleFilter('sheetsShared')}
                         >
                             Afficher les feuilles partagées
