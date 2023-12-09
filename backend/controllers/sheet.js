@@ -60,9 +60,10 @@ export async function getAll(req, res, next) {
 export async function getOne(req, res, next) {
     const sht_uuid = req.params.id;
     try {
-        let sheet;
-        if (!isNaN(sht_uuid)) sheet = await _getOne({ sht_idtsht: sht_uuid });
-        else sheet = await _getOne({ sht_uuid });
+        const sheet = await _getOne({sht_uuid: sht_uuid});
+        // if (!isNaN(sht_uuid)) sheet = await _getOne({ sht_idtsht: sht_uuid });
+        // else sheet = await _getOne({ sht_uuid });
+        console.log(sheet, sht_uuid);
         if (sheet.length === 0) throw new SheetNotFoundError('Sheet not found');
         return res.status(200).json({
             status: 'success',
@@ -259,6 +260,7 @@ export async function getCells(req, res, next) {
 }
 
 export async function addSharing(req, res, next) {
+    console.log('POST /share route called');
     const { lsu_idtusr_shared } = req.body;
     const inv_link = req.params.id;
     try {

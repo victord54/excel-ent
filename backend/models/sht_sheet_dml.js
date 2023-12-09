@@ -15,7 +15,6 @@ export async function create({
     sht_sharing,
     sht_uuid,
 }) {
-    // TODO: Vérifier injection SQL /!\
     return executeQuery(
         'INSERT INTO sht_sheet (sht_idtusr_aut, sht_name, sht_sharing, sht_uuid) VALUES (?, ?, ?, ?)',
         [sht_idtusr_aut, sht_name, sht_sharing, sht_uuid],
@@ -61,26 +60,29 @@ export async function remove({ sht_idtsht }) {
         [sht_idtsht],
     );
 
+    const deleteShareLink = await executeQuery(
+        'DELETE FROM tmp_invitation WHERE inv_idtsht = ?', 
+    [sht_idtsht]);
+
     const deleteSheet = await executeQuery(
         'DELETE FROM sht_sheet WHERE sht_idtsht = ?',
         [sht_idtsht],
     );
 
-    return [deleteCells, deleteSharing, deleteSheet];
+    return [deleteCells, deleteSharing, deleteShareLink, deleteSheet];
 }
 
 export async function addSharing({ lsu_idtsht, lsu_idtusr_shared }) {
-    const insertShare = executeQuery(
-        'INSERT INTO sht_link_sht_usr (lsu_idtsht, lsu_idtusr_shared) VALUES (?, ?)',
-        [lsu_idtsht, lsu_idtusr_shared],
-    );
+    const queries = [
+        'START TRANSACTION;',
+        'INSERT INTO sht_link_sht_usr (lsu_idtsht, lsu_idtusr_shared) VALUES (?, ?);',
+        'UPDATE sht_sheet SET sht_sharing = 1 WHERE sht_idtsht = ?;',
+        'COMMIT;'
+    ];
 
-    const updateShare = executeQuery(
-        'UPDATE sht_sheet SET sht_sharing = 1 WHERE sht_idtsht = ?',
-        [lsu_idtsht],
-    );
-
-    return [insertShare, updateShare];
+    for (const query of queries) {
+        await executeQuery(query, [lsu_idtsht, lsu_idtusr_shared, lsu_idtsht]);
+    }
 }
 
 export async function removeSharing({ lsu_idtsht, lsu_idtusr_shared }) {

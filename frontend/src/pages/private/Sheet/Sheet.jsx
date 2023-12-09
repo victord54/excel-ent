@@ -20,30 +20,33 @@ export default function Sheet() {
 
     useEffect(() => {
         document.title = 'Feuille de calcul';
-        checkAccess();
-        const socket = io(import.meta.env.VITE_API_URL);
-        const idsht = getSheet().then((idsht) => {
-            socket.on('udpdateData', (data) => {
-                console.log('socket udpdateData');
-                console.log('user: ', user.usr_idtusr);
-                console.log('u: ', data.idtusr_ori);
-                console.log('s: ', data.cel_idtsht);
-                console.log('sheet: ', idsht);
-                if (
-                    data.idtusr_ori === user.usr_idtusr ||
-                    idsht != data.cel_idtsht
-                )
-                    return;
-                console.log('data: ', data);
-                console.log('idt_sht: ', idt_sht);
-                console.log('client user: ', user.usr_idtusr);
-                console.log('sheet id:', idt_sht);
-                console.log('updateData');
-                console.log('data: ', data);
-                setContentCell(data.cel_idtcel, data.cel_val);
+        const fetchData = async() => {
+            const socket = io(import.meta.env.VITE_API_URL);
+            const idsht = getSheet().then((idsht) => {
+                socket.on('udpdateData', (data) => {
+                    console.log('socket udpdateData');
+                    console.log('user: ', user.usr_idtusr);
+                    console.log('u: ', data.idtusr_ori);
+                    console.log('s: ', data.cel_idtsht);
+                    console.log('sheet: ', idsht);
+                    if (
+                        data.idtusr_ori === user.usr_idtusr ||
+                        idsht != data.cel_idtsht
+                    )
+                        return;
+                    console.log('data: ', data);
+                    console.log('idt_sht: ', idt_sht);
+                    console.log('client user: ', user.usr_idtusr);
+                    console.log('sheet id:', idt_sht);
+                    console.log('updateData');
+                    console.log('data: ', data);
+                    setContentCell(data.cel_idtcel, data.cel_val);
+                });
             });
-        });
-    }, []);
+        }
+        fetchData();
+     
+    }, [idSheet]);
 
     const numberOfRows = 100;
     const numberOfColumns = 30;
@@ -83,11 +86,13 @@ export default function Sheet() {
      * Redirect to the 404 page if the user doesn't have access.
      */
     async function checkAccess() {
+        console.log(idSheet);
         const response = await _checkAccess(idSheet);
         // console.log(response);
         if (response.status === 200) {
         } else {
-            window.location.href = '/404';
+          window.location.href = '/404';
+           console.log(response);
         }
     }
 
@@ -143,6 +148,8 @@ export default function Sheet() {
      * @returns {BigInt} The id of the sheet.
      */
     async function getSheet() {
+        if (sheetExist) return;
+        console.log(idSheet);
         const sheetResponse = await getSheetById(idSheet);
         const sheetBody = await sheetResponse.json();
         const sheetData = sheetBody.data;
@@ -164,7 +171,7 @@ export default function Sheet() {
         } else {
             //TODO: c'est censé renvoyer une erreur 404 dans le corps de la réponse
             window.location.href = '/404';
-            //console.log(sheetResponse);
+            console.log(sheetResponse);
         }
     }
 

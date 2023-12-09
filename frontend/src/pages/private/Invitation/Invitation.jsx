@@ -18,6 +18,7 @@ export default function Invitation() {
         const body = await response.json();
         const data = body.data;
         if (response.status === 200) {
+            console.log(body);
             console.log(data.link);
             const link = data.link;
             navigate(`/sheet/${link}`);
@@ -29,5 +30,5 @@ export default function Invitation() {
         }
     }
 
-    return <></>;
+    return <>Lien expiré !</>;
 }
