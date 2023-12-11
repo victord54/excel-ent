@@ -81,10 +81,10 @@ export async function checkDuplicateSharing({ lsu_idtsht, lsu_idtusr_shared }) {
     );
 }
 
-export async function checkLock({ cel_idtsht, cel_idtcel }) {
+export async function checkLock({ cel_idtsht }) {
     return executeQuery(
-        'SELECT cel_lock FROM sht_cell WHERE cel_idtcel = ? AND cel_idtsht = ?',
-        [cel_idtcel, cel_idtsht],
+        'SELECT cel_idtcel, cel_lock FROM sht_cell WHERE cel_lock = 1 AND cel_idtsht = ?',
+        [cel_idtsht],
     );
 }
 

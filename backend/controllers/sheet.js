@@ -377,19 +377,15 @@ export async function checkAccess(req, res, next) {
 export async function checkLock(req, res, next) {
     const cel_idtsht = req.params.id;
     try {
-        const { cel_idtcel } = req.body;
         let missing = '';
         if (cel_idtsht === undefined || cel_idtsht == 0) missing += 'cel_idtsht ';
-        if (cel_idtcel === undefined || cel_idtcel == '') missing += 'cel_idtcel ';
         if (missing !== '') {
             throw new MissingParameterError('Missing parameters: ' + missing);
         }
-        const lock = await _checkLock({ cel_idtcel, cel_idtsht });
+        const lock = await _checkLock({ cel_idtsht });
         return res.status(200).json({
             status: 'success',
-            data: {
-                cel_lock: lock.length === 0 ? 0 : lock[0].cel_lock,
-            },
+            data: lock,
         });
     } catch (error) {
         next(error);
@@ -400,6 +396,8 @@ export async function updateLock(req, res, next) {
     const cel_idtsht = req.params.id;
     try {
         const { cel_idtcel, cel_lock } = req.body;
+        const token = req.headers.authorization;
+        const idtusr_ori = _getIdtUsr(token);
         let missing = '';
         if (cel_idtsht === undefined) missing += 'cel_idtsht ';
         if (cel_idtcel === undefined) missing += 'cel_idtcel ';
@@ -419,6 +417,14 @@ export async function updateLock(req, res, next) {
         }
         await _updateLock({ cel_idtcel, cel_idtsht, cel_lock });
         await commitTransaction();
+
+        req.io.emit('udpdateLock', {
+            cel_idtcel,
+            cel_idtsht,
+            idtusr_ori,
+            cel_lock
+        });
+
         return res.status(201).json({
             status: 'success',
         });
