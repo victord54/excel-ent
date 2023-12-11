@@ -31,7 +31,8 @@
 - [x] Route pour sharing
 - [x] Route pour recherche de sheet par nom
 - [x] Update la date de modification des feuilles
-- [ ] Table pour dire qui a lock telle case -> bloquer la case en front
+- [x] Table pour dire qui a lock telle case -> bloquer la case en front
+- [ ] Dire qui est co sur une feuille
 
 # FIXME
 - [x] Délai de chargement au login
