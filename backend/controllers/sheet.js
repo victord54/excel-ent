@@ -8,6 +8,7 @@ import {
     getOneLink as _getOneLink,
     getOneWithAccess as _getOneWithAccess,
     checkDuplicateSharing as _checkDuplicateSharing,
+    checkLock as _checkLock,
     // search as _search,
 } from '../models/sht_sheet_dql.js';
 import {
@@ -19,6 +20,8 @@ import {
     addSharing as _addSharing,
     removeSharing as _removeSharing,
     createLink as _createLink,
+    updateDate as _updateDate,
+    updateLock as _updateLock,
 } from '../models/sht_sheet_dml.js';
 import {
     MissingParameterError,
@@ -60,7 +63,7 @@ export async function getAll(req, res, next) {
 export async function getOne(req, res, next) {
     const sht_uuid = req.params.id;
     try {
-        const sheet = await _getOne({sht_uuid: sht_uuid});
+        const sheet = await _getOne({ sht_uuid: sht_uuid });
         // if (!isNaN(sht_uuid)) sheet = await _getOne({ sht_idtsht: sht_uuid });
         // else sheet = await _getOne({ sht_uuid });
         console.log(sheet, sht_uuid);
@@ -194,7 +197,11 @@ export async function updateData(req, res, next) {
                 cel_stl,
             });
         }
+        // update the sheet modification date
+        await _updateDate({ cel_idtsht });
+
         await commitTransaction();
+
         // emit event to all users that are on the sheet
         req.io.emit('udpdateData', {
             cel_idtcel,
@@ -276,21 +283,24 @@ export async function addSharing(req, res, next) {
         if (link.length === 0) throw new LinkExpiredError('Link expired');
         const lsu_idtsht = link[0].inv_idtsht;
 
-        const alreadySharedWithUser = await _checkDuplicateSharing({lsu_idtsht, lsu_idtusr_shared});
+        const alreadySharedWithUser = await _checkDuplicateSharing({
+            lsu_idtsht,
+            lsu_idtusr_shared,
+        });
         console.log(alreadySharedWithUser);
         if (alreadySharedWithUser.length !== 0) {
-            console.log("dedans")
+            console.log('dedans');
             return res.status(200).json({
                 status: 'success',
-                data: {link: link[0].sht_uuid},
+                data: { link: link[0].sht_uuid },
             });
         }
         const sharing = await _addSharing({ lsu_idtsht, lsu_idtusr_shared });
         await commitTransaction();
-        console.log("sharing");
+        console.log('sharing');
         return res.status(200).json({
             status: 'success',
-            data: {sharing: sharing, link: link[0].sht_uuid},
+            data: { sharing: sharing, link: link[0].sht_uuid },
         });
     } catch (error) {
         await rollbackTransaction();
@@ -358,6 +368,59 @@ export async function checkAccess(req, res, next) {
         return res.status(200).json({
             status: 'success',
             data: sheet[0],
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+export async function checkLock(req, res, next) {
+    const cel_idtsht = req.params.id;
+    try {
+        const { cel_idtcel } = req.body;
+        let missing = '';
+        if (cel_idtsht === undefined || cel_idtsht == 0) missing += 'cel_idtsht ';
+        if (cel_idtcel === undefined || cel_idtcel == '') missing += 'cel_idtcel ';
+        if (missing !== '') {
+            throw new MissingParameterError('Missing parameters: ' + missing);
+        }
+        const lock = await _checkLock({ cel_idtcel, cel_idtsht });
+        return res.status(200).json({
+            status: 'success',
+            data: {
+                cel_lock: lock.length === 0 ? 0 : lock[0].cel_lock,
+            },
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+export async function updateLock(req, res, next) {
+    const cel_idtsht = req.params.id;
+    try {
+        const { cel_idtcel, cel_lock } = req.body;
+        let missing = '';
+        if (cel_idtsht === undefined) missing += 'cel_idtsht ';
+        if (cel_idtcel === undefined) missing += 'cel_idtcel ';
+        if (cel_lock === undefined) missing += 'cel_lock ';
+        if (missing !== '') {
+            throw new MissingParameterError('Missing parameters: ' + missing);
+        }
+        // Check if the cell exists
+        const cell = await _getOneCell({ cel_idtsht, cel_idtcel });
+        if (cell.length === 0) {
+            await _createData({
+                cel_idtcel,
+                cel_idtsht,
+                cel_val: '',
+                cel_stl: '',
+            });
+        }
+        await _updateLock({ cel_idtcel, cel_idtsht, cel_lock });
+        await commitTransaction();
+        return res.status(201).json({
+            status: 'success',
         });
     } catch (error) {
         await rollbackTransaction();

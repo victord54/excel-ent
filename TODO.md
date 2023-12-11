@@ -30,8 +30,8 @@
 - [x] Ajouter check si le lien est tjrs valide dans /share/:id
 - [x] Route pour sharing
 - [x] Route pour recherche de sheet par nom
-- [ ] Update la date de modification des feuilles
-- [ ] Table pour dire qui a lock telle case -> bloquer la case en front
+- [x] Update la date de modification des feuilles
+- [ ] Table pour dire qui a lock telle case -> bloquer la case en front
 
 # FIXME
 - [x] Délai de chargement au login

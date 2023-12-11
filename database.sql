@@ -82,3 +82,5 @@ CREATE EVENT IF NOT EXISTS `clean_tmp_invitation`
     COMMENT 'Clean tmp_invitation table'
     DO
         DELETE FROM `tmp_invitation` WHERE `inv_created_at` < DATE_SUB(NOW(), INTERVAL 30 MINUTE);
+
+ALTER TABLE `sht_cell` ADD COLUMN `cel_lock` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Cell lock';

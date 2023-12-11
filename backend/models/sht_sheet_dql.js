@@ -81,6 +81,13 @@ export async function checkDuplicateSharing({ lsu_idtsht, lsu_idtusr_shared }) {
     );
 }
 
+export async function checkLock({ cel_idtsht, cel_idtcel }) {
+    return executeQuery(
+        'SELECT cel_lock FROM sht_cell WHERE cel_idtcel = ? AND cel_idtsht = ?',
+        [cel_idtcel, cel_idtsht],
+    );
+}
+
 // export async function search({ keywords }) {
 //     const transformed = keywords.map((e) => `.*${e}.*`);
 //     return executeQuery(

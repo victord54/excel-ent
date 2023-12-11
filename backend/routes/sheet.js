@@ -11,6 +11,8 @@ import {
     removeSharing,
     createLink,
     checkAccess,
+    checkLock,
+    updateLock,
     // search
 } from '../controllers/sheet.js';
 const router = Router();
@@ -57,6 +59,10 @@ router.delete('/share/:id', removeSharing);
 router.post('/invite/:id', createLink);
 
 router.get('/check/:id', checkAccess);
+
+router.get('/lock/:id', checkLock);
+
+router.put('/lock/:id', updateLock);
 
 // router.get('/search/:keywords', search);
 

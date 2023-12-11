@@ -35,16 +35,28 @@ export async function updateName({ sht_idtsht, sht_name }) {
     );
 }
 
-export async function createData({ cel_idtcel, cel_idtsht, cel_val, cel_stl }) {
+export async function createData({
+    cel_idtcel,
+    cel_idtsht,
+    cel_val,
+    cel_stl,
+    cel_lock,
+}) {
     return executeQuery(
-        'INSERT INTO sht_cell (cel_idtcel, cel_idtsht, cel_val, cel_stl) VALUES (?, ?, ?, ?)',
-        [cel_idtcel, cel_idtsht, cel_val, cel_stl],
+        'INSERT INTO sht_cell (cel_idtcel, cel_idtsht, cel_val, cel_stl, cel_lock) VALUES (?, ?, ?, ?, ?)',
+        [
+            cel_idtcel,
+            cel_idtsht,
+            cel_val,
+            cel_stl,
+            cel_lock === undefined ? 0 : cel_lock,
+        ],
     );
 }
 
 export async function updateData({ cel_idtcel, cel_idtsht, cel_val, cel_stl }) {
     return executeQuery(
-        'UPDATE sht_cell SET cel_val = ?, cel_stl = ? WHERE cel_idtcel = ? AND cel_idtsht = ?',
+        'UPDATE sht_cell SET cel_val = ?, cel_stl = ?, cel_updated_at = CURRENT_TIMESTAMP WHERE cel_idtcel = ? AND cel_idtsht = ?',
         [cel_val, cel_stl, cel_idtcel, cel_idtsht],
     );
 }
@@ -61,8 +73,9 @@ export async function remove({ sht_idtsht }) {
     );
 
     const deleteShareLink = await executeQuery(
-        'DELETE FROM tmp_invitation WHERE inv_idtsht = ?', 
-    [sht_idtsht]);
+        'DELETE FROM tmp_invitation WHERE inv_idtsht = ?',
+        [sht_idtsht],
+    );
 
     const deleteSheet = await executeQuery(
         'DELETE FROM sht_sheet WHERE sht_idtsht = ?',
@@ -77,7 +90,7 @@ export async function addSharing({ lsu_idtsht, lsu_idtusr_shared }) {
         'START TRANSACTION;',
         'INSERT INTO sht_link_sht_usr (lsu_idtsht, lsu_idtusr_shared) VALUES (?, ?);',
         'UPDATE sht_sheet SET sht_sharing = 1 WHERE sht_idtsht = ?;',
-        'COMMIT;'
+        'COMMIT;',
     ];
 
     for (const query of queries) {
@@ -96,5 +109,19 @@ export async function createLink({ inv_idtsht, inv_link }) {
     return executeQuery(
         'INSERT INTO tmp_invitation (inv_idtsht, inv_link) VALUES (?, ?)',
         [inv_idtsht, inv_link],
+    );
+}
+
+export async function updateDate({ cel_idtsht }) {
+    return executeQuery(
+        'UPDATE sht_sheet SET sht_updated_at = CURRENT_TIMESTAMP WHERE sht_idtsht = ?',
+        [cel_idtsht],
+    );
+}
+
+export async function updateLock({ cel_idtcel, cel_idtsht, cel_lock }) {
+    return executeQuery(
+        'UPDATE sht_cell SET cel_lock = ? WHERE cel_idtcel = ? AND cel_idtsht = ?',
+        [cel_lock, cel_idtcel, cel_idtsht],
     );
 }

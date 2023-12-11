@@ -1276,6 +1276,132 @@ paths:
                       status:
                         type: integer
                         example: 400
+  "/sheet/lock/{id}":
+    get:
+      tags:
+        - Sheet
+      summary: Check if a cell is locked by a user
+      description: Check if a cell is locked by a user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: Sheet id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: Cell id
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cel_idtcel:
+                  type: string
+                  example: C_15
+      responses:
+        "200":
+          description: OK - Sheet is or not locked by the user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      cel_lock:
+                        type: integer
+                        example: 1
+        "400":
+          description: Bad Request - Missing parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  error:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: MissingParameterError
+                      message:
+                        type: string
+                        example: "Missing parameters: cel_idtcel"
+                      status:
+                        type: integer
+                        example: 400
+    put:
+      tags:
+        - Sheet
+      summary: Lock a cell for a user
+      description: Lock a cell for a user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: Sheet id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: Cell id
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cel_idtcel:
+                  type: string
+                  example: C_15
+                cel_lock:
+                  type: integer
+                  example: 1
+      responses:
+        "201":
+          description: Created - Cell locked for the user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+        "400":
+          description: Bad Request - Missing parameters or cell already locked by the user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  error:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: MissingParameterError
+                      message:
+                        type: string
+                        example: "Missing parameters: cel_idtcel"
+                      status:
+                        type: integer
+                        example: 400
 components:
   securitySchemes:
     bearerAuth:
