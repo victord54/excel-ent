@@ -9,6 +9,8 @@ import {
     renameSheet as _renameSheet,
     updateSheetData as _updateSheetData,
     checkAccess as _checkAccess,
+    checkLock as _checkLock,
+    updateLock as _updateLock
 } from '../../../services/api-service';
 import { getSheetById, getSheetData } from '../../../services/api-service';
 
@@ -20,15 +22,12 @@ export default function Sheet() {
 
     useEffect(() => {
         document.title = 'Feuille de calcul';
+        checkAccessSheet();
         const fetchData = async() => {
             const socket = io(import.meta.env.VITE_API_URL);
             const idsht = getSheet().then((idsht) => {
                 socket.on('udpdateData', (data) => {
                     console.log('socket udpdateData');
-                    console.log('user: ', user.usr_idtusr);
-                    console.log('u: ', data.idtusr_ori);
-                    console.log('s: ', data.cel_idtsht);
-                    console.log('sheet: ', idsht);
                     if (
                         data.idtusr_ori === user.usr_idtusr ||
                         idsht != data.cel_idtsht
@@ -43,6 +42,16 @@ export default function Sheet() {
                     setContentCell(data.cel_idtcel, data.cel_val);
                 });
             });
+            checkLockedCells();
+
+            socket.on('updateLock', (data) => {
+                console.log('socket updateLock');
+                console.log(data);
+                if (data.idtusr_ori === user.usr_idtusr || idt_sht != data.cel_idtsht) return;
+                console.log('socket updateLock 2 ');
+                setDivLock(data.cel_idtcel, data.cel_lock);
+            });
+            
         }
         fetchData();
      
@@ -53,6 +62,7 @@ export default function Sheet() {
     const [nameSheet, setNameSheet] = useState('Sans Nom');
     const [draggedCell, setDraggedCell] = useState(null);
     const [idt_sht, setIdt_sht] = useState(null);
+    const [cellsLocked, setCellsLocked] = useState([]);
     const [sheetExist, setSheetExist] = useState(false);
     const [colSelect, setSelectCol] = useState(null);
     const [rowSelect, setSelectRow] = useState(null);
@@ -85,7 +95,7 @@ export default function Sheet() {
      * Send a request to the server.
      * Redirect to the 404 page if the user doesn't have access.
      */
-    async function checkAccess() {
+    async function checkAccessSheet() {
         console.log(idSheet);
         const response = await _checkAccess(idSheet);
         // console.log(response);
@@ -94,6 +104,43 @@ export default function Sheet() {
           window.location.href = '/404';
            console.log(response);
         }
+    }
+
+    async function setDivLock(cellKey, lock){
+        const td = document.getElementById(cellKey);
+        if (td) {
+            const divChild = td.querySelector('div');
+            if (divChild) {
+                if (lock){
+                    divChild.classList.add('sht-cell-locked');
+                    divChild.contentEditable = false;
+                    divChild.title = 'Cellule entrain d\'être modifiée par un autre utilisateur';
+                }
+                else {
+                    divChild.classList.remove('sht-cell-locked');
+                    divChild.contentEditable = true;
+                    divChild.title = '';
+                }
+            }
+        }
+        
+    }
+
+    async function checkLockedCells(){
+        const response = await _checkLock(idt_sht);
+        if(response.status === 200){
+            const body = await response.json();
+            const data = body.data;
+            for (let key in data){
+                setDivLock(data[key].cel_idtcel, true);
+            }
+        }
+    }
+
+
+
+    async function updateLockedCell(cell, lock){
+        const response = await _updateLock(idt_sht, cell, lock);
     }
 
     /**
@@ -139,6 +186,7 @@ export default function Sheet() {
         setSelectCol(null);
         setSelectRow(null);
         const response = await _updateSheetData(idt_sht, cell, val, '');
+        updateLockedCell(cell, false);
     }
 
     /**
@@ -272,6 +320,8 @@ export default function Sheet() {
 
         setSelectCol(nameCol);
         setSelectRow(nameRow);
+
+        updateLockedCell(nameCol + '_' + nameRow, true);
     }
 
     /**
