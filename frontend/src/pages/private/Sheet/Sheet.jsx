@@ -57,12 +57,13 @@ export default function Sheet() {
      
     }, [idSheet]);
 
+    const regexName = /^[a-z\sA-Z0-9*'()_\-/À-ÖØ-öø-ÿ]+$/;
     const numberOfRows = 100;
     const numberOfColumns = 30;
     const [nameSheet, setNameSheet] = useState('Sans Nom');
+    const [errorNameSheet, setErrorNameSheet] = useState(false);
     const [draggedCell, setDraggedCell] = useState(null);
     const [idt_sht, setIdt_sht] = useState(null);
-    const [cellsLocked, setCellsLocked] = useState([]);
     const [sheetExist, setSheetExist] = useState(false);
     const [colSelect, setSelectCol] = useState(null);
     const [rowSelect, setSelectRow] = useState(null);
@@ -106,6 +107,12 @@ export default function Sheet() {
         }
     }
 
+    /**
+     * Method that set the cell as locked or not.
+     * 
+     * @param {String} cellKey The id of the cell.
+     * @param {Boolean} lock The lock state.
+     */
     async function setDivLock(cellKey, lock){
         const td = document.getElementById(cellKey);
         if (td) {
@@ -126,6 +133,10 @@ export default function Sheet() {
         
     }
 
+    /**
+     * Method that get all the lockedl cells.
+     * Send a request to the server.
+     */
     async function checkLockedCells(){
         const response = await _checkLock(idt_sht);
         if(response.status === 200){
@@ -138,7 +149,13 @@ export default function Sheet() {
     }
 
 
-
+    /**
+     * Method that update the lock state of a cell.
+     * Send a request to the server.
+     * 
+     * @param {String} cell The id of the cell.
+     * @param {Boolean} lock The lock state.
+     */
     async function updateLockedCell(cell, lock){
         const response = await _updateLock(idt_sht, cell, lock);
     }
@@ -147,13 +164,11 @@ export default function Sheet() {
      * Method that handle when the user rename the sheet.
      */
     async function renameSheet() {
-        const regex = /^[a-z\sA-Z0-9*'()_\-/À-ÖØ-öø-ÿ]+$/;
-        if (!regex.test(nameSheet)) {
-            //TODO : afficher un message d'erreur
-            console.log('erreur');
+        if (!regexName.test(nameSheet)) {
+            setErrorNameSheet(true);
             return;
         }
-
+        setErrorNameSheet(false);
         const response = await _renameSheet(idt_sht, nameSheet);
 
         if (response.status === 200) {
@@ -170,6 +185,12 @@ export default function Sheet() {
      */
     function handleKeyDownInput(event) {
         if (event.key === 'Enter') {
+            if (!regexName.test(event.target.value)) {
+                setErrorNameSheet(true);
+                event.target.focus();
+                return;
+            }
+            setErrorNameSheet(false);
             event.target.blur();
         }
     }
@@ -202,6 +223,7 @@ export default function Sheet() {
         const sheetBody = await sheetResponse.json();
         const sheetData = sheetBody.data;
         if (sheetResponse.status === 200) {
+            document.title = `Feuille - ${sheetData.sht_name}`;
             setNameSheet(sheetData.sht_name);
             setIdt_sht(sheetData.sht_idtsht);
             const cellsResponse = await getSheetData(sheetData.sht_idtsht);
@@ -272,6 +294,11 @@ export default function Sheet() {
      * @param {Event} event The event.
      */
     function nameSheetChange(event) {
+        if (!regexName.test(event.target.value)) {
+            setErrorNameSheet(true);
+        }else{
+            setErrorNameSheet(false);
+        }
         setNameSheet(event.target.value);
         document.title = `Feuille - ${event.target.value}`;
         if (event.target.value === '') document.title = 'Sans Nom';
@@ -354,13 +381,14 @@ export default function Sheet() {
     return (
         <>
             <input
-                className="sht-input-name"
+                className={errorNameSheet ? 'sht-input-name sht-input-name-error' : 'sht-input-name '}
                 value={nameSheet}
                 onChange={nameSheetChange}
                 onClick={handleSelectAllInput}
                 onBlur={renameSheet}
                 onKeyDown={handleKeyDownInput}
             ></input>
+            {errorNameSheet && (<span className="sht-error-message">Un ou des caractères ne sont pas acceptés.</span>)}
             <div className="sht-container-all">
                 <div className="sht-container-tab">
                     <table className="sht-table">

@@ -44,3 +44,14 @@
 .sht-cell-locked {
     background-color: rgb(202, 197, 197);
 }
+
+.sht-input-name-error {
+    background-color: rgb(219, 138, 138);
+}
+
+.sht-error-message{
+    color: rgb(219, 138, 138);
+    font-size: 15px;
+    margin-left: 5px;
+    font-style: italic;
+}
