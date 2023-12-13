@@ -23,7 +23,7 @@ export function removeToken() {
  */
 export function isLogged() {
     const token = localStorage.getItem('auth_token');
-    return token !== null && token !== undefined && getLoggedUser() !== null && getExpirationDate(token)>new Date();
+    return token && getExpirationDate(token) > new Date() && getLoggedUser();
 }
 
 /**
