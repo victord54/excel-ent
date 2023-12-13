@@ -1,5 +1,13 @@
 import { getBearerString } from './auth-service';
 
+/**
+ * Execute a request to the given URL with the provided options.
+ * @param {string} url - The URL to send the request to.
+ * @param {object} options - The options to configure the request.
+ * @param {boolean} [needAuthentified=true] - Whether authentication is required or not. Default is true.
+ * @returns {Promise<any>} - A promise that resolves to the response payload.
+ * @throws {Error} - If the response status is 401 (Unauthorized) and authentication is required.
+ */
 async function executeRequest(url, options, needAuthentified = true) {
     const response = await fetch(import.meta.env.VITE_API_URL + url, {
         ...options,
@@ -265,6 +273,36 @@ export async function checkAccess(sht_uuid) {
                 'Content-Type': 'application/json',
                 Authorization: getBearerString(),
             },
+        },
+    );
+}
+
+export async function checkLock(cel_idtsht){
+    return await fetch(
+        import.meta.env.VITE_API_URL + '/sheet/lock/' + cel_idtsht,
+        {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: getBearerString(),
+            },
+        },
+    );
+}
+
+export async function updateLock(cel_idtsht, cel_idtcel, cel_lock){
+    return await fetch(
+        import.meta.env.VITE_API_URL + '/sheet/lock/' + cel_idtsht,
+        {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: getBearerString(),
+            },
+            body: JSON.stringify({
+                cel_idtcel: cel_idtcel,
+                cel_lock: cel_lock
+            }),
         },
     );
 }

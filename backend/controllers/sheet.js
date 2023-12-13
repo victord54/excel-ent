@@ -418,7 +418,7 @@ export async function updateLock(req, res, next) {
         await _updateLock({ cel_idtcel, cel_idtsht, cel_lock });
         await commitTransaction();
 
-        req.io.emit('udpdateLock', {
+        req.io.emit('updateLock', {
             cel_idtcel,
             cel_idtsht,
             idtusr_ori,
