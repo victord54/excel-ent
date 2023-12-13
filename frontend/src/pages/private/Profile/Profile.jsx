@@ -76,7 +76,7 @@ export default function Profile() {
                     pwd: form.pwd,
                 }),
             ).then((data) => {
-                if (data.error) {
+                if (data.status === "error") {
                     setForm({
                         ...form,
                         [name]: {
@@ -87,17 +87,15 @@ export default function Profile() {
                         },
                     });
                 } else {
-                    data.json().then((data) => {
-                        setUser(data.user);
-                        setForm({
-                            ...form,
-                            [name]: {
-                                ...form[name],
-                                inEdit: !form[name].inEdit,
-                                error: false,
-                                errorMessage: '',
-                            },
-                        });
+                    setUser(data.data.user);
+                    setForm({
+                        ...form,
+                        [name]: {
+                            ...form[name],
+                            inEdit: !form[name].inEdit,
+                            error: false,
+                            errorMessage: '',
+                        },
                     });
                 }
             });
@@ -125,7 +123,9 @@ export default function Profile() {
     };
 
     const handlePasswordEditing = (e) => {
-        e.preventDefault;
+        e.preventDefault();
+
+        if(passwordForm.new_pwd.value !== passwordForm.old_pwd.value) return;
 
         if (passwordForm.isEditing) {
             authQuery(
@@ -134,7 +134,7 @@ export default function Profile() {
                     new_password: passwordForm.new_pwd.value,
                 }),
             ).then((data) => {
-                if (data.error) {
+                if (data.success === "error") {
                     if (data.error.name === 'InvalidIdentifiersError') {
                         setPasswordForm((prevValue) => {
                             return {
@@ -153,7 +153,7 @@ export default function Profile() {
                             const errors = {
                                 old_pwd: old_pwd.value.length === 0,
                                 new_pwd: new_pwd.value.length === 0,
-                                confirm_pwd: confirm_pwd.value.length === 0,
+                                confirm_pwd: confirm_pwd.value.length === 0
                             };
 
                             return {

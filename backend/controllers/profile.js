@@ -8,6 +8,7 @@ import {
     UserAlreadyExistsError,
     UserNotFoundError,
     InvalidIdentifiersError,
+    InvalidTokenError,
 } from '../utils/error.js';
 import { extractBearer } from '../utils/jwt-check.js';
 import { compare, hash as _hash } from 'bcrypt';
@@ -32,7 +33,7 @@ export async function editProfile(req, res, next) {
         const token =
             req.headers.authorization &&
             extractBearer(req.headers.authorization);
-        if (!token) return res.status(401).json({ message: 'Not authorized' });
+        if (!token) throw new InvalidTokenError('Invalid token');
 
         const { usr_idtusr } = pkg.decode(token);
 
@@ -63,11 +64,14 @@ export async function editProfile(req, res, next) {
 
         // envoi de la réponse
         return res.status(201).json({
-            message: 'user editer',
-            user: {
-                usr_pseudo: userEdited.usr_pseudo,
-                usr_mail: userEdited.usr_mail,
-            },
+            status: "success",
+            data: {
+                message: 'user editer',
+                user: {
+                    usr_pseudo: userEdited.usr_pseudo,
+                    usr_mail: userEdited.usr_mail,
+                },
+            }    
         });
     } catch (error) {
         rollbackTransaction();
@@ -132,11 +136,14 @@ export async function editPassword(req, res, next) {
 
         // envoi de la réponse
         return res.status(201).json({
-            message: 'user editer',
-            user: {
-                usr_pseudo: userEdited.usr_pseudo,
-                usr_mail: userEdited.usr_mail,
-            },
+            status: "success",
+            data: {
+                message: 'user editer',
+                user: {
+                    usr_pseudo: userEdited.usr_pseudo,
+                    usr_mail: userEdited.usr_mail,
+                },
+            }
         });
     } catch (error) {
         rollbackTransaction();
@@ -160,11 +167,14 @@ export async function fetchData(req, res, next) {
 
         // envoi de la réponse
         return res.status(201).json({
-            message: 'user editer',
-            user: {
-                usr_pseudo: user.usr_pseudo,
-                usr_mail: user.usr_mail,
-            },
+            status: 'success',
+            data: {
+                message: 'user editer',
+                user: {
+                    usr_pseudo: user.usr_pseudo,
+                    usr_mail: user.usr_mail,
+                },
+            }
         });
     } catch (error) {
         next(error);
