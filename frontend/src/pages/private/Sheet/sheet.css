@@ -40,3 +40,7 @@
 .sht-select-col-row {
     background-color: #7a9edb;
 }
+
+.sht-cell-locked {
+    background-color: rgb(202, 197, 197);
+}

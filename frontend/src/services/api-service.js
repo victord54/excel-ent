@@ -276,3 +276,33 @@ export async function checkAccess(sht_uuid) {
         },
     );
 }
+
+export async function checkLock(cel_idtsht){
+    return await fetch(
+        import.meta.env.VITE_API_URL + '/sheet/lock/' + cel_idtsht,
+        {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: getBearerString(),
+            },
+        },
+    );
+}
+
+export async function updateLock(cel_idtsht, cel_idtcel, cel_lock){
+    return await fetch(
+        import.meta.env.VITE_API_URL + '/sheet/lock/' + cel_idtsht,
+        {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: getBearerString(),
+            },
+            body: JSON.stringify({
+                cel_idtcel: cel_idtcel,
+                cel_lock: cel_lock
+            }),
+        },
+    );
+}
