@@ -126,7 +126,6 @@ export default function Profile() {
         e.preventDefault();
 
         if (passwordForm.isEditing) {
-            console.log(passwordForm);
             if(passwordForm.new_pwd.value !== passwordForm.confirm_pwd.value) return;
             authQuery(
                 editPassword({
