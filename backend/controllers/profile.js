@@ -9,6 +9,7 @@ import {
     UserNotFoundError,
     InvalidIdentifiersError,
     InvalidTokenError,
+    InvalidFormatError,
 } from '../utils/error.js';
 import { extractBearer } from '../utils/jwt-check.js';
 import { compare, hash as _hash } from 'bcrypt';
@@ -49,6 +50,11 @@ export async function editProfile(req, res, next) {
             (userPseudo.length > 0 && user.usr_pseudo !== usr_pseudo)
         ) {
             throw new UserAlreadyExistsError('User already exists');
+        }
+
+        //test validité du mail
+        if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(usr_mail)) {
+            throw new InvalidFormatError('Invalid email format');
         }
 
         //mise a jour de l'utilisateur

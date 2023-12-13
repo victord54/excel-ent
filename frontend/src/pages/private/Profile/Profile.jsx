@@ -125,9 +125,9 @@ export default function Profile() {
     const handlePasswordEditing = (e) => {
         e.preventDefault();
 
-        if(passwordForm.new_pwd.value !== passwordForm.old_pwd.value) return;
-
         if (passwordForm.isEditing) {
+            console.log(passwordForm);
+            if(passwordForm.new_pwd.value !== passwordForm.confirm_pwd.value) return;
             authQuery(
                 editPassword({
                     old_password: passwordForm.old_pwd.value,
