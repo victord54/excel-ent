@@ -4,6 +4,7 @@ import './sheet.css';
 import { evaluateur } from '../../../services/evaluateur';
 import { AuthContext } from '../../../contexts/AuthContext';
 import { TailSpin } from 'react-loader-spinner';
+import Toast from '../../../components/Toast/Toast';
 
 import {
     saveSheet as _saveSheet,
@@ -67,6 +68,9 @@ export default function Sheet() {
         Array.from({ length: numberOfRows }, (_, index) => index + 1),
     );
     const [nameColums, setNameColums] = useState(generateNameColumns());
+    const [isToastVisible, setIsToastVisible] = useState(false);
+    const [messageToast, setMessageToast] = useState('');
+
     /**
      * Method that generate the name of the columns.
      *
@@ -158,8 +162,10 @@ export default function Sheet() {
 
         if (response.status === 200) {
             const _body = await response.json();
+        } else {
+            setIsToastVisible(true);
+            setMessageToast(response.status + ' : ' + response.message);
         }
-        //TODO: handle error
     }
 
     /**
@@ -239,7 +245,6 @@ export default function Sheet() {
                 event.target.innerText = res;
             }
             event.target.blur();
-            //updateSheetData(cellKey, event.target.innerText);
         }
         if (event.ctrlKey && event.key === 'c') {
             handleCopy();
@@ -354,6 +359,11 @@ export default function Sheet() {
         }
     }
 
+    const handleToastTimeoutEnd = () => {
+        console.log('test');
+        setIsToastVisible(false);
+    };
+
     if (isLoading) {
         return (
             <div
@@ -393,6 +403,14 @@ export default function Sheet() {
     } else {
         return (
             <>
+                {' '}
+                {isToastVisible && (
+                    <Toast
+                        error={true}
+                        message={messageToast}
+                        onTimeoutEnd={handleToastTimeoutEnd}
+                    />
+                )}
                 <input
                     className={
                         errorNameSheet

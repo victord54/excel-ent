@@ -1,0 +1,21 @@
+.toast {
+    position: fixed;
+    left: 35%;
+    margin-top: 0px;
+    /* transform: translate(-50%, -50%); */
+    width: 30%;
+    background: red;
+    color: white;
+    text-align: center;
+    border-radius: 5px;
+    padding: 10px;
+    z-index: 1000;
+}
+
+.toast-error {
+    background-color: rgb(231, 106, 106);
+}
+
+.toast-success {
+    background-color: rgb(175, 224, 175);
+}

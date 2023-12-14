@@ -14,6 +14,7 @@ import {
     createLink as _createLink,
 } from '../../../services/api-service';
 import PopUp from '../../../components/private/pop-up/PopUp';
+import Toast from '../../../components/Toast/Toast';
 
 export default function Listing() {
     useEffect(() => {
@@ -28,6 +29,9 @@ export default function Listing() {
     const [isPopupShareOpen, setIsPopupShareOpen] = useState(false);
     const [sheetToDeleteOrShare, setSheetToDeleteOrShare] = useState(null);
     const [sortedBy, setSortedBy] = useState('last_update');
+    const [isToastVisible, setIsToastVisible] = useState(false);
+    const [messageToast, setMessageToast] = useState('');
+    const [errorToast, setErrorToast] = useState(false);
 
     /**
      * Method that handle the filter selected.
@@ -44,10 +48,15 @@ export default function Listing() {
      * Send a request to the server to get all the sheets.
      */
     async function getSheets() {
-        // TODO : error
         const res = await getAllSheetFromUser();
-        const _body = await res.json();
-        setSheets(_body);
+        if (res.status == 200) {
+            const _body = await res.json();
+            setSheets(_body);
+        } else {
+            setErrorToast(true);
+            setMessageToast(res.status + ' : ' + res.message);
+            setIsToastVisible(true);
+        }
     }
 
     /**
@@ -127,12 +136,15 @@ export default function Listing() {
 
         if (!regex.test(td.innerText)) {
             td.innerText = sheet.sht_name;
-            // TODO : Afficher l'error (caractères interdits)
+            setErrorToast(true);
+            setMessageToast(
+                "Le nom de la feuille ne peut contenir que des lettres, des chiffres et les caractères suivants : * ' ( ) _ - /",
+            );
+            setIsToastVisible(true);
             return;
         }
         setCanRowClick(true);
 
-        // TODO : error
         const response = await _renameSheet(idt_sht, td.innerText);
 
         if (response.status === 200) {
@@ -150,6 +162,11 @@ export default function Listing() {
                     return sheet;
                 });
             });
+        } else {
+            td.innerText = sheet.sht_name;
+            setErrorToast(true);
+            setMessageToast(response.status + ' : ' + response.message);
+            setIsToastVisible(true);
         }
     }
 
@@ -177,7 +194,6 @@ export default function Listing() {
 
         if (confirm) {
             const res = await _deleteSheet(sheetToDeleteOrShare.sht_idtsht);
-            //TODO : error
             if (res.status === 200) {
                 const _body = await res.json();
                 setSheets((prevSheets) => {
@@ -186,6 +202,12 @@ export default function Listing() {
                     );
                     return updatedSheets;
                 });
+                setMessageToast('La feuille a bien été supprimée !');
+                setIsToastVisible(true);
+            } else {
+                setErrorToast(true);
+                setMessageToast(res.status + ' : ' + res.message);
+                setIsToastVisible(true);
             }
         }
         setSheetToDeleteOrShare(null);
@@ -219,8 +241,11 @@ export default function Listing() {
             );
             if (response.status === 200) {
                 console.log(response);
+            } else {
+                setErrorToast(true);
+                setMessageToast(response.status + ' : ' + response.message);
+                setIsToastVisible(true);
             }
-            // TODO :error
         }
 
         setSheetToDeleteOrShare(null);
@@ -286,6 +311,10 @@ export default function Listing() {
             else if (sortedBy === 'author') sortByAuthor();
 
             window.open(`/sheet/${newUuid}`, '_blank');
+        } else {
+            setErrorToast(true);
+            setMessageToast(response.status + ' : ' + response.message);
+            setIsToastVisible(true);
         }
     }
 
@@ -368,8 +397,21 @@ export default function Listing() {
         return url;
     }
 
+    const handleToastTimeoutEnd = () => {
+        console.log('test');
+        setIsToastVisible(false);
+    };
+
     return (
         <>
+            {' '}
+            {isToastVisible && (
+                <Toast
+                    error={errorToast}
+                    message={messageToast}
+                    onTimeoutEnd={handleToastTimeoutEnd}
+                />
+            )}
             {isPopupDeleteOpen && (
                 <div className="sht-popup">
                     <PopUp
