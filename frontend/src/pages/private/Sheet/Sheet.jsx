@@ -1,8 +1,9 @@
 import { useState, useEffect, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import './sheet.css';
 import { evaluateur } from '../../../services/evaluateur';
 import { AuthContext } from '../../../contexts/AuthContext';
+import { TailSpin } from 'react-loader-spinner';
 
 import {
     saveSheet as _saveSheet,
@@ -10,51 +11,45 @@ import {
     updateSheetData as _updateSheetData,
     checkAccess as _checkAccess,
     checkLock as _checkLock,
-    updateLock as _updateLock
+    updateLock as _updateLock,
 } from '../../../services/api-service';
 import { getSheetById, getSheetData } from '../../../services/api-service';
 
 import { io } from 'socket.io-client';
 
 export default function Sheet() {
+    const [isLoading, setIsLoading] = useState(true);
     const { idSheet } = useParams();
     const { user } = useContext(AuthContext);
 
     useEffect(() => {
         document.title = 'Feuille de calcul';
         checkAccessSheet();
-        const fetchData = async() => {
+        const fetchData = async () => {
             const socket = io(import.meta.env.VITE_API_URL);
             const idsht = getSheet().then((idsht) => {
                 socket.on('udpdateData', (data) => {
-                    console.log('socket udpdateData');
                     if (
                         data.idtusr_ori === user.usr_idtusr ||
                         idsht != data.cel_idtsht
                     )
                         return;
-                    console.log('data: ', data);
-                    console.log('idt_sht: ', idt_sht);
-                    console.log('client user: ', user.usr_idtusr);
-                    console.log('sheet id:', idt_sht);
-                    console.log('updateData');
-                    console.log('data: ', data);
+
                     setContentCell(data.cel_idtcel, data.cel_val);
                 });
             });
             checkLockedCells();
 
             socket.on('updateLock', (data) => {
-                console.log('socket updateLock');
-                console.log(data);
-                if (data.idtusr_ori === user.usr_idtusr || idt_sht != data.cel_idtsht) return;
-                console.log('socket updateLock 2 ');
+                if (
+                    data.idtusr_ori === user.usr_idtusr ||
+                    idt_sht != data.cel_idtsht
+                )
+                    return;
                 setDivLock(data.cel_idtcel, data.cel_lock);
             });
-            
-        }
+        };
         fetchData();
-     
     }, [idSheet]);
 
     const regexName = /^[a-z\sA-Z0-9*'()_\-/À-ÖØ-öø-ÿ]+$/;
@@ -72,7 +67,6 @@ export default function Sheet() {
         Array.from({ length: numberOfRows }, (_, index) => index + 1),
     );
     const [nameColums, setNameColums] = useState(generateNameColumns());
-
     /**
      * Method that generate the name of the columns.
      *
@@ -97,66 +91,57 @@ export default function Sheet() {
      * Redirect to the 404 page if the user doesn't have access.
      */
     async function checkAccessSheet() {
-        console.log(idSheet);
         const response = await _checkAccess(idSheet);
-        // console.log(response);
-        if (response.status === 200) {
-        } else {
-          window.location.href = '/404';
-           console.log(response);
-        }
     }
 
     /**
      * Method that set the cell as locked or not.
-     * 
+     *
      * @param {String} cellKey The id of the cell.
      * @param {Boolean} lock The lock state.
      */
-    async function setDivLock(cellKey, lock){
+    async function setDivLock(cellKey, lock) {
         const td = document.getElementById(cellKey);
         if (td) {
             const divChild = td.querySelector('div');
             if (divChild) {
-                if (lock){
+                if (lock) {
                     divChild.classList.add('sht-cell-locked');
                     divChild.contentEditable = false;
-                    divChild.title = 'Cellule entrain d\'être modifiée par un autre utilisateur';
-                }
-                else {
+                    divChild.title =
+                        "Cellule entrain d'être modifiée par un autre utilisateur";
+                } else {
                     divChild.classList.remove('sht-cell-locked');
                     divChild.contentEditable = true;
                     divChild.title = '';
                 }
             }
         }
-        
     }
 
     /**
      * Method that get all the lockedl cells.
      * Send a request to the server.
      */
-    async function checkLockedCells(){
+    async function checkLockedCells() {
         const response = await _checkLock(idt_sht);
-        if(response.status === 200){
+        if (response.status === 200) {
             const body = await response.json();
             const data = body.data;
-            for (let key in data){
+            for (let key in data) {
                 setDivLock(data[key].cel_idtcel, true);
             }
         }
     }
 
-
     /**
      * Method that update the lock state of a cell.
      * Send a request to the server.
-     * 
+     *
      * @param {String} cell The id of the cell.
      * @param {Boolean} lock The lock state.
      */
-    async function updateLockedCell(cell, lock){
+    async function updateLockedCell(cell, lock) {
         const response = await _updateLock(idt_sht, cell, lock);
     }
 
@@ -172,10 +157,9 @@ export default function Sheet() {
         const response = await _renameSheet(idt_sht, nameSheet);
 
         if (response.status === 200) {
-            console.log('ok');
             const _body = await response.json();
-            console.log(_body);
         }
+        //TODO: handle error
     }
 
     /**
@@ -203,7 +187,6 @@ export default function Sheet() {
      * @param {String} val The value of the cell.
      */
     async function updateSheetData(cell, val) {
-        console.log('updateSheetData');
         setSelectCol(null);
         setSelectRow(null);
         const response = await _updateSheetData(idt_sht, cell, val, '');
@@ -218,7 +201,6 @@ export default function Sheet() {
      */
     async function getSheet() {
         if (sheetExist) return;
-        console.log(idSheet);
         const sheetResponse = await getSheetById(idSheet);
         const sheetBody = await sheetResponse.json();
         const sheetData = sheetBody.data;
@@ -236,13 +218,10 @@ export default function Sheet() {
                 );
             }
             setSheetExist(true);
-            console.log(sheetData.sht_idtsht);
+            setIsLoading(false);
             return sheetData.sht_idtsht;
-        } else {
-            //TODO: c'est censé renvoyer une erreur 404 dans le corps de la réponse
-            window.location.href = '/404';
-            console.log(sheetResponse);
         }
+        setIsLoading(false);
     }
 
     /**
@@ -296,7 +275,7 @@ export default function Sheet() {
     function nameSheetChange(event) {
         if (!regexName.test(event.target.value)) {
             setErrorNameSheet(true);
-        }else{
+        } else {
             setErrorNameSheet(false);
         }
         setNameSheet(event.target.value);
@@ -323,7 +302,6 @@ export default function Sheet() {
      * @param {String} keyCell The id of the cell.
      */
     function handleDrop(event, keyCell) {
-        console.log(event.dataTransfer.getData('text/plain'));
         setContentCell(keyCell, '');
 
         setContentCell(draggedCell, '');
@@ -367,7 +345,6 @@ export default function Sheet() {
      * @param {String} content The content to set.
      */
     function setContentCell(cellKey, content) {
-        console.log('setContentCell');
         const td = document.getElementById(cellKey);
         if (td) {
             const divChild = td.querySelector('div');
@@ -377,106 +354,160 @@ export default function Sheet() {
         }
     }
 
-    if (!sheetExist) return <></>;
-    return (
-        <>
-            <input
-                className={errorNameSheet ? 'sht-input-name sht-input-name-error' : 'sht-input-name '}
-                value={nameSheet}
-                onChange={nameSheetChange}
-                onClick={handleSelectAllInput}
-                onBlur={renameSheet}
-                onKeyDown={handleKeyDownInput}
-            ></input>
-            {errorNameSheet && (<span className="sht-error-message">Un ou des caractères ne sont pas acceptés.</span>)}
-            <div className="sht-container-all">
-                <div className="sht-container-tab">
-                    <table className="sht-table">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                {nameColums.map((nameCol, i) => (
-                                    <th
-                                        key={nameCol}
-                                        className={
-                                            nameCol === colSelect
-                                                ? 'sht-select-col-row'
-                                                : ''
-                                        }
-                                    >
-                                        {nameCol}
-                                    </th>
-                                ))}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {nameRows.map((nameRow, i) => (
-                                <tr key={nameRow}>
-                                    <th
-                                        key={nameRow}
-                                        className={
-                                            nameRow === rowSelect
-                                                ? 'sht-select-col-row'
-                                                : ''
-                                        }
-                                    >
-                                        {nameRow}
-                                    </th>
-                                    {nameColums.map((nameCol) => (
-                                        <td
-                                            id={nameCol + '_' + nameRow}
-                                            key={nameCol + '_' + nameRow}
-                                            draggable
-                                            onDragStart={(event) =>
-                                                handleDragStart(
-                                                    event,
-                                                    nameCol + '_' + nameRow,
-                                                )
-                                            }
-                                            onDrop={(event) =>
-                                                handleDrop(
-                                                    event,
-                                                    nameCol + '_' + nameRow,
-                                                )
-                                            }
-                                        >
-                                            <div
-                                                contentEditable
-                                                onKeyDown={(event) =>
-                                                    handleKeyDown(
-                                                        event,
-                                                        nameCol + '_' + nameRow,
-                                                    )
-                                                }
-                                                onPaste={(event) =>
-                                                    handlePaste(
-                                                        event,
-                                                        nameCol + '_' + nameRow,
-                                                    )
-                                                }
-                                                onFocus={(event) =>
-                                                    handleSelectAll(
-                                                        event,
-                                                        nameCol,
-                                                        nameRow,
-                                                    )
-                                                }
-                                                onDoubleClick={handleSelectAll}
-                                                onBlur={(event) =>
-                                                    updateSheetData(
-                                                        nameCol + '_' + nameRow,
-                                                        event.target.innerText,
-                                                    )
-                                                }
-                                            ></div>
-                                        </td>
-                                    ))}
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+    if (isLoading) {
+        return (
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                }}
+            >
+                <TailSpin color="red" radius={'8px'} />
+            </div>
+        );
+    } else if (!sheetExist && !isLoading) {
+        return (
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                }}
+            >
+                <div
+                    style={{
+                        fontSize: '20px',
+                        marginBottom: '20px',
+                        marginTop: '20px',
+                    }}
+                >
+                    Cette feuille n'existe pas ou vous n'y avez pas accès !
+                </div>
+
+                <div>
+                    Go back to real life : <Link to={'/'}>Home</Link>
                 </div>
             </div>
-        </>
-    );
+        );
+    } else {
+        return (
+            <>
+                <input
+                    className={
+                        errorNameSheet
+                            ? 'sht-input-name sht-input-name-error'
+                            : 'sht-input-name '
+                    }
+                    value={nameSheet}
+                    onChange={nameSheetChange}
+                    onClick={handleSelectAllInput}
+                    onBlur={renameSheet}
+                    onKeyDown={handleKeyDownInput}
+                ></input>
+                {errorNameSheet && (
+                    <span className="sht-error-message">
+                        Un ou des caractères ne sont pas acceptés.
+                    </span>
+                )}
+                <div className="sht-container-all">
+                    <div className="sht-container-tab">
+                        <table className="sht-table">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    {nameColums.map((nameCol, i) => (
+                                        <th
+                                            key={nameCol}
+                                            className={
+                                                nameCol === colSelect
+                                                    ? 'sht-select-col-row'
+                                                    : ''
+                                            }
+                                        >
+                                            {nameCol}
+                                        </th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {nameRows.map((nameRow, i) => (
+                                    <tr key={nameRow}>
+                                        <th
+                                            key={nameRow}
+                                            className={
+                                                nameRow === rowSelect
+                                                    ? 'sht-select-col-row'
+                                                    : ''
+                                            }
+                                        >
+                                            {nameRow}
+                                        </th>
+                                        {nameColums.map((nameCol) => (
+                                            <td
+                                                id={nameCol + '_' + nameRow}
+                                                key={nameCol + '_' + nameRow}
+                                                draggable
+                                                onDragStart={(event) =>
+                                                    handleDragStart(
+                                                        event,
+                                                        nameCol + '_' + nameRow,
+                                                    )
+                                                }
+                                                onDrop={(event) =>
+                                                    handleDrop(
+                                                        event,
+                                                        nameCol + '_' + nameRow,
+                                                    )
+                                                }
+                                            >
+                                                <div
+                                                    contentEditable
+                                                    onKeyDown={(event) =>
+                                                        handleKeyDown(
+                                                            event,
+                                                            nameCol +
+                                                                '_' +
+                                                                nameRow,
+                                                        )
+                                                    }
+                                                    onPaste={(event) =>
+                                                        handlePaste(
+                                                            event,
+                                                            nameCol +
+                                                                '_' +
+                                                                nameRow,
+                                                        )
+                                                    }
+                                                    onFocus={(event) =>
+                                                        handleSelectAll(
+                                                            event,
+                                                            nameCol,
+                                                            nameRow,
+                                                        )
+                                                    }
+                                                    onDoubleClick={
+                                                        handleSelectAll
+                                                    }
+                                                    onBlur={(event) =>
+                                                        updateSheetData(
+                                                            nameCol +
+                                                                '_' +
+                                                                nameRow,
+                                                            event.target
+                                                                .innerText,
+                                                        )
+                                                    }
+                                                ></div>
+                                            </td>
+                                        ))}
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </>
+        );
+    }
 }

@@ -55,6 +55,6 @@ function getExpirationDate(jwt) {
     const tokenParts = jwt.split('.');
     const payload = JSON.parse(atob(tokenParts[1]));
     const expirationDate = new Date(payload.exp * 1000);
-  
+
     return expirationDate;
 }

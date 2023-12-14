@@ -277,7 +277,7 @@ export async function checkAccess(sht_uuid) {
     );
 }
 
-export async function checkLock(cel_idtsht){
+export async function checkLock(cel_idtsht) {
     return await fetch(
         import.meta.env.VITE_API_URL + '/sheet/lock/' + cel_idtsht,
         {
@@ -290,7 +290,7 @@ export async function checkLock(cel_idtsht){
     );
 }
 
-export async function updateLock(cel_idtsht, cel_idtcel, cel_lock){
+export async function updateLock(cel_idtsht, cel_idtcel, cel_lock) {
     return await fetch(
         import.meta.env.VITE_API_URL + '/sheet/lock/' + cel_idtsht,
         {
@@ -301,7 +301,7 @@ export async function updateLock(cel_idtsht, cel_idtcel, cel_lock){
             },
             body: JSON.stringify({
                 cel_idtcel: cel_idtcel,
-                cel_lock: cel_lock
+                cel_lock: cel_lock,
             }),
         },
     );
