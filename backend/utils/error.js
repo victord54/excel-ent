@@ -49,6 +49,12 @@ export class InvalidIdentifiersError extends UserError {
     }
 }
 
+export class InvalidFormatError extends UserError {
+    constructor(message) {
+        super(message, 400);
+    }
+}
+
 export class SheetError extends CustomError {
     constructor(message, status) {
         super(message, status);

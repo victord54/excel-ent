@@ -1280,8 +1280,8 @@ paths:
     get:
       tags:
         - Sheet
-      summary: Check if a cell is locked by a user
-      description: Check if a cell is locked by a user
+      summary: Get the lock status of the cells of a sheet
+      description: Get the lock status of the cells of a sheet
       security:
         - bearerAuth: []
       parameters:
@@ -1291,20 +1291,9 @@ paths:
           required: true
           schema:
             type: integer
-      requestBody:
-        description: Cell id
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                cel_idtcel:
-                  type: string
-                  example: C_15
       responses:
         "200":
-          description: OK - Sheet is or not locked by the user
+          description: OK - Lock status of the cells of the sheet
           content:
             application/json:
               schema:
@@ -1314,11 +1303,19 @@ paths:
                     type: string
                     example: success
                   data:
-                    type: object
-                    properties:
-                      cel_lock:
-                        type: integer
-                        example: 1
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        cel_idtcel:
+                          type: string
+                        cel_lock:
+                          type: integer
+                    example:
+                      - cel_idtcel: C_15
+                        cel_lock: 1
+                      - cel_idtcel: C_16
+                        cel_lock: 0
         "400":
           description: Bad Request - Missing parameters
           content:
