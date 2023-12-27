@@ -32,6 +32,7 @@ export default function Listing() {
     const [isToastVisible, setIsToastVisible] = useState(false);
     const [messageToast, setMessageToast] = useState('');
     const [errorToast, setErrorToast] = useState(false);
+    const navigate = useNavigate();
 
     /**
      * Method that handle the filter selected.
@@ -125,6 +126,7 @@ export default function Listing() {
      * @param {Object} sheet The sheet to rename.
      */
     async function handleOnBlurRenameSheet(event, sheet) {
+        setCanRowClick(true);
         if (event.target.contentEditable === 'false') return;
         const regex = /^[a-z\sA-Z0-9*'()_\-/À-ÖØ-öø-ÿ]+$/;
         const idt_sht = sheet.sht_idtsht;
@@ -143,7 +145,6 @@ export default function Listing() {
             setIsToastVisible(true);
             return;
         }
-        setCanRowClick(true);
 
         const response = await _renameSheet(idt_sht, td.innerText);
 
@@ -304,12 +305,12 @@ export default function Listing() {
                     sht_sharing: 0,
                 },
             ]);
-
+            
             if (sortedBy === 'last_update') sortByDate();
             else if (sortedBy === 'name') sortByName();
             else if (sortedBy === 'author') sortByAuthor();
 
-            window.open(`/sheet/${newUuid}`, '_blank');
+            navigate('/sheet/' + newUuid);
         } else {
             setErrorToast(true);
             setMessageToast(response.error.code + ' : ' + response.error.message);
