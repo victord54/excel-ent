@@ -54,7 +54,7 @@ export default function Listing() {
             setSheets(_body);
         } else {
             setErrorToast(true);
-            setMessageToast(res.status + ' : ' + res.message);
+            setMessageToast(res.error.code + ' : ' + res.error.message);
             setIsToastVisible(true);
         }
     }
@@ -165,7 +165,7 @@ export default function Listing() {
         } else {
             td.innerText = sheet.sht_name;
             setErrorToast(true);
-            setMessageToast(response.status + ' : ' + response.message);
+            setMessageToast(response.error.code + ' : ' + response.error.message);
             setIsToastVisible(true);
         }
     }
@@ -206,7 +206,7 @@ export default function Listing() {
                 setIsToastVisible(true);
             } else {
                 setErrorToast(true);
-                setMessageToast(res.status + ' : ' + res.message);
+                setMessageToast(res.error.code + ' : ' + res.error.message);
                 setIsToastVisible(true);
             }
         }
@@ -243,7 +243,7 @@ export default function Listing() {
                 console.log(response);
             } else {
                 setErrorToast(true);
-                setMessageToast(response.status + ' : ' + response.message);
+                setMessageToast(response.error.code + ' : ' + response.error.message);
                 setIsToastVisible(true);
             }
         }
@@ -277,7 +277,6 @@ export default function Listing() {
             sht_idtsht: null,
         });
         let _body = await response.json();
-        console.log(_body);
         if (response.status === 409) {
             console.log('conflict');
             newUuid = uuid();
@@ -313,7 +312,7 @@ export default function Listing() {
             window.open(`/sheet/${newUuid}`, '_blank');
         } else {
             setErrorToast(true);
-            setMessageToast(response.status + ' : ' + response.message);
+            setMessageToast(response.error.code + ' : ' + response.error.message);
             setIsToastVisible(true);
         }
     }
