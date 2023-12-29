@@ -68,9 +68,11 @@ CREATE TABLE
 
 CREATE TABLE
     `tmp_invitation` (
+        inv_idtinv         BIGINT          NOT NULL AUTO_INCREMENT             COMMENT 'PK Invitation',
         inv_idtsht         BIGINT          NOT NULL                            COMMENT 'Sheet FK',
         inv_link           VARCHAR(255)    NOT NULL                            COMMENT 'Invitation link',
         inv_created_at     DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP  COMMENT 'Date of invitation creation',
+        PRIMARY KEY (`inv_idtinv`),
         CONSTRAINT `inv_sht_fk` FOREIGN KEY (`inv_idtsht`) REFERENCES `sht_sheet` (`sht_idtsht`),
         KEY `inv_sht_fk_i` (`inv_idtsht`),
         CONSTRAINT `inv_link_u` UNIQUE (`inv_link`)
