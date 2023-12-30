@@ -2,12 +2,6 @@ DROP DATABASE IF EXISTS `excelent`;
 CREATE DATABASE `excelent`;
 USE `excelent`;
 
-DROP TABLE IF EXISTS `tmp_invitation`;
-DROP TABLE IF EXISTS `sht_link_sht_cel`;
-DROP TABLE IF EXISTS `usr_sht_link_sheet_user`;
-DROP TABLE IF EXISTS `sht_sheet`;
-DROP TABLE IF EXISTS `usr_user`;
-
 -- user table
 CREATE TABLE
     `usr_user` (
