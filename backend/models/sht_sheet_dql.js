@@ -90,7 +90,7 @@ export async function checkLock({ cel_idtsht }) {
 
 export async function getConnectedToSheet({ uc_idtsht }){
     return executeQuery(    
-        'SELECT usr_idtusr, usr_pseudo FROM sht_usr_connected JOIN usr_user WHERE uc_idtusr = usr_idtusr AND uc_idtsht = ?',
+        'SELECT DISTINCT usr_idtusr, usr_pseudo FROM sht_usr_connected JOIN usr_user WHERE uc_idtusr = usr_idtusr AND uc_idtsht = ?',
         [uc_idtsht],
     );
 }

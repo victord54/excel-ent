@@ -43,23 +43,22 @@ io.sockets.on('connection', (socket) => {
         const sheet = await getOne({ sht_uuid: sheetUUID });
         const sheetId = sheet[0].sht_idtsht;
 
-        try{
-            await addConnected({ uc_idtsht: sheetId, uc_idtusr: userId });
-            database.commitTransaction();
-        }catch(e){
-            console.log(e);
-        }
-
         socket.on('disconnect', async () => {
             try{
-                removeConnected({ uc_idtsht: sheetId, uc_idtusr: userId });
-                database.commitTransaction();
+                removeConnected({ uc_idtsht: sheetId, uc_idtusr: userId, uc_idtsocket: socket.id });
             }catch(e){
                 console.log(e);
             }
 
             io.emit('updateConnected', { users: await getConnectedToSheet({ uc_idtsht: sheetId }) });
         });
+
+        try{
+            await addConnected({ uc_idtsht: sheetId, uc_idtusr: userId, uc_idtsocket: socket.id });
+            database.commitTransaction();
+        }catch(e){
+            console.log(e);
+        }
         
         io.emit('updateConnected', { users: await getConnectedToSheet({ uc_idtsht: sheetId }) });
     });

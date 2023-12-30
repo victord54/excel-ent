@@ -82,7 +82,8 @@ CREATE TABLE
     `sht_usr_connected` (
         uc_idtsht BIGINT NOT NULL,
         uc_idtusr BIGINT NOT NULL,
-        PRIMARY KEY (`uc_idtsht`, `uc_idtusr`),
+        uc_idtsocket varchar(25) NOT NULL,
+        PRIMARY KEY (`uc_idtsht`, `uc_idtusr`, `uc_idtsocket`),
         CONSTRAINT `fk_uc_idtsht` FOREIGN KEY (`uc_idtsht`) REFERENCES `sht_sheet` (`sht_idtsht`),
         CONSTRAINT `fk_uc_idtusr` FOREIGN KEY (`uc_idtusr`) REFERENCES `usr_user` (`usr_idtusr`)
     ) ENGINE = InnoDB DEFAULT CHARSET = UTF8MB4;

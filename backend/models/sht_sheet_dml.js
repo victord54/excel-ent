@@ -126,17 +126,17 @@ export async function updateLock({ cel_idtcel, cel_idtsht, cel_lock }) {
     );
 }
 
-export async function removeConnected({ uc_idtsht, uc_idtusr }) {
+export async function removeConnected({ uc_idtsht, uc_idtusr, uc_idtsocket }) {
     return executeQuery(
-        'DELETE FROM sht_usr_connected WHERE uc_idtsht = ? AND uc_idtusr = ?  ',
-        [uc_idtsht, uc_idtusr],
+        'DELETE FROM sht_usr_connected WHERE uc_idtsht = ? AND uc_idtusr = ? AND uc_idtsocket = ?',
+        [uc_idtsht, uc_idtusr, uc_idtsocket],
     );
 };
 
-export async function addConnected({ uc_idtsht, uc_idtusr }) {
+export async function addConnected({ uc_idtsht, uc_idtusr, uc_idtsocket }) {
     return executeQuery(
-        'INSERT IGNORE INTO sht_usr_connected (uc_idtsht, uc_idtusr) VALUES (?,?)',
-        [uc_idtsht, uc_idtusr],
+        'INSERT IGNORE INTO sht_usr_connected (uc_idtsht, uc_idtusr, uc_idtsocket) VALUES (?,?,?)',
+        [uc_idtsht, uc_idtusr, uc_idtsocket],
     );
 };
 
