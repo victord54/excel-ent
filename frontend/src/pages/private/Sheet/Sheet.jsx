@@ -25,8 +25,6 @@ export default function Sheet() {
     const { user } = useContext(AuthContext);
 
     useEffect(() => {
-        console.log(idSheet);
-
         document.title = 'Feuille de calcul';
         checkAccessSheet();
         const fetchData = async () => {
@@ -58,7 +56,6 @@ export default function Sheet() {
             });
 
             socket.on('updateConnected', (data) => {
-                console.log(data);
                 setConnectedUsers(data.users.map((user) => user.usr_pseudo));
             });
         };
