@@ -17,7 +17,7 @@ import {
 import { getSheetById, getSheetData } from '../../../services/api-service';
 
 import { io } from 'socket.io-client';
-import { generateRandomColor } from '../../../helpers/colorHelper';
+import { getColorByPseudo } from '../../../helpers/colorHelper';
 
 export default function Sheet() {
     const [isLoading, setIsLoading] = useState(true);
@@ -25,6 +25,8 @@ export default function Sheet() {
     const { user } = useContext(AuthContext);
 
     useEffect(() => {
+        console.log(idSheet);
+
         document.title = 'Feuille de calcul';
         checkAccessSheet();
         const fetchData = async () => {
@@ -56,7 +58,7 @@ export default function Sheet() {
             });
 
             socket.on('updateConnected', (data) => {
-                console.log("hey");
+                console.log(data);
                 setConnectedUsers(data.users.map((user) => user.usr_pseudo));
             });
         };
@@ -443,7 +445,7 @@ export default function Sheet() {
                 <div className='connected-names-container'>
                     {
                         connectedUsers.map((username) => (
-                            <div key={username} className='connected-name' style={{borderColor: generateRandomColor()}}>
+                            <div key={username} className='connected-name' style={{borderColor: getColorByPseudo(username)}}>
                                 {username}
                             </div>
                         ))
