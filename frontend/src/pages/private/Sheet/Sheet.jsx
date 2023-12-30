@@ -24,11 +24,12 @@ export default function Sheet() {
     const { idSheet } = useParams();
     const { user } = useContext(AuthContext);
 
+    const [socket, setSocket] = useState(io(import.meta.env.VITE_API_URL));
+
     useEffect(() => {
         document.title = 'Feuille de calcul';
         checkAccessSheet();
         const fetchData = async () => {
-            const socket = io(import.meta.env.VITE_API_URL);
             socket.emit('join', {
                 userId: user.usr_idtusr,
                 sheetUUID: idSheet,
