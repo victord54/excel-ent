@@ -12,6 +12,8 @@ import { Server } from 'socket.io';
 import fs from 'fs';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yaml';
+import { addConnected, removeConnected, truncateConnected } from './models/sht_sheet_dml.js';
+import { getConnectedToSheet, getOne } from './models/sht_sheet_dql.js';
 const file = fs.readFileSync('./documentation.yml', 'utf8');
 const documentation = YAML.parse(file);
 
@@ -32,6 +34,35 @@ app.use((req, res, next) => {
     req.io = io;
     accessLogFile(req);
     next();
+});
+
+truncateConnected();
+io.sockets.on('connection', (socket) => {
+    socket.on('join', async ({ userId, sheetUUID }) => {
+
+        const sheet = await getOne({ sht_uuid: sheetUUID });
+        const sheetId = sheet[0].sht_idtsht;
+
+        try{
+            await addConnected({ uc_idtsht: sheetId, uc_idtusr: userId });
+            database.commitTransaction();
+        }catch(e){
+            console.log(e);
+        }
+
+        socket.on('disconnect', async () => {
+            try{
+                removeConnected({ uc_idtsht: sheetId, uc_idtusr: userId });
+                database.commitTransaction();
+            }catch(e){
+                console.log(e);
+            }
+
+            io.emit('updateConnected', { users: await getConnectedToSheet({ uc_idtsht: sheetId }) });
+        });
+        
+        io.emit('updateConnected', { users: await getConnectedToSheet({ uc_idtsht: sheetId }) });
+    });
 });
 
 app.get('/', (req, res) => {

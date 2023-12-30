@@ -17,6 +17,7 @@ import {
 import { getSheetById, getSheetData } from '../../../services/api-service';
 
 import { io } from 'socket.io-client';
+import { generateRandomColor } from '../../../helpers/colorHelper';
 
 export default function Sheet() {
     const [isLoading, setIsLoading] = useState(true);
@@ -28,6 +29,10 @@ export default function Sheet() {
         checkAccessSheet();
         const fetchData = async () => {
             const socket = io(import.meta.env.VITE_API_URL);
+            socket.emit('join', {
+                userId: user.usr_idtusr,
+                sheetUUID: idSheet,
+            });
             const idsht = getSheet().then((idsht) => {
                 socket.on('udpdateData', (data) => {
                     if (
@@ -49,9 +54,16 @@ export default function Sheet() {
                     return;
                 setDivLock(data.cel_idtcel, data.cel_lock);
             });
+
+            socket.on('updateConnected', (data) => {
+                console.log("hey");
+                setConnectedUsers(data.users.map((user) => user.usr_pseudo));
+            });
         };
         fetchData();
     }, [idSheet]);
+
+    const [connectedUsers, setConnectedUsers] = useState([]);
 
     const regexName = /^[a-z\sA-Z0-9*'()_\-/À-ÖØ-öø-ÿ]+$/;
     const numberOfRows = 100;
@@ -428,6 +440,15 @@ export default function Sheet() {
                         Un ou des caractères ne sont pas acceptés.
                     </span>
                 )}
+                <div className='connected-names-container'>
+                    {
+                        connectedUsers.map((username) => (
+                            <div key={username} className='connected-name' style={{borderColor: generateRandomColor()}}>
+                                {username}
+                            </div>
+                        ))
+                    }
+                </div>
                 <div className="sht-container-all">
                     <div className="sht-container-tab">
                         <table className="sht-table">

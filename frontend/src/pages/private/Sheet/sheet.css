@@ -27,7 +27,6 @@
     width: 500px;
     background: none;
     height: 50px;
-    margin-bottom: 25px;
     margin-left: 5px;
     font-size: 20px;
     border: 0.5px rgb(194, 191, 191) solid;
@@ -54,4 +53,21 @@
     font-size: 15px;
     margin-left: 5px;
     font-style: italic;
+}
+
+.connected-names-container{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1em;
+    margin: 0.6em 0.4em;
+}
+
+.connected-name{
+    border-radius: 1em;
+    border: 2px solid rgb(255, 48, 48);
+    padding: 1px 8px;
+    min-width: 5em;
+    text-align: center;
+    background-color: rgb(245, 245, 245);
 }

@@ -125,3 +125,23 @@ export async function updateLock({ cel_idtcel, cel_idtsht, cel_lock }) {
         [cel_lock, cel_idtcel, cel_idtsht],
     );
 }
+
+export async function removeConnected({ uc_idtsht, uc_idtusr }) {
+    return executeQuery(
+        'DELETE FROM sht_usr_connected WHERE uc_idtsht = ? AND uc_idtusr = ?  ',
+        [uc_idtsht, uc_idtusr],
+    );
+};
+
+export async function addConnected({ uc_idtsht, uc_idtusr }) {
+    return executeQuery(
+        'INSERT IGNORE INTO sht_usr_connected (uc_idtsht, uc_idtusr) VALUES (?,?)',
+        [uc_idtsht, uc_idtusr],
+    );
+};
+
+export async function truncateConnected(){
+    return executeQuery(
+        'TRUNCATE TABLE sht_usr_connected',
+    );
+}
